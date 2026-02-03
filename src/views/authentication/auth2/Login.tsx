@@ -12,20 +12,20 @@ const Login = () => {
     <>
       <div className="relative overflow-hidden h-screen bg-lightprimary dark:bg-darkprimary">
         <div className="flex h-full justify-center items-center px-4">
-          <CardBox className="md:w-[450px] w-full border-none">
-            <div className="mx-auto mb-6">
+          <CardBox className="md:w-[500px] w-full border-none">
+            <div className="mx-auto ">
               <FullLogo />
             </div>
-            <SocialButtons title="or sign in with" />
             <AuthLogin />
-            <div className="flex gap-2 text-base text-ld font-medium mt-6 items-center justify-center">
-              <p>New to TailwindAdmin?</p>
-              <Link
+            <div className="flex gap-2 text-base text-sm font-medium mt-6 items-center justify-center">
+              <p>Si presenta algún inconveniente con el inicio de sesión por favor envíe un correo a <Link
                 to={"/auth/auth2/register"}
                 className="text-primary text-sm font-medium"
-              >
-                Create an account
-              </Link>
+                > 
+                 matriculas@gescom.edu.ve
+                </Link>
+              </p>
+
             </div>
           </CardBox>
         </div>

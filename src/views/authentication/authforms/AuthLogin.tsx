@@ -10,13 +10,13 @@ const AuthLogin = () => {
       <form className="mt-6">
         <div className="mb-4">
           <div className="mb-2 block">
-            <Label htmlFor="Username">Username</Label>
+            <Label htmlFor="Username">Correo electrónico</Label>
           </div>
           <Input id="username" type="text" />
         </div>
         <div className="mb-4">
           <div className="mb-2 block">
-            <Label htmlFor="userpwd">Password</Label>
+            <Label htmlFor="userpwd">Contraseña</Label>
           </div>
           <Input id="userpwd" type="password" />
         </div>
@@ -24,15 +24,15 @@ const AuthLogin = () => {
           <div className="flex items-center gap-2">
             <Checkbox id="accept" className="checkbox" />
             <Label htmlFor="accept" className="opacity-90 font-normal cursor-pointer">
-              Remeber this Device
+              Mantener mi sesión abierta
             </Label>
           </div>
           <Link to={'/'} className="text-primary text-sm font-medium">
-            Forgot Password ?
+            ¿Has olvidado tu Contraseña?
           </Link>
         </div>
         <Button asChild className="w-full">
-          <Link to="/">Sign in</Link>
+          <Link to="/">Iniciar Sesión</Link>
         </Button>
       </form>
     </>
