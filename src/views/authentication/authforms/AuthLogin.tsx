@@ -31,7 +31,12 @@ const AuthLogin = () => {
             ¿Has olvidado tu Contraseña?
           </Link>
         </div>
-        <Button asChild className="w-full">
+        <Button asChild className="w-full"
+          onClick={() => {
+            localStorage.setItem('isAuthenticated', 'true');
+            localStorage.setItem('role', 'student'); // prueba con 'student'
+            window.location.href = '/student'; // o /student
+        }}>
           <Link to="/">Iniciar Sesión</Link>
         </Button>
       </form>

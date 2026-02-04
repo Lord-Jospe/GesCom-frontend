@@ -3,7 +3,8 @@
 import { Children, lazy } from 'react';
 import { Navigate, createBrowserRouter } from 'react-router';
 import Loadable from '../layouts/full/shared/loadable/Loadable';
-import path from 'path';
+
+import PrivateRoute from '../components/shared/PrivateRoute';
 
 
 /* ***Layouts**** */
@@ -62,7 +63,11 @@ const Router = [
   /*Admin routes*/
   {
     path: '/admin',
-    element: <AdminLayout />,
+    element:  (
+      <PrivateRoute allowedRoles={['admin']}>
+        <AdminLayout />
+      </PrivateRoute>
+    ),
     children: [
       { path: '/admin', exact: true, element: <Admindash /> },
     ]
@@ -70,7 +75,11 @@ const Router = [
   /*Student routes*/
   {
     path: '/student',
-    element: <StudentLayout />,
+    element: (
+      <PrivateRoute allowedRoles={['student']}>
+        <StudentLayout />
+      </PrivateRoute>
+    ),
     children: [
       {path: '/student', exact: true, element: <Studentdash /> },
     ]

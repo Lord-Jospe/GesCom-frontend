@@ -10,6 +10,9 @@ import ProfileWelcome from "src/components/dashboards/modern/ProfileWelcome";
 const Studentdash = () => {
     return (
         <>
+            <div>
+                <h2>Soy un estudiante</h2>
+            </div>
             <div className="grid grid-cols-12 gap-6">
                 <div className="col-span-12">
                     <ProfileWelcome />

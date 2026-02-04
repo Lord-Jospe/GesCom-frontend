@@ -1,22 +1,26 @@
-// src/components/PrivateRoute.tsx
-import { Navigate, Outlet } from 'react-router-dom';
+import { Navigate } from 'react-router';
+import { ReactNode } from 'react';
 
 interface PrivateRouteProps {
-  role: 'admin' | 'student'; // roles posibles
+  children: ReactNode;
+  allowedRoles?: Array<'admin' | 'student'>;
 }
 
-const PrivateRoute = ({ role }: PrivateRouteProps) => {
-  const storedRole = localStorage.getItem('userRole'); 
+const PrivateRoute = ({ children, allowedRoles }: PrivateRouteProps) => {
+  const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
+  const role = localStorage.getItem('role') as 'admin' | 'student' | null;
 
-  if (!storedRole) {
-    return <Navigate to="/login" />;
+  // No logueado → login
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
   }
 
-  if (storedRole !== role) {
-    return <Navigate to="/" />;
+  // Rol no permitido
+  if (allowedRoles && (!role || !allowedRoles.includes(role))) {
+    return <Navigate to="/login" replace />;
   }
 
-  return <Outlet />; // Si el rol coincide, muestra las rutas hijas
+  return <>{children}</>;
 };
 
 export default PrivateRoute;
