@@ -3,7 +3,7 @@ import { Icon } from '@iconify/react';
 import Messages from './Messages';
 import FullLogo from '../../shared/logo/FullLogo';
 import Profile from './Profile';
-import SidebarLayout from '../sidebar/Sidebar';
+import SidebarLayout from '../sidebar/AdminSidebar';
 import { useTheme } from 'src/components/provider/theme-provider';
 
 import { Sheet, SheetContent, SheetTitle } from 'src/components/ui/sheet';

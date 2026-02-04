@@ -151,7 +151,7 @@ const SidebarContent: MenuItem[] = [
         id: uniqueId(),
         name: 'Seguridad y Auditoría',
         icon: 'solar:shield-check-linear',
-        //url: '/',
+        url: '/',
       },
       {
         id: uniqueId(),

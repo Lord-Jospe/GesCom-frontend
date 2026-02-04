@@ -1,4 +1,4 @@
-import SidebarContent from './sidebaritems';
+import SidebarContent from './studentSidebarItems';
 import SimpleBar from 'simplebar-react';
 import { Icon } from '@iconify/react';
 import FullLogo from '../../shared/logo/FullLogo';
@@ -94,7 +94,7 @@ const renderSidebarItems = (
   });
 };
 
-const SidebarLayout = ({ onClose }: { onClose?: () => void }) => {
+const StudentSidebarLayout = ({ onClose }: { onClose?: () => void }) => {
   const location = useLocation();
   const pathname = location.pathname;
   const { theme } = useTheme();
@@ -114,7 +114,7 @@ const SidebarLayout = ({ onClose }: { onClose?: () => void }) => {
     >
       {/* Logo */}
       <div className="px-6 flex items-center brand-logo overflow-hidden">
-        <AMLogo component={Link} href="/" img="">
+        <AMLogo component={Link} href="/student" img="">
           <FullLogo />
         </AMLogo>
       </div>
@@ -151,4 +151,4 @@ const SidebarLayout = ({ onClose }: { onClose?: () => void }) => {
   );
 };
 
-export default SidebarLayout;
+export default StudentSidebarLayout;

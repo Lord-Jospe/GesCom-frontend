@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { Outlet } from 'react-router';
-import Sidebar from './vertical/sidebar/Sidebar';
+import Sidebar from './vertical/sidebar/StudentSidebar';
 import Header from './vertical/header/Header';
 
 const StudentLayout: FC = () => {

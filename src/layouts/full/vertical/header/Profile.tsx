@@ -62,7 +62,7 @@ const Profile = () => {
               variant="outline"
               className="w-full rounded-md"
             >
-              <Link to="/auth/auth2/login">Logout</Link>
+              <Link to="/login">Logout</Link>
             </Button>
           </div>
         </DropdownMenuContent>
