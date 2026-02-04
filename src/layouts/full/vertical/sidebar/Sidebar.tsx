@@ -1,7 +1,6 @@
 import SidebarContent from './sidebaritems';
 import SimpleBar from 'simplebar-react';
 import { Icon } from '@iconify/react';
-import rocket from 'src/assets/images/backgrounds/rocket.png';
 import FullLogo from '../../shared/logo/FullLogo';
 import { Link, useLocation } from 'react-router';
 import { Button } from 'src/components/ui/button';
