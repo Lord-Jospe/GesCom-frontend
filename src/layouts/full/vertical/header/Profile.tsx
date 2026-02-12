@@ -14,7 +14,20 @@ import {
 } from 'src/components/ui/dropdown-menu';
 import { Button } from 'src/components/ui/button';
 
+import { useAuth } from 'src/context/AuthContext';
+import { useNavigate } from 'react-router';
+
+
 const Profile = () => {
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
+
+  
   return (
     <div className="relative group/menu ps-1 sm:ps-15 shrink-0">
       <DropdownMenu>
@@ -61,6 +74,7 @@ const Profile = () => {
               asChild
               variant="outline"
               className="w-full rounded-md"
+              onClick={handleLogout}
             >
               <Link to="/login">Logout</Link>
             </Button>

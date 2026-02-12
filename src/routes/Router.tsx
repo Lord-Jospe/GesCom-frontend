@@ -3,8 +3,11 @@
 import { Children, lazy } from 'react';
 import { Navigate, createBrowserRouter } from 'react-router';
 import Loadable from '../layouts/full/shared/loadable/Loadable';
+import PublicRoute from '../components/shared/PublicRoute';
 
 import PrivateRoute from '../components/shared/PrivateRoute';
+
+const RoleRedirect = Loadable(lazy(() => import('../routes/RoleRedirect')));
 
 
 /* ***Layouts**** */
@@ -26,13 +29,8 @@ const Studentdash = Loadable(lazy(() => import('../views/dashboards/student')));
 const UserProfile = Loadable(lazy(() => import('../views/pages/user-profile/UserProfile')));
 
 /* ****Apps***** */
-const Notes = Loadable(lazy(() => import('../views/apps/notes/Notes')));
 const Form = Loadable(lazy(() => import('../views/utilities/form/Form')));
 const Table = Loadable(lazy(() => import('../views/utilities/table/Table')));
-const Tickets = Loadable(lazy(() => import('../views/apps/tickets/Tickets')));
-const CreateTickets = Loadable(lazy(() => import('../views/apps/tickets/CreateTickets')));
-const Blog = Loadable(lazy(() => import('../views/apps/blog/Blog')));
-const BlogDetail = Loadable(lazy(() => import('../views/apps/blog/BlogDetail')));
 
 const Error = Loadable(lazy(() => import('../views/authentication/Error')));
 
@@ -45,14 +43,19 @@ const Router = [
   // Redirigir la ruta raíz a login
   {
     path: '/',
-    element: <Navigate to="/login" />,
+    element: <RoleRedirect />,
   },
+
   // Blank Layout for Authentication
   {
     path: '/',
     element: <BlankLayout />,
     children: [
-      { path: 'login', element: <Login2 /> },
+      { path: 'login', element: (
+                                <PublicRoute>
+                                  <Login2 />
+                                </PublicRoute>
+                              )},
       { path: 'register', element: <Register2 /> },
       { path: 'maintenance', element: <Maintainance /> },
       { path: '404', element: <Error /> },
@@ -60,30 +63,43 @@ const Router = [
     ],
   },
   
-  /*Admin routes*/
+  /*ADMIN*/
   {
     path: '/admin',
     element:  (
-      <PrivateRoute allowedRoles={['admin']}>
+      <PrivateRoute allowedRoles={['ADMIN']}>
         <AdminLayout />
       </PrivateRoute>
     ),
     children: [
-      { path: '/admin', exact: true, element: <Admindash /> },
+      { index: true, element: <Admindash /> },
     ]
   },
   /*Student routes*/
   {
     path: '/student',
     element: (
-      <PrivateRoute allowedRoles={['student']}>
+      <PrivateRoute allowedRoles={['ESTUDIANTE']}>
         <StudentLayout />
       </PrivateRoute>
     ),
     children: [
-      {path: '/student', exact: true, element: <Studentdash /> },
+      {index: true, element: <Studentdash /> },
     ]
-  }
+  },
+
+  /*Docente*/
+    {
+    path: '/teacher',
+    element: (
+      <PrivateRoute allowedRoles={['DOCENTE']}>
+        <TeacherLayaout />
+      </PrivateRoute>
+    ),
+    children: [
+      {index: true, element: <Teacherdash /> },
+    ]
+  },
 ];
 
 const router = createBrowserRouter(Router);

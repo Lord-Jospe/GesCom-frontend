@@ -1,22 +1,23 @@
 import { Navigate } from 'react-router';
 import { ReactNode } from 'react';
+import authService from 'src/api/services/auth/authService';
+
 
 interface PrivateRouteProps {
   children: ReactNode;
-  allowedRoles?: Array<'admin' | 'student'>;
+  allowedRoles: string[];
 }
 
 const PrivateRoute = ({ children, allowedRoles }: PrivateRouteProps) => {
-  const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
-  const role = localStorage.getItem('role') as 'admin' | 'student' | null;
+  const isAuth = authService.isAuthenticated();
 
-  // No logueado → login
-  if (!isAuthenticated) {
+  if (!isAuth) {
     return <Navigate to="/login" replace />;
   }
 
-  // Rol no permitido
-  if (allowedRoles && (!role || !allowedRoles.includes(role))) {
+  const user = authService.getUserFromToken();
+
+  if (!user || !allowedRoles.includes(user.rol)) {
     return <Navigate to="/login" replace />;
   }
 
