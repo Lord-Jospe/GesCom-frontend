@@ -1,41 +1,36 @@
 import api from "src/api/axios";
 import {jwtDecode} from "jwt-decode";
-import { DecodedToken, LoginRequest, RegisterRequest } from "src/types/auth/auth.types";
+import { AuthResponse, DecodedToken, LoginRequest, RegistroEmpresaRequest } from "src/types/auth/auth.types";
 
 
 const authService = {
   // Login
-  login: async (email: string, password: string): Promise<string> => {
+  login: async (email: string, password: string): Promise<AuthResponse> => {
     try {
-      const response = await api.post('/auth/login', {
+      const response = await api.post<AuthResponse>('/auth/login', {
         email,
         password,
       } as LoginRequest);
       
-      const token = response.data.token || response.data; 
-
-
-      // Guardar token y usuario en localStorage
-      localStorage.setItem('token', token);
       
-      return token;
+      localStorage.setItem('token', response.data.token);
+
+      
+      return response.data;
     } catch (error: any) {
       throw error.response?.data?.message || 'Error al iniciar sesión';
     }
   },
 
   // Register
-  register: async (userData: RegisterRequest): Promise<string> => {
+  register: async (userData: RegistroEmpresaRequest): Promise<AuthResponse> => {
     try {
-      const response = await api.post('/auth/register', userData);
+      const response = await api.post<AuthResponse>('/auth/register', userData);
       
-      const token = response.data.token || response.data;
-      
-      // Guardar token y usuario en localStorage
-      localStorage.setItem('token', token);
+      localStorage.setItem('token', response.data.token);
 
       
-      return token;
+      return response.data;
     } catch (error: any) {
       throw error.response?.data?.message || 'Error al registrar usuario';
     }
@@ -47,13 +42,12 @@ const authService = {
   },
 
   getUserFromToken: (): DecodedToken | null => {
-  const token = localStorage.getItem('token');
-  if (!token) return null;
-
-  try {
-    return jwtDecode<DecodedToken>(token);
-  } catch {
-    return null;
+    const token = localStorage.getItem('token');
+    if (!token) return null;
+    try {
+      return jwtDecode<DecodedToken>(token);
+    } catch {
+      return null;
   }
 },
 

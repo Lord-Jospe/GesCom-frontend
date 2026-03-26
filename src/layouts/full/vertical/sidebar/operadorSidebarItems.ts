@@ -1,7 +1,7 @@
 import { uniqueId } from 'lodash';
 import type { MenuItem } from './adminSidebaritems';
 
-const StudentSidebarContent: MenuItem[] = [
+const OperadorSidebarContent: MenuItem[] = [
   {
     heading: 'Académico',
     children: [
@@ -61,4 +61,4 @@ const StudentSidebarContent: MenuItem[] = [
   },
 ];
 
-export default StudentSidebarContent;
+export default OperadorSidebarContent;

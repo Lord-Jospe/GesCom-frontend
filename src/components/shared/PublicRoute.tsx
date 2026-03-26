@@ -9,11 +9,11 @@ const PublicRoute = ({ children }: { children: JSX.Element }) => {
     if (user?.rol === 'ADMIN') {
       return <Navigate to="/admin" replace />;
     }
-    if (user?.rol === 'ESTUDIANTE') {
-      return <Navigate to="/student" replace />;
+    if (user?.rol === 'CONTADOR') {
+      return <Navigate to="/contador" replace />;
     }
-    if (user?.rol === 'DOCENTE') {
-      return <Navigate to="/teacher" replace />;
+    if (user?.rol === 'OPERADOR') {
+      return <Navigate to="/operador" replace />;
     }
   }
 

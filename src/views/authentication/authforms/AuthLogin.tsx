@@ -6,7 +6,6 @@ import { Input } from 'src/components/ui/input';
 import { Label } from 'src/components/ui/label';
 import { useAuth } from 'src/context/AuthContext';
 
-
 const AuthLogin = () => {
   const navigate = useNavigate();
   const {login, user} = useAuth();

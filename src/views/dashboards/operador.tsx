@@ -7,11 +7,11 @@ import { ProductPerformance } from "src/components/dashboards/modern/ProuctPerfo
 import { Footer } from "src/components/dashboards/modern/Footer";
 import ProfileWelcome from "src/components/dashboards/modern/ProfileWelcome";
 
-const Studentdash = () => {
+const Operadordash = () => {
     return (
         <>
             <div>
-                <h2>Soy un estudiante</h2>
+                <h2>Soy un Operador</h2>
             </div>
             <div className="grid grid-cols-12 gap-6">
                 <div className="col-span-12">
@@ -42,4 +42,4 @@ const Studentdash = () => {
     );
 };
 
-export default Studentdash;
+export default Operadordash;

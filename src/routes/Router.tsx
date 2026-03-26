@@ -6,6 +6,10 @@ import Loadable from '../layouts/full/shared/loadable/Loadable';
 import PublicRoute from '../components/shared/PublicRoute';
 
 import PrivateRoute from '../components/shared/PrivateRoute';
+import Contadordash from '../views/dashboards/contador';
+import Operadordash from '../views/dashboards/operador';
+import OperadorLayout from '../layouts/full/OperadorLayout';
+import ContadorLayout from '../layouts/full/ContadorLayout';
 
 const RoleRedirect = Loadable(lazy(() => import('../routes/RoleRedirect')));
 
@@ -13,7 +17,6 @@ const RoleRedirect = Loadable(lazy(() => import('../routes/RoleRedirect')));
 /* ***Layouts**** */
 const AdminLayout = Loadable(lazy(() => import('../layouts/full/AdminLayout')));
 const BlankLayout = Loadable(lazy(() => import('../layouts/blank/BlankLayout')));
-const StudentLayout = Loadable(lazy(() => import('../layouts/full/StudentLayout')));
 
 // authentication
 
@@ -23,7 +26,6 @@ const Maintainance = Loadable(lazy(() => import('../views/authentication/Maintai
 
 // Dashboards
 const Admindash = Loadable(lazy(() => import('../views/dashboards/admin')));
-const Studentdash = Loadable(lazy(() => import('../views/dashboards/student')));
 
 //pages
 const UserProfile = Loadable(lazy(() => import('../views/pages/user-profile/UserProfile')));
@@ -75,29 +77,29 @@ const Router = [
       { index: true, element: <Admindash /> },
     ]
   },
-  /*Student routes*/
+  /*Contador*/
   {
-    path: '/student',
+    path: '/contador',
     element: (
-      <PrivateRoute allowedRoles={['ESTUDIANTE']}>
-        <StudentLayout />
+      <PrivateRoute allowedRoles={['CONTADOR']}>
+        <ContadorLayout />
       </PrivateRoute>
     ),
     children: [
-      {index: true, element: <Studentdash /> },
+      {index: true, element: <Contadordash /> },
     ]
   },
 
-  /*Docente*/
+  /*Operador*/
     {
-    path: '/teacher',
+    path: '/operador',
     element: (
-      <PrivateRoute allowedRoles={['DOCENTE']}>
-        <TeacherLayaout />
+      <PrivateRoute allowedRoles={['OPERADOR']}>
+        <OperadorLayout />
       </PrivateRoute>
     ),
     children: [
-      {index: true, element: <Teacherdash /> },
+      {index: true, element: <Operadordash /> },
     ]
   },
 ];

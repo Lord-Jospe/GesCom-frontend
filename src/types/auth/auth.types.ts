@@ -7,6 +7,11 @@ export interface UserInfo {
 
 export interface AuthResponse {
   token: string;
+  usuarioId: number;
+  empresaId: number;
+  nombreCompleto: string;
+  rol: string;
+  nombreEmpresa: string;
 }
 
 export interface LoginRequest {
@@ -14,22 +19,29 @@ export interface LoginRequest {
   password: string;
 }
 
-export interface RegisterRequest {
-  email: string;
-  password: string;
+export interface RegistroEmpresaRequest {
+  // Datos de la empresa
+  nombreEmpresa: string;
+  rif: string;
+  correoEmpresa: string;
+  planNombre: string; // "SEMILLA" | "EMPRENDEDOR" | "NEGOCIO"
+
+  // Datos del admin
   primerNombre: string;
   segundoNombre?: string;
   primerApellido: string;
   segundoApellido?: string;
-  sexo?: string;
-  rol: string;
+  emailAdmin: string;
+  password: string;
 }
+
 
 export interface DecodedToken {
   usuarioId: number;
+  empresaId: number;
   nombre: string;
   rol: string;
-  sub: string;
+  sub: string;   // email
   iat: number;
   exp: number;
 }

@@ -1,4 +1,4 @@
-import SidebarContent from './studentSidebarItems';
+import SidebarContent from './operadorSidebarItems';
 import SimpleBar from 'simplebar-react';
 import { Icon } from '@iconify/react';
 import FullLogo from '../../shared/logo/FullLogo';
@@ -94,7 +94,7 @@ const renderSidebarItems = (
   });
 };
 
-const StudentSidebarLayout = ({ onClose }: { onClose?: () => void }) => {
+const OperadorSidebarLayout = ({ onClose }: { onClose?: () => void }) => {
   const location = useLocation();
   const pathname = location.pathname;
   const { theme } = useTheme();
@@ -151,4 +151,4 @@ const StudentSidebarLayout = ({ onClose }: { onClose?: () => void }) => {
   );
 };
 
-export default StudentSidebarLayout;
+export default OperadorSidebarLayout;

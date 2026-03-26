@@ -33,26 +33,32 @@ import { uniqueId } from 'lodash';
 
 const SidebarContent: MenuItem[] = [
   {
-    heading: 'Gestión Académica',
+    heading: 'Organización',
     children: [
       {
-        name: 'Aulas y secciones',
-        icon: 'solar:widget-2-linear',
+        name: 'Mi empresa',
+        icon: 'solar:buildings-2-linear',
         id: uniqueId(),
         url: '/utilities/table',
       },
       {
-        name: 'Docentes',
+        name: 'Empleados',
         icon: 'solar:users-group-rounded-linear',
         id: uniqueId(),
         url: '/utilities/form',
       },
       {
-        name: 'Estudiantes',
-        icon: 'solar:square-academic-cap-linear',
+        name: 'Subscripcion',
+        icon: 'solar:chat-round-money-linear',
         id: uniqueId(),
         //url: '/utilities/activities',
-        children: [
+      },
+      {
+        id: uniqueId(),
+        name: 'Clientes',
+        icon: 'solar:user-broken',
+        //url: '/user-profile',
+                children: [
           {
             id: uniqueId(),
             name: 'Lista de Estudiantes',
@@ -67,10 +73,16 @@ const SidebarContent: MenuItem[] = [
         ],
       },
       {
+        name: 'Proveedores',
+        icon: 'solar:shop-2-linear',
         id: uniqueId(),
-        name: 'Planificación e Informes',
-        icon: 'solar:document-add-linear',
-        //url: '/user-profile',
+        url: '/utilities/form',
+      },
+      {
+        name: 'Bancos',
+        icon: 'mdi-light:bank',
+        id: uniqueId(),
+        url: '/utilities/form',
       },
     ],
   },

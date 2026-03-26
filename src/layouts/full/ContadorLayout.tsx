@@ -1,9 +1,9 @@
 import { FC } from 'react';
 import { Outlet } from 'react-router';
-import Sidebar from './vertical/sidebar/StudentSidebar';
+import Sidebar from './vertical/sidebar/OperadorSidebar';
 import Header from './vertical/header/Header';
 
-const StudentLayout: FC = () => {
+const ContadorLayout: FC = () => {
   return (
     <>
             <div className="flex w-full min-h-screen">
@@ -29,4 +29,4 @@ const StudentLayout: FC = () => {
   );
 };
 
-export default StudentLayout;
+export default ContadorLayout;
