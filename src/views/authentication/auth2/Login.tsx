@@ -9,22 +9,22 @@ import FullLogo from "src/layouts/full/shared/logo/FullLogo";
 const Login = () => {
   return (
     <>
-      <div className="relative overflow-hidden h-screen bg-lightprimary dark:bg-darkprimary">
-        <div className="flex h-full justify-center items-center px-4">
-          <CardBox className="md:w-[500px] w-full border-none">
-            <div className="mx-auto ">
+      <div className="relative overflow-auto min-h-screen bg-lightprimary dark:bg-darkprimary">
+        <div className="flex min-h-screen justify-center items-center px-4 py-8">
+          <CardBox className="w-full max-w-md md:max-w-lg border-none">
+            <div className="mx-auto mb-4 flex justify-center ">
               <FullLogo />
             </div>
             <AuthLogin />
             <div className="flex gap-2 text-base text-sm font-medium mt-6 items-center justify-center">
-              <p>Si presenta algún inconveniente con el inicio de sesión por favor envíe un correo a <Link
-                to={"/auth/auth2/register"}
+              <p>¿Aún no tienes cuenta?</p>
+              <Link
+                to={"/register"}
                 className="text-primary text-sm font-medium"
                 > 
-                 matriculas@gescom.edu.ve
+                 Regístrate
                 </Link>
-              </p>
-
+            
             </div>
           </CardBox>
         </div>

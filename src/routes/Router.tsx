@@ -20,8 +20,8 @@ const BlankLayout = Loadable(lazy(() => import('../layouts/blank/BlankLayout')))
 
 // authentication
 
-const Login2 = Loadable(lazy(() => import('../views/authentication/auth2/Login')));
-const Register2 = Loadable(lazy(() => import('../views/authentication/auth2/Register')));
+const Login = Loadable(lazy(() => import('../views/authentication/auth2/Login')));
+const Register = Loadable(lazy(() => import('../views/authentication/auth2/Register')));
 const Maintainance = Loadable(lazy(() => import('../views/authentication/Maintainance')));
 
 // Dashboards
@@ -55,10 +55,10 @@ const Router = [
     children: [
       { path: 'login', element: (
                                 <PublicRoute>
-                                  <Login2 />
+                                  <Login />
                                 </PublicRoute>
                               )},
-      { path: 'register', element: <Register2 /> },
+      { path: 'register', element: <Register /> },
       { path: 'maintenance', element: <Maintainance /> },
       { path: '404', element: <Error /> },
       { path: '*', element: <Navigate to="/404" /> },

@@ -41,6 +41,7 @@ const AuthLogin = () => {
           <Input 
             id="username"
             type="email"
+            placeholder='Ingresa tu correo electrónico'
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required />
@@ -53,6 +54,7 @@ const AuthLogin = () => {
           <Input 
               id="userpwd"
               type="password"
+              placeholder='Ingresa tu contraseña'
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required />
@@ -75,7 +77,7 @@ const AuthLogin = () => {
         )}
 
         <Button type='submit' className='w-full'>
-            Iniciar Sesión
+            Iniciar sesión
         </Button>
       </form>
     </>
