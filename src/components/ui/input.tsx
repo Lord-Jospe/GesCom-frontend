@@ -8,7 +8,7 @@ const inputVariants = cva(
     variants: {
       variant: {
         default:
-          'border-ld bg-transparent text-ld placeholder:text-muted-foreground dark:placeholder:text-white/30 focus-visible:border-primary focus-visible:ring-0',
+          'border border-gray-300 bg-white/80 backdrop-blur-sm text-gray-900 placeholder:text-gray-400 focus-visible:border-primary focus-visible:ring-1 focus-visible:ring-primary/20 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:placeholder:text-gray-400',
         gray: 'border-gray-300 bg-gray-50 text-gray-900 placeholder-gray-500 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500 focus-visible:ring',
         info: 'border-info bg-info/10 text-info placeholder-info focus:border-info focus:ring-info dark:border-info dark:bg-info/10 dark:focus:border-info dark:focus:ring-border-info focus-visible:ring',
         failure:

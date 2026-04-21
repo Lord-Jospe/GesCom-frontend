@@ -1,13 +1,17 @@
-import SidebarContent from './sidebaritems';
 import SimpleBar from 'simplebar-react';
 import { Icon } from '@iconify/react';
-import rocket from 'src/assets/images/backgrounds/rocket.png';
 import FullLogo from '../../shared/logo/FullLogo';
 import { Link, useLocation } from 'react-router';
 import { Button } from 'src/components/ui/button';
 import { useTheme } from 'src/components/provider/theme-provider';
 import { AMLogo, AMMenu, AMMenuItem, AMSidebar, AMSubmenu } from 'tailwind-sidebar';
 import 'tailwind-sidebar/styles.css';
+import { useAuth } from 'src/context/AuthContext';
+import adminItems, { MenuItem } from './itemsSidebar/adminSidebaritems';
+import contadorItems from './itemsSidebar/contadorSideBaritems';
+import operadorItems from './itemsSidebar/operadorSidebarItems';
+
+
 
 interface SidebarItemType {
   heading?: string
@@ -99,9 +103,33 @@ const SidebarLayout = ({ onClose }: { onClose?: () => void }) => {
   const location = useLocation();
   const pathname = location.pathname;
   const { theme } = useTheme();
+  const { user } = useAuth();
 
   // Only allow "light" or "dark" for AMSidebar
   const sidebarMode = theme === 'light' || theme === 'dark' ? theme : undefined;
+
+  const getSidebarByRole = (rol?: string) => {
+  switch (rol) {
+    case 'ADMIN':
+      return adminItems;
+    case 'CONTADOR':
+      return contadorItems;
+    case 'OPERADOR':
+      return operadorItems;
+    default:
+      return [];
+    }
+  };
+    
+  const SidebarContent = getSidebarByRole(user?.rol) || []; 
+
+  const homeByRole: Record<string, string> = {
+    ADMIN: '/admin',
+    CONTADOR: '/contador',
+    OPERADOR: '/operador',
+  };
+
+  const homePath = homeByRole[user?.rol ?? ''] || '/login';
 
   return (
     <AMSidebar
@@ -115,7 +143,7 @@ const SidebarLayout = ({ onClose }: { onClose?: () => void }) => {
     >
       {/* Logo */}
       <div className="px-6 flex items-center brand-logo overflow-hidden">
-        <AMLogo component={Link} href="/" img="">
+        <AMLogo component={Link} href={homePath} img="">
           <FullLogo />
         </AMLogo>
       </div>
@@ -124,7 +152,7 @@ const SidebarLayout = ({ onClose }: { onClose?: () => void }) => {
 
       <SimpleBar className="h-[calc(100vh-100px)]">
         <div className="px-6">
-          {SidebarContent.map((section, index) => (
+          {SidebarContent.map((section: MenuItem, index: number) => (
             <div key={index}>
               {renderSidebarItems(
                 [
@@ -142,10 +170,7 @@ const SidebarLayout = ({ onClose }: { onClose?: () => void }) => {
             <div className="flex w-full bg-lightprimary rounded-lg p-6">
               <div className="lg:w-1/2 w-full">
                 <h5 className="text-base text-sidebar-foreground">Haven't Account?</h5>
-                <Button className="whitespace-nowrap mt-2 text-[13px]">Get Pro</Button>
-              </div>
-              <div className="lg:w-1/2 w-full -mt-4 ml-[26px] scale-[1.2] shrink-0">
-                <img src={rocket} alt="rocket" />
+                <Button className="whitespace-nowrap mt-2 text-[13px]">Cerrar Sesión</Button>
               </div>
             </div>
           </div>

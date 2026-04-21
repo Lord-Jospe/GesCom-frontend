@@ -7,9 +7,12 @@ import { ProductPerformance } from "src/components/dashboards/modern/ProuctPerfo
 import { Footer } from "src/components/dashboards/modern/Footer";
 import ProfileWelcome from "src/components/dashboards/modern/ProfileWelcome";
 
-const Moderndash = () => {
+const Operadordash = () => {
     return (
         <>
+            <div>
+                <h2>Soy un Operador</h2>
+            </div>
             <div className="grid grid-cols-12 gap-6">
                 <div className="col-span-12">
                     <ProfileWelcome />
@@ -39,4 +42,4 @@ const Moderndash = () => {
     );
 };
 
-export default Moderndash;
+export default Operadordash;

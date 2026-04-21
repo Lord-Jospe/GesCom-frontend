@@ -3,10 +3,10 @@ import { Outlet } from 'react-router';
 import Sidebar from './vertical/sidebar/Sidebar';
 import Header from './vertical/header/Header';
 
-const FullLayout: FC = () => {
+const ContadorLayout: FC = () => {
   return (
     <>
-      <div className="flex w-full min-h-screen">
+            <div className="flex w-full min-h-screen">
         <div className="page-wrapper flex w-full ">
           {/* Header/sidebar */}
           <div className="xl:block hidden">
@@ -29,4 +29,4 @@ const FullLayout: FC = () => {
   );
 };
 
-export default FullLayout;
+export default ContadorLayout;
