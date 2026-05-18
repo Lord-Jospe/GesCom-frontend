@@ -13,7 +13,7 @@ const Login = () => {
         <div className="flex min-h-screen justify-center items-center px-4 py-8">
           <CardBox className="w-full max-w-md md:max-w-lg border-none">
             <div className="mx-auto mb-4 flex justify-center ">
-              <FullLogo />
+              <Link to={"/"}><FullLogo /></Link>
             </div>
             <AuthLogin />
             <div className="flex gap-2 text-base text-sm font-medium mt-6 items-center justify-center">

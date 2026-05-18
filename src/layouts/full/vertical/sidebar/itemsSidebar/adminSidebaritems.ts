@@ -45,7 +45,7 @@ const SidebarContent: MenuItem[] = [
         name: 'Empleados',
         icon: 'solar:users-group-rounded-linear',
         id: uniqueId(),
-        url: '/utilities/form',
+        url: '/admin/empleados',
       },
       {
         name: 'Subscripcion',

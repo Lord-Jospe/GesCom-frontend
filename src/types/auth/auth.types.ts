@@ -19,20 +19,18 @@ export interface LoginRequest {
   password: string;
 }
 
-export interface RegistroEmpresaRequest {
-  // Datos de la empresa
+export interface RegisterFormData {
+  // Paso 1 — datos personales
+  primerNombre: string;
+  primerApellido: string;
+  email: string;
+  password: string;
+  aceptaTerminos: boolean;
+
+  // Paso 2 — empresa
   nombreEmpresa: string;
   rif: string;
-  correoEmpresa: string;
-  planNombre: string; // "SEMILLA" | "EMPRENDEDOR" | "NEGOCIO"
-
-  // Datos del admin
-  primerNombre: string;
-  segundoNombre?: string;
-  primerApellido: string;
-  segundoApellido?: string;
-  emailAdmin: string;
-  password: string;
+  telefono: string;
 }
 
 

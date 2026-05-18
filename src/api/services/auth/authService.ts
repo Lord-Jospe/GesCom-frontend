@@ -1,6 +1,6 @@
 import api from "src/api/axios";
 import {jwtDecode} from "jwt-decode";
-import { AuthResponse, DecodedToken, LoginRequest, RegistroEmpresaRequest } from "src/types/auth/auth.types";
+import { AuthResponse, DecodedToken, LoginRequest, RegisterFormData } from "src/types/auth/auth.types";
 
 
 const authService = {
@@ -23,16 +23,23 @@ const authService = {
   },
 
   // Register
-  register: async (userData: RegistroEmpresaRequest): Promise<AuthResponse> => {
+  register: async (userData: RegisterFormData): Promise<AuthResponse> => {
     try {
-      const response = await api.post<AuthResponse>('/auth/register', userData);
-      
-      localStorage.setItem('token', response.data.token);
+        const payload = {
+            primerNombre:   userData.primerNombre,
+            primerApellido: userData.primerApellido,
+            email:          userData.email,
+            password:       userData.password,
+            nombreEmpresa:  userData.nombreEmpresa,
+            rif:            userData.rif,
+            telefono:       userData.telefono,
+        };
 
-      
-      return response.data;
+        const response = await api.post<AuthResponse>('/auth/register', payload);
+        localStorage.setItem('token', response.data.token);
+        return response.data;
     } catch (error: any) {
-      throw error.response?.data?.message || 'Error al registrar usuario';
+        throw error.response?.data?.message || 'Error al registrar usuario';
     }
   },
 

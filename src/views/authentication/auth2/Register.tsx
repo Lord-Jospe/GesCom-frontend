@@ -5,6 +5,7 @@ import AuthRegister from "../authforms/AuthRegister";
 import SocialButtons from "../authforms/SocialButtons";
 
 import FullLogo from "src/layouts/full/shared/logo/FullLogo";
+import { RegisterProvider } from "src/context/RegisterContext";
 
 
 
@@ -15,10 +16,13 @@ const Register = () => {
         <div className="flex min-h-screen justify-center items-center px-4 py-8">
           <CardBox className="w-full max-w-md md:max-w-lg border-nonee">
             <div className="mx-auto mb-4 flex justify-center">
-              <FullLogo />
+              <Link to={"/"}><FullLogo /></Link>
             </div>
-            {/* <SocialButtons title="or sign up with" /> */}
-            <AuthRegister />
+
+            <RegisterProvider>
+                <AuthRegister />
+            </RegisterProvider>
+            
             <div className="flex gap-2 text-base text-sm font-medium mt-6 items-center justify-center">
               <p>Ya tienes cuenta?</p>
               <Link

@@ -10,6 +10,9 @@ import Contadordash from '../views/dashboards/contador';
 import Operadordash from '../views/dashboards/operador';
 import OperadorLayout from '../layouts/full/OperadorLayout';
 import ContadorLayout from '../layouts/full/ContadorLayout';
+import HomePage from 'src/views/pages/HomePage';
+import EmpleadoPage from 'src/views/pages/admin/empleados/EmpleadosPage';
+
 
 const RoleRedirect = Loadable(lazy(() => import('../routes/RoleRedirect')));
 
@@ -45,7 +48,7 @@ const Router = [
   // Redirigir la ruta raíz a login
   {
     path: '/',
-    element: <RoleRedirect />,
+    element: <HomePage />,
   },
 
   // Blank Layout for Authentication
@@ -75,6 +78,7 @@ const Router = [
     ),
     children: [
       { index: true, element: <Admindash /> },
+      { path: 'Empleados', element: <EmpleadoPage /> }
     ]
   },
   /*Contador*/

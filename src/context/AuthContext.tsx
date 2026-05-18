@@ -1,13 +1,13 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { jwtDecode } from 'jwt-decode';
-import { AuthResponse, DecodedToken, RegistroEmpresaRequest } from 'src/types/auth/auth.types';
+import { AuthResponse, DecodedToken, RegisterFormData } from 'src/types/auth/auth.types';
 import authService from 'src/api/services/auth/authService';
 
 interface AuthContextType {
   user: DecodedToken | null;
   authData: AuthResponse | null;
   login: (email: string, password: string) => Promise<void>;
-  registro: (userData: RegistroEmpresaRequest) => Promise<void>;
+  registro: (userData: RegisterFormData) => Promise<void>;
   logout: () => void;
   isAuthenticated: boolean;
 }
@@ -39,7 +39,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, []);
 
-  // 🔹 Login
+  // Login
   const login = async (email: string, password: string) => {
     const data = await authService.login(email, password);
     const decoded = jwtDecode<DecodedToken>(data.token);
@@ -49,7 +49,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   // Registro
-  const registro = async (userData: RegistroEmpresaRequest) => {
+  const registro = async (userData: RegisterFormData) => {
     const data = await authService.register(userData);
     const decoded = jwtDecode<DecodedToken>(data.token);
     setUser(decoded);
