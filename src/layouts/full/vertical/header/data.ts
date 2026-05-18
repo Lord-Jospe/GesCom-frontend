@@ -248,22 +248,22 @@ import taskIcon from 'src/assets/images/svgs/icon-tasks.svg';
 const profileDD: ProfileType[] = [
   {
     img: acccountIcon,
-    title: 'My Profile',
+    title: 'Mi perfil',
     subtitle: 'Account settings',
     icon: "tabler:user",
     url: '/user-profile',
   },
   {
     img: inboxIcon,
-    title: 'My Notes',
-    subtitle: 'My Daily Notes',
+    title: 'Mis notas',
+    subtitle: 'Mis notas diarias',
     icon: "tabler:mail",
     url: '/apps/Notes',
   },
   {
     img: taskIcon,
-    title: 'My Blogs',
-    subtitle: 'Stories, insights, and updates',
+    title: 'Mis blogs',
+    subtitle: 'Historias, ideas y actualizaciones',
     icon: "tabler:list-check",
     url: '/apps/blog/post',
   },

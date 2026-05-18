@@ -4,6 +4,7 @@ import '../src/css/globals.css'
 import App from './App.tsx'
 import Spinner from './views/spinner/Spinner.tsx'
 import { AuthProvider } from './context/AuthContext'
+import { Toaster } from 'sonner';
 
 
 createRoot(document.getElementById('root')!).render(

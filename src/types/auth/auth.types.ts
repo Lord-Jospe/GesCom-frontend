@@ -43,3 +43,35 @@ export interface DecodedToken {
   iat: number;
   exp: number;
 }
+
+export interface UsuarioPerfilResponse {
+    usuarioId:        number;
+    primerNombre:     string;
+    segundoNombre?:   string;
+    primerApellido:   string;
+    segundoApellido?: string;
+    email:            string;
+    rol:              string;
+    activo:         boolean;
+    createdAt:        string;
+}
+
+export interface EmpresaPerfilResponse {
+    empresaId:   number;
+    nombre:      string;
+    rif:         string;
+    correo:      string;
+    telefono?:   string;
+    direccion?:  string;
+    actividad?:  string;
+    monedaBase:  string;
+}
+
+export interface EditarPerfilRequest {
+    primerNombre?:   string;
+    segundoNombre?: string;
+    primerApellido?: string;
+    segundoApellido?: string;
+    email?:            string;
+    password?:       string;
+}

@@ -2,7 +2,7 @@ import { Link } from "react-router";
 import CardBox from "src/components/shared/CardBox";
 
 import AuthRegister from "../authforms/AuthRegister";
-import SocialButtons from "../authforms/SocialButtons";
+//import SocialButtons from "../authforms/SocialButtons";
 
 import FullLogo from "src/layouts/full/shared/logo/FullLogo";
 import { RegisterProvider } from "src/context/RegisterContext";
@@ -22,7 +22,7 @@ const Register = () => {
             <RegisterProvider>
                 <AuthRegister />
             </RegisterProvider>
-            
+
             <div className="flex gap-2 text-base text-sm font-medium mt-6 items-center justify-center">
               <p>Ya tienes cuenta?</p>
               <Link

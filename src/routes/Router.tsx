@@ -35,7 +35,6 @@ const UserProfile = Loadable(lazy(() => import('../views/pages/user-profile/User
 
 /* ****Apps***** */
 const Form = Loadable(lazy(() => import('../views/utilities/form/Form')));
-const Table = Loadable(lazy(() => import('../views/utilities/table/Table')));
 
 const Error = Loadable(lazy(() => import('../views/authentication/Error')));
 
@@ -78,7 +77,8 @@ const Router = [
     ),
     children: [
       { index: true, element: <Admindash /> },
-      { path: 'Empleados', element: <EmpleadoPage /> }
+      { path: 'Empleados', element: <EmpleadoPage /> },
+      { path: 'user-profile', element: <UserProfile /> },
     ]
   },
   /*Contador*/
@@ -91,6 +91,7 @@ const Router = [
     ),
     children: [
       {index: true, element: <Contadordash /> },
+      {path: 'user-profile', element: <UserProfile /> },
     ]
   },
 
@@ -104,6 +105,7 @@ const Router = [
     ),
     children: [
       {index: true, element: <Operadordash /> },
+      { path: 'user-profile', element: <UserProfile /> },
     ]
   },
 ];

@@ -25,15 +25,15 @@ const EmpleadosPage = () => {
     }
   };
 
-  if (loading) return <p>Cargando usuarios...</p>;
+  if (loading) return <p>Cargando empleados...</p>;
   if (error)   return <p className="text-red-500">{error}</p>;
 
   return (
     <div className="space-y-6">
 
       <div>
-        <h1 className="text-2xl font-bold">Usuarios</h1>
-        <p className="text-muted-foreground">Gestiona los usuarios de tu empresa</p>
+        <h1 className="text-2xl font-bold">Empleados</h1>
+        <p className="text-muted-foreground">Gestiona los empleados de tu empresa</p>
       </div>
 
       <UsuariosTable

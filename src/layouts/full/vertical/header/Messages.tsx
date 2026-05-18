@@ -32,8 +32,8 @@ const Messages = () => {
           className="w-screen sm:w-[300px] py-6 rounded-sm border border-ld"
         >
           <div className="flex items-center px-6 justify-between">
-            <h3 className="mb-0 text-lg font-semibold text-ld">Notification</h3>
-            <Badge color={'primary'}>5 new</Badge>
+            <h3 className="mb-0 text-lg font-semibold text-ld">Notificaciones</h3>
+            <Badge color={'primary'}>5 nuevas</Badge>
           </div>
 
           <SimpleBar className="max-h-80 mt-3">
@@ -67,7 +67,7 @@ const Messages = () => {
 
           <div className="pt-5 px-6">
             <Button variant={'outline'} className="w-full">
-              See All Notifications
+              Mostrar todas las notificaciones
             </Button>
           </div>
         </DropdownMenuContent>
