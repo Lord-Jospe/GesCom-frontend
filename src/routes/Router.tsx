@@ -33,6 +33,19 @@ const Admindash = Loadable(lazy(() => import('../views/dashboards/admin')));
 //pages
 const UserProfile = Loadable(lazy(() => import('../views/pages/user-profile/UserProfile')));
 
+// Facturación y cobranza
+const CajaFacturacionPage = Loadable(lazy(() => import('../views/pages/admin/facturacion/CajaFacturacionPage')));
+const GestionPagosPage = Loadable(lazy(() => import('../views/pages/admin/facturacion/GestionPagosPage')));
+const HistorialTransaccionesPage = Loadable(lazy(() => import('../views/pages/admin/facturacion/HistorialTransaccionesPage')));
+const DescuentosBecasPage = Loadable(lazy(() => import('../views/pages/admin/facturacion/DescuentosBecasPage')));
+const AlertasNotificacionesPage = Loadable(lazy(() => import('../views/pages/admin/facturacion/AlertasNotificacionesPage')));
+
+// Módulo Contable
+const AsientosContablesPage = Loadable(lazy(() => import('../views/pages/admin/contable/AsientosContablesPage')));
+const GestionEgresosPage = Loadable(lazy(() => import('../views/pages/admin/contable/GestionEgresosPage')));
+const ReportesFinancierosPage = Loadable(lazy(() => import('../views/pages/admin/contable/ReportesFinancierosPage')));
+const CentroExportacionPage = Loadable(lazy(() => import('../views/pages/admin/contable/CentroExportacionPage')));
+
 /* ****Apps***** */
 const Form = Loadable(lazy(() => import('../views/utilities/form/Form')));
 
@@ -79,6 +92,17 @@ const Router = [
       { index: true, element: <Admindash /> },
       { path: 'Empleados', element: <EmpleadoPage /> },
       { path: 'user-profile', element: <UserProfile /> },
+      // Facturación y cobranza
+      { path: 'caja-facturacion', element: <CajaFacturacionPage /> },
+      { path: 'gestion-pagos', element: <GestionPagosPage /> },
+      { path: 'historial-transacciones', element: <HistorialTransaccionesPage /> },
+      { path: 'descuentos-becas', element: <DescuentosBecasPage /> },
+      { path: 'alertas', element: <AlertasNotificacionesPage /> },
+      // Módulo Contable
+      { path: 'asientos-contables', element: <AsientosContablesPage /> },
+      { path: 'gestion-egresos', element: <GestionEgresosPage /> },
+      { path: 'reportes-financieros', element: <ReportesFinancierosPage /> },
+      { path: 'centro-exportacion', element: <CentroExportacionPage /> },
     ]
   },
   /*Contador*/
