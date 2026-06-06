@@ -33,18 +33,27 @@ const Admindash = Loadable(lazy(() => import('../views/dashboards/admin')));
 //pages
 const UserProfile = Loadable(lazy(() => import('../views/pages/user-profile/UserProfile')));
 
+// Organización
+const MiEmpresaPage = Loadable(lazy(() => import('../views/pages/admin/organizacion/MiEmpresaPage')));
+const ClientesPage = Loadable(lazy(() => import('../views/pages/admin/organizacion/ClientesPage')));
+const ProveedoresPage = Loadable(lazy(() => import('../views/pages/admin/organizacion/ProveedoresPage')));
+
 // Facturación y cobranza
 const CajaFacturacionPage = Loadable(lazy(() => import('../views/pages/admin/facturacion/CajaFacturacionPage')));
-const GestionPagosPage = Loadable(lazy(() => import('../views/pages/admin/facturacion/GestionPagosPage')));
-const HistorialTransaccionesPage = Loadable(lazy(() => import('../views/pages/admin/facturacion/HistorialTransaccionesPage')));
-const DescuentosBecasPage = Loadable(lazy(() => import('../views/pages/admin/facturacion/DescuentosBecasPage')));
-const AlertasNotificacionesPage = Loadable(lazy(() => import('../views/pages/admin/facturacion/AlertasNotificacionesPage')));
+const PorCobrarPage = Loadable(lazy(() => import('../views/pages/admin/facturacion/PorCobrarPage')));
+const PorPagarPage = Loadable(lazy(() => import('../views/pages/admin/facturacion/PorPagarPage')));
+
+// Inventario
+const InventarioPage = Loadable(lazy(() => import('../views/pages/admin/inventario/InventarioPage')));
 
 // Módulo Contable
 const AsientosContablesPage = Loadable(lazy(() => import('../views/pages/admin/contable/AsientosContablesPage')));
-const GestionEgresosPage = Loadable(lazy(() => import('../views/pages/admin/contable/GestionEgresosPage')));
 const ReportesFinancierosPage = Loadable(lazy(() => import('../views/pages/admin/contable/ReportesFinancierosPage')));
-const CentroExportacionPage = Loadable(lazy(() => import('../views/pages/admin/contable/CentroExportacionPage')));
+const GestionDocumentalPage = Loadable(lazy(() => import('../views/pages/admin/contable/GestionDocumentalPage')));
+
+// Configuración
+const GestionUsuariosPage = Loadable(lazy(() => import('../views/pages/admin/configuracion/GestionUsuariosPage')));
+const AjustesSistemaPage = Loadable(lazy(() => import('../views/pages/admin/configuracion/AjustesSistemaPage')));
 
 /* ****Apps***** */
 const Form = Loadable(lazy(() => import('../views/utilities/form/Form')));
@@ -90,19 +99,25 @@ const Router = [
     ),
     children: [
       { index: true, element: <Admindash /> },
-      { path: 'Empleados', element: <EmpleadoPage /> },
       { path: 'user-profile', element: <UserProfile /> },
+      // Organización
+      { path: 'mi-empresa', element: <MiEmpresaPage /> },
+      { path: 'Empleados', element: <EmpleadoPage /> },
+      { path: 'clientes', element: <ClientesPage /> },
+      { path: 'proveedores', element: <ProveedoresPage /> },
       // Facturación y cobranza
       { path: 'caja-facturacion', element: <CajaFacturacionPage /> },
-      { path: 'gestion-pagos', element: <GestionPagosPage /> },
-      { path: 'historial-transacciones', element: <HistorialTransaccionesPage /> },
-      { path: 'descuentos-becas', element: <DescuentosBecasPage /> },
-      { path: 'alertas', element: <AlertasNotificacionesPage /> },
+      { path: 'por-cobrar', element: <PorCobrarPage /> },
+      { path: 'por-pagar', element: <PorPagarPage /> },
+      // Inventario
+      { path: 'inventario', element: <InventarioPage /> },
       // Módulo Contable
       { path: 'asientos-contables', element: <AsientosContablesPage /> },
-      { path: 'gestion-egresos', element: <GestionEgresosPage /> },
       { path: 'reportes-financieros', element: <ReportesFinancierosPage /> },
-      { path: 'centro-exportacion', element: <CentroExportacionPage /> },
+      { path: 'gestion-documental', element: <GestionDocumentalPage /> },
+      // Configuración
+      { path: 'gestion-usuarios', element: <GestionUsuariosPage /> },
+      { path: 'ajustes-sistema', element: <AjustesSistemaPage /> },
     ]
   },
   /*Contador*/

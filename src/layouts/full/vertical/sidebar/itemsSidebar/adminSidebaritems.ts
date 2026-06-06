@@ -39,86 +39,75 @@ const SidebarContent: MenuItem[] = [
         name: 'Mi empresa',
         icon: 'solar:buildings-2-linear',
         id: uniqueId(),
-        url: '/utilities/table',
+        children: [
+          { id: uniqueId(), name: 'Perfil de empresa', icon: 'solar:buildings-linear', url: '/admin/mi-empresa' },
+          { id: uniqueId(), name: 'Configuración y moneda', icon: 'solar:dollar-minimalistic-linear', url: '/admin/mi-empresa' },
+          { id: uniqueId(), name: 'Plan y suscripción', icon: 'solar:star-linear', url: '/admin/mi-empresa' },
+        ],
       },
       {
         name: 'Empleados',
         icon: 'solar:users-group-rounded-linear',
         id: uniqueId(),
-        url: '/admin/empleados',
+        children: [
+          { id: uniqueId(), name: 'Lista de empleados', icon: 'solar:users-group-rounded-linear', url: '/admin/empleados' },
+          { id: uniqueId(), name: 'Gestión de nómina', icon: 'solar:card-transfer-linear', url: '/admin/empleados' },
+        ],
       },
       {
-        name: 'Subscripcion',
-        icon: 'solar:chat-round-money-linear',
-        id: uniqueId(),
-        //url: '/utilities/activities',
-      },
-      {
-        id: uniqueId(),
         name: 'Clientes',
         icon: 'solar:user-broken',
-        //url: '/user-profile',
-                children: [
-          {
-            id: uniqueId(),
-            name: 'Lista de Estudiantes',
-            //url: '/students/list',
-          },
-          {
-            id: uniqueId(),
-            name: 'Repositorio documental',
-
-            //url: '/students/documents',
-          },
-        ],
+        id: uniqueId(),
+        url: '/admin/clientes',
       },
       {
         name: 'Proveedores',
         icon: 'solar:shop-2-linear',
         id: uniqueId(),
-        url: '/utilities/form',
-      },
-      {
-        name: 'Bancos',
-        icon: 'mdi-light:bank',
-        id: uniqueId(),
-        url: '/utilities/form',
+        url: '/admin/proveedores',
       },
     ],
   },
   {
-    heading: 'Facturación y cobranza',
+    heading: 'Facturación y Cobranza',
     children: [
       {
         name: 'Caja y Facturación',
         icon: 'solar:calculator-linear',
         id: uniqueId(),
-        url: '/admin/caja-facturacion',
+        children: [
+          { id: uniqueId(), name: 'Registrar venta', icon: 'solar:cart-plus-linear', url: '/admin/caja-facturacion' },
+          { id: uniqueId(), name: 'Registrar gasto', icon: 'solar:arrow-down-linear', url: '/admin/caja-facturacion' },
+          { id: uniqueId(), name: 'Historial', icon: 'solar:list-check-linear', url: '/admin/caja-facturacion' },
+        ],
       },
       {
-        name: 'Gestión de pagos',
-        icon: 'solar:wallet-linear',
+        name: 'Por Cobrar',
+        icon: 'solar:hand-money-linear',
         id: uniqueId(),
-        url: '/admin/gestion-pagos',
+        url: '/admin/por-cobrar',
       },
       {
-        name: 'Historial de transacciones',
-        icon: 'solar:checklist-bold',
+        name: 'Por Pagar',
+        icon: 'solar:wallet-money-linear',
         id: uniqueId(),
-        url: '/admin/historial-transacciones',
+        url: '/admin/por-pagar',
       },
+    ],
+  },
+  {
+    heading: 'Inventario',
+    children: [
       {
-        name: 'Descuentos y becas',
-        icon: 'solar:dollar-linear',
+        name: 'Inventario',
+        icon: 'solar:box-linear',
         id: uniqueId(),
-        url: '/admin/descuentos-becas',
+        children: [
+          { id: uniqueId(), name: 'Productos y stock', icon: 'solar:box-linear', url: '/admin/inventario' },
+          { id: uniqueId(), name: 'Movimientos', icon: 'solar:transfer-horizontal-linear', url: '/admin/inventario' },
+          { id: uniqueId(), name: 'Alertas', icon: 'solar:danger-triangle-linear', url: '/admin/inventario' },
+        ],
       },
-      {
-        name: 'Alertas y notificaciones',
-        icon: 'solar:dialog-2-linear',
-        id: uniqueId(),
-        url: '/admin/alertas',
-      }
     ],
   },
   {
@@ -128,49 +117,49 @@ const SidebarContent: MenuItem[] = [
         name: 'Asientos Contables',
         icon: 'solar:book-2-broken',
         id: uniqueId(),
-        url: '/admin/asientos-contables',
-      },
-      {
-        name: 'Gestión de Egresos',
-        icon: 'solar:calculator-minimalistic-linear',
-        id: uniqueId(),
-        url: '/admin/gestion-egresos',
+        children: [
+          { id: uniqueId(), name: 'Plan de cuentas', icon: 'solar:documents-linear', url: '/admin/asientos-contables' },
+          { id: uniqueId(), name: 'Libro diario', icon: 'solar:book-open-linear', url: '/admin/asientos-contables' },
+          { id: uniqueId(), name: 'Libro mayor', icon: 'solar:book-bookmark-linear', url: '/admin/asientos-contables' },
+        ],
       },
       {
         name: 'Reportes Financieros',
         icon: 'solar:chart-2-bold',
         id: uniqueId(),
-        url: '/admin/reportes-financieros',
+        children: [
+          { id: uniqueId(), name: 'Estado de resultados', icon: 'solar:graph-up-linear', url: '/admin/reportes-financieros' },
+          { id: uniqueId(), name: 'Balance general', icon: 'solar:align-vertical-spacing-linear', url: '/admin/reportes-financieros' },
+          { id: uniqueId(), name: 'Conciliación bancaria', icon: 'solar:bank-linear', url: '/admin/reportes-financieros' },
+        ],
       },
       {
-        name: 'Centro de Exportación',
-        icon: 'solar:download-linear',
+        name: 'Gestión Documental',
+        icon: 'solar:folder-with-files-linear',
         id: uniqueId(),
-        url: '/admin/centro-exportacion',
-      }
+        children: [
+          { id: uniqueId(), name: 'Bóveda de documentos', icon: 'solar:folder-open-linear', url: '/admin/gestion-documental' },
+          { id: uniqueId(), name: 'Exportar facturas', icon: 'solar:export-linear', url: '/admin/gestion-documental' },
+          { id: uniqueId(), name: 'Revisar facturas', icon: 'solar:document-search-linear', url: '/admin/gestion-documental' },
+        ],
+      },
     ],
   },
   {
     heading: 'Configuración y Seguridad',
     children: [
       {
-        id: uniqueId(),
         name: 'Gestión de Usuarios',
         icon: 'solar:user-block-bold-duotone',
-        //url: '/settings/users',
-      },
-            {
         id: uniqueId(),
-        name: 'Seguridad y Auditoría',
-        icon: 'solar:shield-check-linear',
-        url: '/',
+        url: '/admin/gestion-usuarios',
       },
       {
-        id: uniqueId(),
-        name: 'Ajustes del sistema',
+        name: 'Ajustes del Sistema',
         icon: 'solar:settings-linear',
-        //url: '/settings/system',  
-      }
+        id: uniqueId(),
+        url: '/admin/ajustes-sistema',
+      },
     ],
   },
 ];
