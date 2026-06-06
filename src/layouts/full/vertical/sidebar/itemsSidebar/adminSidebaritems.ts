@@ -82,13 +82,13 @@ const SidebarContent: MenuItem[] = [
         ],
       },
       {
-        name: 'Por Cobrar',
+        name: 'Cuentas por Cobrar',
         icon: 'solar:hand-money-linear',
         id: uniqueId(),
         url: '/admin/por-cobrar',
       },
       {
-        name: 'Por Pagar',
+        name: 'Cuentas por Pagar',
         icon: 'solar:wallet-money-linear',
         id: uniqueId(),
         url: '/admin/por-pagar',

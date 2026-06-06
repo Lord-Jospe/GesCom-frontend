@@ -129,8 +129,18 @@ const Router = [
       </PrivateRoute>
     ),
     children: [
-      {index: true, element: <Contadordash /> },
-      {path: 'user-profile', element: <UserProfile /> },
+      { index: true, element: <Contadordash /> },
+      { path: 'user-profile', element: <UserProfile /> },
+      // Facturación y cobranza
+      { path: 'caja-facturacion', element: <CajaFacturacionPage /> },
+      { path: 'por-cobrar', element: <PorCobrarPage /> },
+      { path: 'por-pagar', element: <PorPagarPage /> },
+      // Inventario
+      { path: 'inventario', element: <InventarioPage /> },
+      // Módulo Contable
+      { path: 'asientos-contables', element: <AsientosContablesPage /> },
+      { path: 'reportes-financieros', element: <ReportesFinancierosPage /> },
+      { path: 'gestion-documental', element: <GestionDocumentalPage /> },
     ]
   },
 
@@ -143,8 +153,14 @@ const Router = [
       </PrivateRoute>
     ),
     children: [
-      {index: true, element: <Operadordash /> },
+      { index: true, element: <Operadordash /> },
       { path: 'user-profile', element: <UserProfile /> },
+      // Caja y Facturación
+      { path: 'caja-facturacion', element: <CajaFacturacionPage /> },
+      { path: 'por-cobrar', element: <PorCobrarPage /> },
+      { path: 'por-pagar', element: <PorPagarPage /> },
+      // Inventario
+      { path: 'inventario', element: <InventarioPage /> },
     ]
   },
 ];
