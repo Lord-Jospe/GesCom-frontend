@@ -7,7 +7,14 @@ import { ProductPerformance } from "src/components/dashboards/modern/ProuctPerfo
 import { Footer } from "src/components/dashboards/modern/Footer";
 import ProfileWelcome from "src/components/dashboards/modern/ProfileWelcome";
 
+
+
+
+
 const Admindash = () => {
+   
+
+    
     return (
         <>
             <div className="grid grid-cols-12 gap-6">
