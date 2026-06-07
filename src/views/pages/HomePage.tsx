@@ -78,15 +78,18 @@ const HomePage = () => {
                 </a>
               </div>
 
-              {/* Imagen grande del software */}
-              <div className="w-full max-w-4xl mt-12 rounded-2xl border border-border bg-lightprimary/40 overflow-hidden shadow-lg">
-                <div className="aspect-video flex items-center justify-center text-muted-foreground">
-                  <div className="text-center">
-                    <Icon icon="solar:gallery-wide-linear" width={56} className="mx-auto mb-3" />
-                    <p className="text-base font-medium">Mockup del dashboard de GesCom</p>
-                    <p className="text-sm mt-1">Arrastra tu screenshot aquí o reemplaza este div por una imagen</p>
-                  </div>
-                </div>
+              {/* Screenshot del dashboard */}
+              <div className="w-full max-w-4xl mt-12 rounded-2xl overflow-hidden border border-border shadow-[0_0_60px_-15px] shadow-primary/30 dark:shadow-primary/10">
+                <img
+                  src="/AdminDash-light.png"
+                  alt="Dashboard de GesCom"
+                  className="w-full h-auto block dark:hidden"
+                />
+                <img
+                  src="/Admindash-dark.png"
+                  alt="Dashboard de GesCom"
+                  className="w-full h-auto hidden dark:block"
+                />
               </div>
 
             </div>
