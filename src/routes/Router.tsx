@@ -26,6 +26,8 @@ const BlankLayout = Loadable(lazy(() => import('../layouts/blank/BlankLayout')))
 const Login = Loadable(lazy(() => import('../views/authentication/auth2/Login')));
 const Register = Loadable(lazy(() => import('../views/authentication/auth2/Register')));
 const Maintainance = Loadable(lazy(() => import('../views/authentication/Maintainance')));
+const ForgotPassword = Loadable(lazy(() => import('../views/authentication/auth2/ForgotPassword')));
+const ResetPassword = Loadable(lazy(() => import('../views/authentication/auth2/ResetPassword')));
 
 // Dashboards
 const Admindash = Loadable(lazy(() => import('../views/dashboards/admin')));
@@ -83,6 +85,8 @@ const Router = [
                                 </PublicRoute>
                               )},
       { path: 'register', element: <Register /> },
+      { path: 'forgot-password', element: <ForgotPassword /> },
+      { path: 'reset-password', element: <ResetPassword /> },
       { path: 'maintenance', element: <Maintainance /> },
       { path: '404', element: <Error /> },
       { path: '*', element: <Navigate to="/404" /> },

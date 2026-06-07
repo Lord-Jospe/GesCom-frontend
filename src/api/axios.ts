@@ -41,7 +41,10 @@ api.interceptors.response.use(
       error.response?.data,
     );
 
-    if (status === 401) {
+    // No redirigir si el 401 viene del login (credenciales incorrectas)
+    const esLogin = url?.includes('/auth/login');
+
+    if (status === 401 && !esLogin) {
       // Guardar el error ANTES de redirigir para no perderlo
       try {
         const erroresPrevios = JSON.parse(sessionStorage.getItem('__axios_errors') || '[]');

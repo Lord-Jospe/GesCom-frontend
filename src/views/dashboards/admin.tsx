@@ -50,7 +50,7 @@ const colorIndicador = (dias: number) =>
 const Admindash = () => {
   return (
     <div className="space-y-6">
-      {/*<ProfileWelcome />*/}
+      <ProfileWelcome />
 
       {/* Resumen del día — RF-73 */}
       <div>
