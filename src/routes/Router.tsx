@@ -14,7 +14,7 @@ import HomePage from 'src/views/pages/HomePage';
 import EmpleadoPage from 'src/views/pages/admin/empleados/EmpleadosPage';
 
 
-const RoleRedirect = Loadable(lazy(() => import('../routes/RoleRedirect')));
+//const RoleRedirect = Loadable(lazy(() => import('../routes/RoleRedirect')));
 
 
 /* ***Layouts**** */
@@ -56,12 +56,12 @@ const GestionUsuariosPage = Loadable(lazy(() => import('../views/pages/admin/con
 const AjustesSistemaPage = Loadable(lazy(() => import('../views/pages/admin/configuracion/AjustesSistemaPage')));
 
 /* ****Apps***** */
-const Form = Loadable(lazy(() => import('../views/utilities/form/Form')));
+//const Form = Loadable(lazy(() => import('../views/utilities/form/Form')));
 
 const Error = Loadable(lazy(() => import('../views/authentication/Error')));
 
 // // icons
-const SolarIcon = Loadable(lazy(() => import('../views/icons/SolarIcon')));
+//const SolarIcon = Loadable(lazy(() => import('../views/icons/SolarIcon')));
 
 //const SamplePage = lazy(() => import('../views/sample-page/SamplePage'));
 

@@ -6,6 +6,8 @@ import { Button }   from 'src/components/ui/button';
 import { Checkbox } from 'src/components/ui/checkbox';
 import { useRegister } from 'src/context/RegisterContext';
 import { useAuth }     from 'src/context/AuthContext';
+import { Eye, EyeOff } from 'lucide-react';
+
 
 const AuthRegister = () => {
     const navigate = useNavigate();
@@ -14,6 +16,8 @@ const AuthRegister = () => {
     const [paso, setPaso]       = useState(1);
     const [error, setError]     = useState('');
     const [loading, setLoading] = useState(false);
+
+    const [mostrarPassword, setMostrarPassword] = useState(false);
 
     const set = (campo: keyof typeof form, valor: string | boolean) => {
         actualizar(campo, valor);
@@ -133,14 +137,24 @@ const AuthRegister = () => {
 
                     <div>
                         <Label htmlFor="password" className="font-semibold">Contraseña</Label>
-                        <Input
-                            id="password"
-                            type="password"
-                            placeholder="Mínimo 6 caracteres"
-                            value={form.password}
-                            onChange={e => set('password', e.target.value)}
-                            className="mt-1"
-                        />
+                        <div className="relative">
+                            <Input
+                                id="password"
+                                type={mostrarPassword ? 'text' : 'password'}
+                                placeholder="Mínimo 6 caracteres"
+                                value={form.password}
+                                onChange={(e) => set('password', e.target.value)}
+                                className="mt-1"
+                            />
+                            <button
+                                type="button"
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                                onClick={() => setMostrarPassword(!mostrarPassword)}
+                                tabIndex={-1}
+                            >
+                                {mostrarPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+                            </button>
+                        </div>
                     </div>
 
                     <div className="flex items-center gap-2 pt-1">

@@ -9,6 +9,8 @@ export interface UsuarioResponse {
   email: string;
   rol: NombreRol;
   activo: boolean;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface CrearUsuarioRequest {
@@ -18,7 +20,7 @@ export interface CrearUsuarioRequest {
   segundoApellido?: string;
   email: string;
   password: string;
-  rolNombre: string;
+  rol: string;
 }
 
 export interface EditarUsuarioRequest {
@@ -27,7 +29,8 @@ export interface EditarUsuarioRequest {
   primerApellido?: string;
   segundoApellido?: string;
   password?: string;
-  rolNombre?: string;
+  email?: string;
+  rol?: string;
 }
 
 export interface UsuarioPageResponse {

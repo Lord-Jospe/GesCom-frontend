@@ -15,10 +15,15 @@ export const usuariosServices = {
 
     crearUsuario: async (usuarioData: CrearUsuarioRequest): Promise<UsuarioResponse> => {
         try {
-            const response = await api.post<UsuarioResponse>('/users/', usuarioData);
+            const response = await api.post<UsuarioResponse>('/users', usuarioData);
             return response.data;
         } catch (error: any) {
-            throw error.response?.data?.message || 'Error al crear usuario';
+            const backendMsg = error.response?.data?.message || error.response?.data?.error || error.response?.data;
+            const msg = typeof backendMsg === 'string'
+                ? backendMsg
+                : (error.response?.data?.message || error.response?.data?.error || 'Error al crear usuario');
+            console.error('[crearUsuario]', error.response?.status, msg, error.response?.data);
+            throw new Error(msg);
         }
     },
 
@@ -27,7 +32,12 @@ export const usuariosServices = {
             const response = await api.put<UsuarioResponse>(`/users/${usuarioId}`, usuarioData);
             return response.data;
         } catch (error: any) {
-            throw error.response?.data?.message || 'Error al editar usuario';
+            const backendMsg = error.response?.data?.message || error.response?.data?.error || error.response?.data;
+            const msg = typeof backendMsg === 'string'
+                ? backendMsg
+                : (error.response?.data?.message || error.response?.data?.error || 'Error al editar usuario');
+            console.error('[editarUsuario]', error.response?.status, msg, error.response?.data);
+            throw new Error(msg);
         }
     },
 
@@ -37,7 +47,12 @@ export const usuariosServices = {
             const {data} = await api.delete(`/users/${usuarioId}`);
             return data;
         } catch (error: any) {
-            throw error.response?.data?.message || 'Error al desactivar usuario';
+            const backendMsg = error.response?.data?.message || error.response?.data?.error || error.response?.data;
+            const msg = typeof backendMsg === 'string'
+                ? backendMsg
+                : (error.response?.data?.message || error.response?.data?.error || 'Error al desactivar usuario');
+            console.error('[desactivarUsuario]', error.response?.status, msg, error.response?.data);
+            throw new Error(msg);
         }
     },
 
@@ -47,7 +62,12 @@ export const usuariosServices = {
             const {data} = await api.post(`/users/${usuarioId}/activate`);
             return data;
         } catch (error: any) {
-            throw error.response?.data?.message || 'Error al activar usuario';
+            const backendMsg = error.response?.data?.message || error.response?.data?.error || error.response?.data;
+            const msg = typeof backendMsg === 'string'
+                ? backendMsg
+                : (error.response?.data?.message || error.response?.data?.error || 'Error al activar usuario');
+            console.error('[activarUsuario]', error.response?.status, msg, error.response?.data);
+            throw new Error(msg);
         }
     },
 

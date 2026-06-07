@@ -3,7 +3,6 @@ import { ResumenCards, type ResumenCardData } from 'src/components/dashboards/ge
 import CardBox from 'src/components/shared/CardBox';
 import { Icon } from '@iconify/react';
 import { Link } from 'react-router';
-import { Button } from 'src/components/ui/button';
 
 const Operadordash = () => {
   const resumenDia: ResumenCardData[] = [

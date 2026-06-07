@@ -43,15 +43,6 @@ export const UsuariosTable = ({ data, onEditar, onToggleEstado }: UsuariosTableP
 
   const columns = useMemo<ColumnDef<UsuarioResponse, unknown>[]>(() => [
     {
-      accessorKey: 'usuarioId',
-      header: 'ID',
-      cell: ({ getValue }) => (
-        <span className="font-medium text-gray-900 dark:text-white">
-          {String(getValue())}
-        </span>
-      ),
-    },
-    {
       id: 'nombre',
       header: 'Nombre',
       accessorFn: (row) => `${row.primerNombre} ${row.primerApellido}`,
@@ -96,18 +87,42 @@ export const UsuariosTable = ({ data, onEditar, onToggleEstado }: UsuariosTableP
       },
     },
     {
-      accessorKey: 'activo',
+      id: 'estado',
       header: 'Estado',
-      cell: ({ getValue }) =>
-        getValue() ? (
-          <Badge className="bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs font-medium">
-            Activo
-          </Badge>
-        ) : (
-          <Badge className="bg-red-100 text-red-700 px-2 py-1 rounded-full text-xs font-medium">
-            Inactivo
-          </Badge>
-        ),
+      accessorFn: (row) => row.activo ? 'Activo' : 'Inactivo',
+      cell: ({ row }) => {
+        const { activo, updatedAt } = row.original;
+        if (activo) {
+          return (
+            <Badge className="bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs font-medium">
+              Activo
+            </Badge>
+          );
+        }
+
+        const ahora = new Date();
+        const desactivado = new Date(updatedAt);
+        const diffHoras = Math.floor((ahora.getTime() - desactivado.getTime()) / (1000 * 60 * 60));
+        const diffDias = Math.floor(diffHoras / 24);
+        const tiempo = diffDias > 0
+          ? `${diffDias} día(s)`
+          : diffHoras > 0
+            ? `${diffHoras} hora(s)`
+            : 'Menos de 1 h';
+
+        return (
+          <div className="flex flex-col gap-0.5">
+            <Badge className="bg-red-100 text-red-700 px-2 py-1 rounded-full text-xs font-medium w-fit">
+              Inactivo
+            </Badge>
+            <span className="text-xs text-muted-foreground">
+              {desactivado.toLocaleDateString('es-VE', { day: '2-digit', month: 'short', year: 'numeric' })}
+              <span className="mx-1">·</span>
+              {tiempo}
+            </span>
+          </div>
+        );
+      },
     },
     {
       id: 'acciones',

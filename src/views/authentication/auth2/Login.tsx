@@ -1,12 +1,29 @@
-import { Link } from "react-router";
-import CardBox from "src/components/shared/CardBox";
-
-import AuthLogin from "../authforms/AuthLogin";
-
-import FullLogo from "src/layouts/full/shared/logo/FullLogo";
-
+import { useEffect } from 'react';
+import { Link } from 'react-router';
+import { toast } from 'sonner';
+import CardBox from 'src/components/shared/CardBox';
+import AuthLogin from '../authforms/AuthLogin';
+import FullLogo from 'src/layouts/full/shared/logo/FullLogo';
+import { recuperarErrores401 } from 'src/api/axios';
 
 const Login = () => {
+  useEffect(() => {
+    const errores = recuperarErrores401();
+    if (errores.length > 0) {
+      errores.forEach((e: { url: string; status: number; data: unknown }) => {
+        console.error(
+          `%c[Session expirada] ${e.url} → ${e.status}`,
+          'color: red; font-weight: bold',
+          e.data,
+        );
+      });
+      toast.error('Tu sesión expiró. Por favor inicia sesión de nuevo.', {
+        description: 'Revisa la consola (F12) para ver el detalle del error.',
+        duration: 8000,
+      });
+    }
+  }, []);
+
   return (
     <>
       <div className="relative overflow-auto min-h-screen bg-lightprimary dark:bg-darkprimary">
