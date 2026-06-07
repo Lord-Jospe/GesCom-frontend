@@ -59,7 +59,7 @@ export const usuariosServices = {
     //activar usuario
     activarUsuario: async (usuarioId: number): Promise<string> => {
         try {
-            const {data} = await api.post(`/users/${usuarioId}/activate`);
+            const {data} = await api.patch(`/users/${usuarioId}/activate`);
             return data;
         } catch (error: any) {
             const backendMsg = error.response?.data?.message || error.response?.data?.error || error.response?.data;

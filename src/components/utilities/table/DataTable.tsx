@@ -8,7 +8,7 @@ import {
   flexRender,
 } from '@tanstack/react-table';
 import type { ColumnDef, SortingState } from '@tanstack/react-table';
-import { ArrowUp, ArrowDown, ChevronsUpDown, Pencil, Trash2 } from 'lucide-react';
+import { ArrowUp, ArrowDown, ChevronsUpDown, Pencil, RotateCcw, Trash2 } from 'lucide-react';
 import { Badge } from 'src/components/ui/badge';
 import { Button } from 'src/components/ui/button';
 import { Input } from 'src/components/ui/input';
@@ -100,26 +100,27 @@ export const UsuariosTable = ({ data, onEditar, onToggleEstado }: UsuariosTableP
           );
         }
 
-        const ahora = new Date();
-        const desactivado = new Date(updatedAt);
-        const diffHoras = Math.floor((ahora.getTime() - desactivado.getTime()) / (1000 * 60 * 60));
-        const diffDias = Math.floor(diffHoras / 24);
-        const tiempo = diffDias > 0
-          ? `${diffDias} día(s)`
-          : diffHoras > 0
-            ? `${diffHoras} hora(s)`
-            : 'Menos de 1 h';
+        // const ahora = new Date();
+        // const desactivado = new Date(updatedAt);
+        // const diffMs = ahora.getTime() - desactivado.getTime();
+        // const diffDias = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+        // const diffHoras = Math.floor(diffMs / (1000 * 60 * 60));
+
+        // let tiempo: string;
+        // if (diffDias >= 1) {
+        //   tiempo = `Hace ${diffDias} día(s)`;
+        // } else if (diffHoras >= 1) {
+        //   tiempo = `Hace ${diffHoras} hora(s)`;
+        // } else {
+        //   tiempo = 'Hace unos minutos';
+        // }
 
         return (
-          <div className="flex flex-col gap-0.5">
-            <Badge className="bg-red-100 text-red-700 px-2 py-1 rounded-full text-xs font-medium w-fit">
+          <div className="flex items-center gap-2">
+            <Badge className="bg-red-100 text-red-700 px-2 py-1 rounded-full text-xs font-medium shrink-0">
               Inactivo
             </Badge>
-            <span className="text-xs text-muted-foreground">
-              {desactivado.toLocaleDateString('es-VE', { day: '2-digit', month: 'short', year: 'numeric' })}
-              <span className="mx-1">·</span>
-              {tiempo}
-            </span>
+
           </div>
         );
       },
@@ -128,26 +129,31 @@ export const UsuariosTable = ({ data, onEditar, onToggleEstado }: UsuariosTableP
       id: 'acciones',
       header: 'Acciones',
       enableSorting: false,
-      cell: ({ row }) => (
-        <div className="flex items-center gap-2">
-          <Button
-            size="sm"
-            variant="lightprimary"
-            className="size-8! rounded-full"
-            onClick={() => onEditar?.(row.original)}
-          >
-            <Pencil className="size-4" />
-          </Button>
-          <Button
-            size="sm"
-            variant="lighterror"
-            className="size-8! rounded-full"
-            onClick={() => onToggleEstado?.(row.original)}
-          >
-            <Trash2 className="size-4" />
-          </Button>
-        </div>
-      ),
+      cell: ({ row }) => {
+        const activo = row.original.activo;
+        return (
+          <div className="flex items-center gap-2">
+            <Button
+              size="sm"
+              variant="lightprimary"
+              className="size-8! rounded-full"
+              onClick={() => onEditar?.(row.original)}
+              title="Editar usuario"
+            >
+              <Pencil className="size-4" />
+            </Button>
+            <Button
+              size="sm"
+              variant={activo ? 'lighterror' : 'lightsuccess'}
+              className="size-8! rounded-full"
+              onClick={() => onToggleEstado?.(row.original)}
+              title={activo ? 'Desactivar usuario' : 'Reactivar usuario'}
+            >
+              {activo ? <Trash2 className="size-4" /> : <RotateCcw className="size-4" />}
+            </Button>
+          </div>
+        );
+      },
     },
   ], [onEditar, onToggleEstado]);
 
@@ -168,12 +174,12 @@ export const UsuariosTable = ({ data, onEditar, onToggleEstado }: UsuariosTableP
   return (
     <CardBox>
       {data.length === 0 ? (
-        <p className="text-center py-8 text-gray-500">No hay usuarios registrados.</p>
+        <p className="text-center py-8 text-gray-500">No hay empleados registrados.</p>
       ) : (
         <>
           {/* Búsqueda */}
           <div className="p-4 pt-0 flex items-center justify-between flex-wrap gap-4">
-            <h3 className="text-xl font-semibold">Usuarios</h3>
+            <h3 className="text-xl font-semibold">Empleados</h3>
             <Input
               type="text"
               className="max-w-96 lg:min-w-96 min-w-full placeholder:text-gray-400"

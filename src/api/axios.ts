@@ -41,35 +41,35 @@ api.interceptors.response.use(
       error.response?.data,
     );
 
-    // if (status === 401) {
-    //   // Guardar el error ANTES de redirigir para no perderlo
-    //   try {
-    //     const erroresPrevios = JSON.parse(sessionStorage.getItem('__axios_errors') || '[]');
-    //     erroresPrevios.push({
-    //       timestamp: new Date().toISOString(),
-    //       url: `${method} ${url}`,
-    //       status,
-    //       data: error.response?.data,
-    //     });
-    //     // Solo guardar los últimos 5
-    //     sessionStorage.setItem('__axios_errors', JSON.stringify(erroresPrevios.slice(-5)));
-    //   } catch {
-    //     // si falla el parseo, no importa
-    //   }
+    if (status === 401) {
+      // Guardar el error ANTES de redirigir para no perderlo
+      try {
+        const erroresPrevios = JSON.parse(sessionStorage.getItem('__axios_errors') || '[]');
+        erroresPrevios.push({
+          timestamp: new Date().toISOString(),
+          url: `${method} ${url}`,
+          status,
+          data: error.response?.data,
+        });
+        // Solo guardar los últimos 5
+        sessionStorage.setItem('__axios_errors', JSON.stringify(erroresPrevios.slice(-5)));
+      } catch {
+        // si falla el parseo, no importa
+      }
 
-    //   console.warn(
-    //     '%c[Axios] 401 detectado — sesión expirada o sin permisos. Redirigiendo a login.',
-    //     'color: orange; font-weight: bold',
-    //   );
-    //   console.warn(
-    //     '%cAbre sessionStorage → __axios_errors para ver el error después del redirect.',
-    //     'color: orange',
-    //   );
+      console.warn(
+        '%c[Axios] 401 detectado — sesión expirada o sin permisos. Redirigiendo a login.',
+        'color: orange; font-weight: bold',
+      );
+      console.warn(
+        '%cAbre sessionStorage → __axios_errors para ver el error después del redirect.',
+        'color: orange',
+      );
 
-    //   localStorage.removeItem('token');
-    //   localStorage.removeItem('user');
-    //   window.location.href = '/login';
-    // }
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      window.location.href = '/login';
+    }
     return Promise.reject(error);
   }
 );
