@@ -7,28 +7,34 @@ import { AMLogo } from 'tailwind-sidebar';
 // ─── Datos del dropdown Soluciones ───────────────────────────────────────────
 const soluciones = [
   {
-    icon: 'tabler:school',
-    title: 'Gestión Académica',
-    description: 'Estudiantes, aulas, secciones y docentes.',
-    href: '#academica',
+    icon: 'solar:calculator-linear',
+    title: 'Caja y Facturación',
+    description: 'Ventas, gastos y facturas PDF con IVA. Multimoneda USD/Bs.',
+    href: '#modulos',
   },
   {
-    icon: 'tabler:calculator',
-    title: 'Módulo Contable',
-    description: 'Control financiero e informes contables.',
-    href: '#contable',
+    icon: 'solar:book-2-broken',
+    title: 'Contabilidad',
+    description: 'Libro diario, mayor, estados financieros y reportes exportables.',
+    href: '#modulos',
   },
   {
-    icon: 'tabler:folder',
-    title: 'Gestión de Archivos',
-    description: 'Almacena y organiza documentos institucionales.',
-    href: '#archivos',
+    icon: 'solar:box-linear',
+    title: 'Inventario',
+    description: 'Control de stock, alertas y valorización automática.',
+    href: '#modulos',
   },
   {
-    icon: 'tabler:receipt',
-    title: 'Facturación y Cobranza',
-    description: 'Emisión de facturas y seguimiento de pagos.',
-    href: '#facturacion',
+    icon: 'solar:users-group-rounded-linear',
+    title: 'Nómina',
+    description: 'Cálculo de salario neto, deducciones y recibos PDF.',
+    href: '#modulos',
+  },
+  {
+    icon: 'solar:folder-with-files-linear',
+    title: 'Bóveda Digital',
+    description: 'Sube facturas y recibos desde tu celular.',
+    href: '#modulos',
   },
 ];
 
@@ -74,10 +80,10 @@ const HeaderHome = () => {
       className={`sticky top-0 z-[2] transition-all duration-200 ${
         isSticky ? 'bg-white dark:bg-dark shadow-md' : 'bg-transparent'
       }`}>
-      <nav className="rounded-none bg-transparent dark:bg-transparent py-4 px-6 !max-w-full flex justify-between items-center">
+      <nav className="rounded-none bg-transparent dark:bg-transparent py-2.5 px-6 max-w-5xl mx-auto flex justify-between items-center">
 
         {/* Logo */}
-        <div className="h-auto w-50">
+        <div className="h-auto w-46">
         <AMLogo href="/" img="">
             <FullLogo />
         </AMLogo>
@@ -90,7 +96,7 @@ const HeaderHome = () => {
           <div ref={dropdownRef} className="relative">
             <button
               onClick={() => setSolucionesOpen((v) => !v)}
-              className={`flex items-center gap-1 px-3 py-2 rounded-full text-sm font-medium
+              className={`flex items-center gap-1 px-3 py-2 rounded-full text-base font-medium
                 text-foreground dark:text-muted-foreground
                 hover:text-primary dark:hover:text-primary
                 hover:bg-lightprimary dark:hover:bg-lightprimary
@@ -144,7 +150,7 @@ const HeaderHome = () => {
           {/* Planes */}
           <a
             href="#planes"
-            className="px-3 py-2 rounded-full text-sm font-medium
+            className="px-3 py-2 rounded-full text-base font-medium
               text-foreground dark:text-muted-foreground
               hover:text-primary dark:hover:text-primary
               hover:bg-lightprimary dark:hover:bg-lightprimary
@@ -153,16 +159,16 @@ const HeaderHome = () => {
             Planes
           </a>
 
-          {/* Contactos */}
+          {/* Contacto */}
           <a
-            href="#contactos"
-            className="px-3 py-2 rounded-full text-sm font-medium
+            href="#contacto"
+            className="px-3 py-2 rounded-full text-base font-medium
               text-foreground dark:text-muted-foreground
               hover:text-primary dark:hover:text-primary
               hover:bg-lightprimary dark:hover:bg-lightprimary
               transition-colors duration-150"
           >
-            Contactos
+            Contacto
           </a>
         </div>
 
@@ -188,7 +194,7 @@ const HeaderHome = () => {
           {/* Iniciar sesión */}
           <a
             href="/login"
-            className="px-4 py-2 rounded-full text-sm font-medium
+            className="px-4 py-2 rounded-full text-base font-medium
               text-foreground dark:text-muted-foreground
               hover:text-primary dark:hover:text-primary
               hover:bg-lightprimary dark:hover:bg-lightprimary
@@ -246,7 +252,7 @@ const HeaderHome = () => {
           <details className="group">
             <summary
               className="flex cursor-pointer list-none items-center justify-between rounded-full px-3 py-2
-                text-sm font-medium text-foreground dark:text-muted-foreground
+                text-base font-medium text-foreground dark:text-muted-foreground
                 hover:text-primary hover:bg-lightprimary transition-colors"
             >
               Soluciones
@@ -276,7 +282,7 @@ const HeaderHome = () => {
           <a
             href="#planes"
             onClick={() => setMobileOpen(false)}
-            className="block rounded-full px-3 py-2 text-sm font-medium
+            className="block rounded-full px-3 py-2 text-base font-medium
               text-foreground dark:text-muted-foreground
               hover:text-primary hover:bg-lightprimary transition-colors"
           >
@@ -284,20 +290,20 @@ const HeaderHome = () => {
           </a>
 
           <a
-            href="#contactos"
+            href="#contacto"
             onClick={() => setMobileOpen(false)}
-            className="block rounded-full px-3 py-2 text-sm font-medium
+            className="block rounded-full px-3 py-2 text-base font-medium
               text-foreground dark:text-muted-foreground
               hover:text-primary hover:bg-lightprimary transition-colors"
           >
-            Contactos
+            Contacto
           </a>
 
           <div className="border-t border-border pt-3 mt-3 space-y-2">
             <a
               href="/login"
               onClick={() => setMobileOpen(false)}
-              className="block rounded-full px-3 py-2 text-sm font-medium text-center border border-border
+              className="block rounded-full px-3 py-2 text-base font-medium text-center border border-border
                 text-foreground dark:text-muted-foreground hover:text-primary hover:bg-lightprimary transition-colors"
             >
               Iniciar sesión
