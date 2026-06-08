@@ -116,7 +116,7 @@ function TimelineView({ data }: { data: TransaccionResponse[] }) {
             const color = ingreso ? 'text-green-600 bg-green-50' : 'text-red-600 bg-red-50';
             return (
               <div key={t.transaccionId} className="flex items-start gap-4 pl-4 relative">
-                <div className={`p-2 rounded-full ${color} shrink-0 z-10 ring-2 ring-background`}>
+                <div className={`p-2 rounded-full ${color} shrink-0`}>
                   <Icono className="size-4" />
                 </div>
                 <div className="flex-1 pb-5">

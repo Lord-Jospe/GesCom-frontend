@@ -77,7 +77,7 @@ const MovimientosInventarioPage = () => {
                 const IconMov = cfg.icon;
                 return (
                   <div key={m.movimientoId} className="flex items-start gap-4 pl-4 relative">
-                    <div className={`p-2 rounded-full ${cfg.bg} shrink-0 z-10 ring-2 ring-background`}>
+                    <div className={`p-2 rounded-full ${cfg.bg} shrink-0`}>
                       <IconMov className={`size-4 ${cfg.color}`} />
                     </div>
                     <div className="flex-1 pb-5">
