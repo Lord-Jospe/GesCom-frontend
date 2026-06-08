@@ -3,6 +3,7 @@ import { Icon } from '@iconify/react';
 import Messages from './Messages';
 import FullLogo from '../../shared/logo/FullLogo';
 import Profile from './Profile';
+import TasaBcvButton from './TasaBcvButton';
 import SidebarLayout from '../sidebar/Sidebar';
 import { useTheme } from 'src/components/provider/theme-provider';
 
@@ -109,6 +110,9 @@ const Header = () => {
                 </div>
               )}
 
+              {/* Tasa BCV */}
+              <TasaBcvButton />
+
               {/* Messages Dropdown */}
               <Messages />
 
@@ -144,6 +148,7 @@ const Header = () => {
                     </span>
                   </div>
                 )}
+                <TasaBcvButton />
                 <Messages />
                 <Profile />
               </div>

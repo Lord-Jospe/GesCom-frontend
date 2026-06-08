@@ -1,13 +1,13 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { jwtDecode } from 'jwt-decode';
-import { AuthResponse, DecodedToken, RegistroEmpresaRequest } from 'src/types/auth/auth.types';
+import { AuthResponse, DecodedToken, RegisterFormData } from 'src/types/auth/auth.types';
 import authService from 'src/api/services/auth/authService';
 
 interface AuthContextType {
   user: DecodedToken | null;
   authData: AuthResponse | null;
-  login: (email: string, password: string) => Promise<void>;
-  registro: (userData: RegistroEmpresaRequest) => Promise<void>;
+  login: (email: string, password: string) => Promise<DecodedToken>;
+  registro: (userData: RegisterFormData) => Promise<DecodedToken>;
   logout: () => void;
   isAuthenticated: boolean;
 }
@@ -39,22 +39,24 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, []);
 
-  // 🔹 Login
-  const login = async (email: string, password: string) => {
+  // Login
+  const login = async (email: string, password: string): Promise<DecodedToken> => {
     const data = await authService.login(email, password);
     const decoded = jwtDecode<DecodedToken>(data.token);
     setUser(decoded);
     setAuthData(data);
     setIsAuthenticated(true);
+    return decoded;
   };
 
   // Registro
-  const registro = async (userData: RegistroEmpresaRequest) => {
+  const registro = async (userData: RegisterFormData): Promise<DecodedToken> => {
     const data = await authService.register(userData);
     const decoded = jwtDecode<DecodedToken>(data.token);
     setUser(decoded);
     setAuthData(data);
     setIsAuthenticated(true);
+    return decoded;
   };
 
   //  Logout

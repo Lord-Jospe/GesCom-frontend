@@ -19,14 +19,22 @@ import { useNavigate } from 'react-router';
 
 
 const Profile = () => {
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = () => {
     logout();
-    navigate('/login');
+    navigate('/');
   };
 
+  const basePathByRole: Record<string, string> = {
+  ADMIN: '/admin',
+  CONTADOR: '/contador',
+  OPERADOR: '/operador',
+  };
+
+  const basePath = basePathByRole[user?.rol ?? ''] || '';
+  
   
   return (
     <div className="relative group/menu ps-1 sm:ps-15 shrink-0">
@@ -48,7 +56,11 @@ const Profile = () => {
                 asChild
                 className="px-4 py-2 flex justify-between items-center bg-hover group/link w-full cursor-pointer"
               >
-                <Link to={items.url}>
+                <Link to={
+                    items.url.startsWith('/user-profile') ? `${basePath}/user-profile` :
+                    items.url.startsWith('/mi-empresa') ? `${basePath}/mi-empresa` :
+                    items.url
+                  }>
                   <div className="w-full">
                     <div className="ps-0 flex items-center gap-3 w-full">
                       <Icon
@@ -76,7 +88,7 @@ const Profile = () => {
               className="w-full rounded-md"
               onClick={handleLogout}
             >
-              <Link to="/login">Logout</Link>
+              <Link to="/">Cerrar Sesión</Link>
             </Button>
           </div>
         </DropdownMenuContent>

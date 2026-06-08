@@ -6,19 +6,19 @@ import { Button } from 'src/components/ui/button';
 
 const ForgotPassword = () => {
   return (
-    <div className="relative overflow-hidden h-screen bg-lightprimary dark:bg-darkprimary">
-      <div className="flex h-full justify-center items-center px-4">
-        <CardBox className="md:w-[450px] w-full border-none">
-          <div className="mx-auto mb-6">
-            <FullLogo />
+    <div className="relative overflow-hidden min-h-screen bg-lightprimary dark:bg-darkprimary">
+      <div className="flex min-h-screen justify-center items-center px-4 py-5">
+        <CardBox className="w-full max-w-md border-none">
+          <div className="mx-auto mb-4 flex justify-center">
+            <Link to="/"><FullLogo /></Link>
           </div>
-          <p className="text-muted-foreground text-sm text-center my-4">
-            Please enter the email address associated with your account and We will email you a link
-            to reset your password.
+          <h2 className="text-xl font-bold text-center text-foreground">Recuperar contraseña</h2>
+          <p className="text-muted-foreground text-sm text-center mt-2">
+            Ingresa tu correo electrónico y te enviaremos un enlace para restablecer tu contraseña.
           </p>
           <AuthForgotPassword />
-          <Button variant={'lightprimary'} className="w-full mt-3">
-            <Link to={'/'}>Back to Login</Link>
+          <Button variant="lightprimary" className="w-full mt-3" asChild>
+            <Link to="/login">Volver al inicio de sesión</Link>
           </Button>
         </CardBox>
       </div>

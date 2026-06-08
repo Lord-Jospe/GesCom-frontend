@@ -3,48 +3,44 @@ import type { MenuItem } from './adminSidebaritems';
 
 const OperadorSidebarContent: MenuItem[] = [
   {
-    heading: 'Académico',
+    heading: 'Caja y Facturación',
     children: [
       {
+        name: 'Caja',
+        icon: 'solar:calculator-linear',
         id: uniqueId(),
-        name: 'Mis Materias',
-        icon: 'solar:book-2-linear',
-        url: '/student/subjects',
+        children: [
+          { id: uniqueId(), name: 'Historial', icon: 'solar:list-check-linear', url: '/operador/caja-facturacion' },
+          { id: uniqueId(), name: 'Registrar venta', icon: 'solar:cart-plus-linear', url: '/operador/caja-facturacion/venta' },
+          { id: uniqueId(), name: 'Registrar gasto', icon: 'solar:arrow-down-linear', url: '/operador/caja-facturacion/gasto' },
+        ],
       },
       {
+        name: 'Cuentas por Cobrar',
+        icon: 'solar:hand-money-linear',
         id: uniqueId(),
-        name: 'Horario',
-        icon: 'solar:calendar-linear',
-        url: '/student/schedule',
+        url: '/operador/por-cobrar',
       },
       {
+        name: 'Cuentas por Pagar',
+        icon: 'solar:wallet-money-linear',
         id: uniqueId(),
-        name: 'Calificaciones',
-        icon: 'solar:chart-square-linear',
-        url: '/student/grades',
+        url: '/operador/por-pagar',
       },
     ],
   },
   {
-    heading: 'Gestión',
+    heading: 'Inventario',
     children: [
       {
+        name: 'Inventario',
+        icon: 'solar:box-linear',
         id: uniqueId(),
-        name: 'Repositorio Documental',
-        icon: 'solar:folder-linear',
-        url: '/student/documents',
-      },
-      {
-        id: uniqueId(),
-        name: 'Pagos y Facturas',
-        icon: 'solar:wallet-linear',
-        url: '/student/payments',
-      },
-      {
-        id: uniqueId(),
-        name: 'Notificaciones',
-        icon: 'solar:dialog-2-linear',
-        url: '/student/notifications',
+        children: [
+          { id: uniqueId(), name: 'Productos y stock', icon: 'solar:box-linear', url: '/operador/inventario' },
+          { id: uniqueId(), name: 'Movimientos', icon: 'solar:transfer-horizontal-linear', url: '/operador/inventario/movimientos' },
+          { id: uniqueId(), name: 'Alertas', icon: 'solar:danger-triangle-linear', url: '/operador/inventario/alertas' },
+        ],
       },
     ],
   },
@@ -52,10 +48,10 @@ const OperadorSidebarContent: MenuItem[] = [
     heading: 'Cuenta',
     children: [
       {
-        id: uniqueId(),
         name: 'Mi Perfil',
         icon: 'solar:user-circle-linear',
-        url: '/student/profile',
+        id: uniqueId(),
+        url: '/operador/user-profile',
       },
     ],
   },
