@@ -72,9 +72,9 @@ const SidebarContent: MenuItem[] = [
         icon: 'solar:calculator-linear',
         id: uniqueId(),
         children: [
-          { id: uniqueId(), name: 'Registrar venta', icon: 'solar:cart-plus-linear', url: '/admin/caja-facturacion' },
-          { id: uniqueId(), name: 'Registrar gasto', icon: 'solar:arrow-down-linear', url: '/admin/caja-facturacion' },
           { id: uniqueId(), name: 'Historial', icon: 'solar:list-check-linear', url: '/admin/caja-facturacion' },
+          { id: uniqueId(), name: 'Registrar venta', icon: 'solar:cart-plus-linear', url: '/admin/caja-facturacion/venta' },
+          { id: uniqueId(), name: 'Registrar gasto', icon: 'solar:arrow-down-linear', url: '/admin/caja-facturacion/gasto' },
         ],
       },
       {

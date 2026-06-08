@@ -10,9 +10,9 @@ const OperadorSidebarContent: MenuItem[] = [
         icon: 'solar:calculator-linear',
         id: uniqueId(),
         children: [
-          { id: uniqueId(), name: 'Registrar venta', icon: 'solar:cart-plus-linear', url: '/operador/caja-facturacion' },
-          { id: uniqueId(), name: 'Registrar gasto', icon: 'solar:arrow-down-linear', url: '/operador/caja-facturacion' },
           { id: uniqueId(), name: 'Historial', icon: 'solar:list-check-linear', url: '/operador/caja-facturacion' },
+          { id: uniqueId(), name: 'Registrar venta', icon: 'solar:cart-plus-linear', url: '/operador/caja-facturacion/venta' },
+          { id: uniqueId(), name: 'Registrar gasto', icon: 'solar:arrow-down-linear', url: '/operador/caja-facturacion/gasto' },
         ],
       },
       {

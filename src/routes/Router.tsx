@@ -41,7 +41,9 @@ const ClientesPage = Loadable(lazy(() => import('../views/pages/admin/organizaci
 const ProveedoresPage = Loadable(lazy(() => import('../views/pages/admin/organizacion/ProveedoresPage')));
 
 // Facturación y cobranza
-const CajaFacturacionPage = Loadable(lazy(() => import('../views/pages/admin/facturacion/CajaFacturacionPage')));
+const HistorialTransaccionesPage = Loadable(lazy(() => import('../views/pages/admin/facturacion/HistorialTransaccionesPage')));
+const RegistrarVentaPage = Loadable(lazy(() => import('../views/pages/admin/facturacion/RegistrarVentaPage')));
+const RegistrarGastoPage = Loadable(lazy(() => import('../views/pages/admin/facturacion/RegistrarGastoPage')));
 const PorCobrarPage = Loadable(lazy(() => import('../views/pages/admin/facturacion/PorCobrarPage')));
 const PorPagarPage = Loadable(lazy(() => import('../views/pages/admin/facturacion/PorPagarPage')));
 
@@ -118,7 +120,9 @@ const Router = [
       { path: 'clientes', element: <ClientesPage /> },
       { path: 'proveedores', element: <ProveedoresPage /> },
       // Facturación y cobranza
-      { path: 'caja-facturacion', element: <CajaFacturacionPage /> },
+      { path: 'caja-facturacion', element: <HistorialTransaccionesPage /> },
+      { path: 'caja-facturacion/venta', element: <RegistrarVentaPage /> },
+      { path: 'caja-facturacion/gasto', element: <RegistrarGastoPage /> },
       { path: 'por-cobrar', element: <PorCobrarPage /> },
       { path: 'por-pagar', element: <PorPagarPage /> },
       // Inventario
@@ -146,9 +150,13 @@ const Router = [
       { index: true, element: <Contadordash /> },
       { path: 'user-profile', element: <UserProfile /> },
       // Facturación y cobranza
-      { path: 'caja-facturacion', element: <CajaFacturacionPage /> },
+      { path: 'caja-facturacion', element: <HistorialTransaccionesPage /> },
+      { path: 'caja-facturacion/venta', element: <RegistrarVentaPage /> },
+      { path: 'caja-facturacion/gasto', element: <RegistrarGastoPage /> },
       { path: 'por-cobrar', element: <PorCobrarPage /> },
       { path: 'por-pagar', element: <PorPagarPage /> },
+      // Nómina
+      { path: 'nomina', element: <NominaPage /> },
       // Inventario
       { path: 'inventario', element: <InventarioPage /> },
       { path: 'inventario/movimientos', element: <MovimientosInventarioPage /> },
@@ -174,7 +182,9 @@ const Router = [
       { index: true, element: <Operadordash /> },
       { path: 'user-profile', element: <UserProfile /> },
       // Caja y Facturación
-      { path: 'caja-facturacion', element: <CajaFacturacionPage /> },
+      { path: 'caja-facturacion', element: <HistorialTransaccionesPage /> },
+      { path: 'caja-facturacion/venta', element: <RegistrarVentaPage /> },
+      { path: 'caja-facturacion/gasto', element: <RegistrarGastoPage /> },
       { path: 'por-cobrar', element: <PorCobrarPage /> },
       { path: 'por-pagar', element: <PorPagarPage /> },
       // Inventario
