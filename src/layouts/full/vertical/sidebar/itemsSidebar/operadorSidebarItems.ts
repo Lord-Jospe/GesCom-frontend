@@ -38,8 +38,8 @@ const OperadorSidebarContent: MenuItem[] = [
         id: uniqueId(),
         children: [
           { id: uniqueId(), name: 'Productos y stock', icon: 'solar:box-linear', url: '/operador/inventario' },
-          { id: uniqueId(), name: 'Movimientos', icon: 'solar:transfer-horizontal-linear', url: '/operador/inventario' },
-          { id: uniqueId(), name: 'Alertas', icon: 'solar:danger-triangle-linear', url: '/operador/inventario' },
+          { id: uniqueId(), name: 'Movimientos', icon: 'solar:transfer-horizontal-linear', url: '/operador/inventario/movimientos' },
+          { id: uniqueId(), name: 'Alertas', icon: 'solar:danger-triangle-linear', url: '/operador/inventario/alertas' },
         ],
       },
     ],

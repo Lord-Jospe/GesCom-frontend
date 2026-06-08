@@ -31,6 +31,8 @@ const EditarUsuarioDialog = ({ open, onOpenChange, onEditado, usuario }: EditarU
     email: '',
     password: '',
     rol: '' as string,
+    sueldo: '' as string,
+    monedaSueldo: 'USD',
   });
   const [error, setError] = useState('');
   const [guardando, setGuardando] = useState(false);
@@ -46,6 +48,8 @@ const EditarUsuarioDialog = ({ open, onOpenChange, onEditado, usuario }: EditarU
         email: usuario.email,
         password: '',
         rol: usuario.rol,
+        sueldo: usuario.sueldo != null ? String(usuario.sueldo) : '',
+        monedaSueldo: usuario.monedaSueldo || 'USD',
       });
     }
     setError('');
@@ -72,6 +76,10 @@ const EditarUsuarioDialog = ({ open, onOpenChange, onEditado, usuario }: EditarU
     if (form.primerApellido !== usuario.primerApellido) payload.primerApellido = form.primerApellido;
     if ((form.segundoApellido || '') !== (usuario.segundoApellido || '')) payload.segundoApellido = form.segundoApellido;
     if (form.password.trim()) payload.password = form.password;
+    const sueldoNum = form.sueldo ? parseFloat(form.sueldo) : null;
+    if (sueldoNum !== (usuario.sueldo ?? null)) payload.sueldo = sueldoNum ?? undefined;
+    if (form.monedaSueldo !== (usuario.monedaSueldo || 'USD')) payload.monedaSueldo = form.monedaSueldo;
+
     if (form.rol !== usuario.rol) payload.rol = form.rol;
 
     if (Object.keys(payload).length === 0) {
@@ -190,6 +198,35 @@ const EditarUsuarioDialog = ({ open, onOpenChange, onEditado, usuario }: EditarU
                 {roles.map((rol) => (
                   <SelectItem key={rol} value={rol}>{rol}</SelectItem>
                 ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="edit-sueldo">Sueldo</Label>
+            <Input
+              id="edit-sueldo"
+              type="number"
+              step="0.01"
+              value={form.sueldo}
+              onChange={(e) => setForm({ ...form, sueldo: e.target.value })}
+              placeholder="0.00"
+            />
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="edit-monedaSueldo">Moneda</Label>
+            <Select
+              value={form.monedaSueldo || 'USD'}
+              onValueChange={(val) => setForm({ ...form, monedaSueldo: val })}
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="USD">USD</SelectItem>
+                <SelectItem value="VES">VES (Bs.)</SelectItem>
               </SelectContent>
             </Select>
           </div>

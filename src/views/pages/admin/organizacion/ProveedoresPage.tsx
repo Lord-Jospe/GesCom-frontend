@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { proveedorService } from 'src/api/services/proveedorService';
 import type { ProveedorResponse, CrearProveedorRequest, CategoriaProveedor } from 'src/types/proveedor';
@@ -15,36 +15,34 @@ import { Badge } from 'src/components/ui/badge';
 import { Icon } from '@iconify/react';
 import { Pencil, RotateCcw, Trash2 } from 'lucide-react';
 
-type Filtro = 'todos' | 'activos' | 'inactivos';
-
+const TAMANO_PAGINA = 10;
 const categorias: CategoriaProveedor[] = ['MERCANCIA', 'SERVICIOS', 'TRANSPORTE', 'OTROS'];
 const catLabel: Record<string, string> = { MERCANCIA: 'Mercancía', SERVICIOS: 'Servicios', TRANSPORTE: 'Transporte', OTROS: 'Otros' };
 
 const ProveedoresPage = () => {
   const [proveedores, setProveedores] = useState<ProveedorResponse[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filtro, setFiltro] = useState<Filtro>('todos');
   const [busqueda, setBusqueda] = useState('');
+  const [pagina, setPagina] = useState(0);
+  const [totalPaginas, setTotalPaginas] = useState(0);
+  const [totalElementos, setTotalElementos] = useState(0);
   const [openCrear, setOpenCrear] = useState(false);
   const [openEditar, setOpenEditar] = useState(false);
   const [openToggle, setOpenToggle] = useState(false);
   const [seleccionado, setSeleccionado] = useState<ProveedorResponse | null>(null);
 
   const cargar = useCallback(async () => {
-    try { setLoading(true); setProveedores(await proveedorService.obtenerTodos()); }
-    catch (e: any) { toast.error(e.message); }
+    try {
+      setLoading(true);
+      const page = await proveedorService.obtenerPaginado(pagina, TAMANO_PAGINA);
+      setProveedores(page.contenido);
+      setTotalPaginas(page.totalPaginas);
+      setTotalElementos(page.totalElementos);
+    } catch (e: any) { toast.error(e.message); }
     finally { setLoading(false); }
-  }, []);
+  }, [pagina]);
 
   useEffect(() => { cargar(); }, [cargar]);
-
-  const datos = useMemo(() => {
-    let r = proveedores;
-    if (filtro === 'activos') r = r.filter(p => p.isActive);
-    if (filtro === 'inactivos') r = r.filter(p => !p.isActive);
-    if (busqueda) r = r.filter(p => p.nombre.toLowerCase().includes(busqueda.toLowerCase()));
-    return r;
-  }, [proveedores, filtro, busqueda]);
 
   return (
     <div className="space-y-6">
@@ -59,14 +57,6 @@ const ProveedoresPage = () => {
       </div>
 
       <div className="flex items-center gap-3 flex-wrap">
-        <Select value={filtro} onValueChange={(v) => setFiltro(v as Filtro)}>
-          <SelectTrigger className="w-32"><SelectValue /></SelectTrigger>
-          <SelectContent>
-            <SelectItem value="todos">Todos</SelectItem>
-            <SelectItem value="activos">Activos</SelectItem>
-            <SelectItem value="inactivos">Inactivos</SelectItem>
-          </SelectContent>
-        </Select>
         <Input placeholder="Buscar..." className="max-w-xs" value={busqueda} onChange={e => setBusqueda(e.target.value)} />
       </div>
 
@@ -83,9 +73,9 @@ const ProveedoresPage = () => {
               <th className="text-left px-4 py-3 font-semibold">Acciones</th>
             </tr></thead>
             <tbody>
-              {datos.length === 0 ? (
+              {proveedores.length === 0 ? (
                 <tr><td colSpan={5} className="text-center py-12 text-muted-foreground">No hay proveedores registrados.</td></tr>
-              ) : datos.map(p => (
+              ) : proveedores.map(p => (
                 <tr key={p.proveedorId} className="border-t hover:bg-muted/20">
                   <td className="px-4 py-3">
                     <p className="font-medium">{p.nombre}</p>
@@ -111,6 +101,17 @@ const ProveedoresPage = () => {
               ))}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {totalPaginas > 1 && (
+        <div className="flex items-center justify-between">
+          <p className="text-sm text-muted-foreground">{totalElementos} proveedores</p>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" disabled={pagina === 0} onClick={() => setPagina(p => p - 1)}>Anterior</Button>
+            <span className="text-sm text-muted-foreground px-2">Pág. {pagina + 1} de {totalPaginas}</span>
+            <Button variant="outline" size="sm" disabled={pagina + 1 >= totalPaginas} onClick={() => setPagina(p => p + 1)}>Siguiente</Button>
+          </div>
         </div>
       )}
 

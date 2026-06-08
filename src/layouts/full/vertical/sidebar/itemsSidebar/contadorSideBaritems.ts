@@ -38,8 +38,22 @@ const ContadorSidebarContent: MenuItem[] = [
         id: uniqueId(),
         children: [
           { id: uniqueId(), name: 'Productos y stock', icon: 'solar:box-linear', url: '/contador/inventario' },
-          { id: uniqueId(), name: 'Movimientos', icon: 'solar:transfer-horizontal-linear', url: '/contador/inventario' },
-          { id: uniqueId(), name: 'Alertas', icon: 'solar:danger-triangle-linear', url: '/contador/inventario' },
+          { id: uniqueId(), name: 'Movimientos', icon: 'solar:transfer-horizontal-linear', url: '/contador/inventario/movimientos' },
+          { id: uniqueId(), name: 'Alertas', icon: 'solar:danger-triangle-linear', url: '/contador/inventario/alertas' },
+        ],
+      },
+    ],
+  },
+  {
+    heading: 'Nómina',
+    children: [
+      {
+        name: 'Nómina',
+        icon: 'solar:card-transfer-linear',
+        id: uniqueId(),
+        children: [
+          { id: uniqueId(), name: 'Calcular nómina', icon: 'solar:calculator-linear', url: '/contador/nomina' },
+          { id: uniqueId(), name: 'Historial', icon: 'solar:list-check-linear', url: '/contador/nomina' },
         ],
       },
     ],

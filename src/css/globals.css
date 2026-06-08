@@ -1,5 +1,5 @@
 @import 'tailwindcss';
-@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,200..800&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,200..800&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap');
 @import './app.css';
 
 @import './layouts/container.css' layer(utilities);
@@ -17,6 +17,15 @@ main {
 
 body {
   font-family: 'DM Sans', sans-serif;
+  font-size: 16px;
+}
+
+.font-mono,
+code,
+pre,
+.moneda {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 450;
 }
 
 @theme {
@@ -115,12 +124,12 @@ body {
   --secondary: #49beff;
   --secondary-foreground: var(--white);
   --muted: #f5f5f5;
-  --muted-foreground: #5a6a85bf;
+  --muted-foreground: #374151;
   --accent: var(--lightprimary);
   --accent-foreground: var(--primary);
   --destructive: var(--error);
   --destructive-foreground: var(--white);
-  --border: #dfe5ef;
+  --border: #cbd5e1;
   --input: #e5e7eb;
   --ring: var(--lightprimary);
   --chart-1: var(--primary);
@@ -175,7 +184,7 @@ body {
   --secondary: #49beff;
   --secondary-foreground: var(--white);
   --muted: #2a3851;
-  --muted-foreground: #7c8fac;
+  --muted-foreground: #94a3b8;
   --accent: var(--accent);
   --accent-foreground: var(--accent-foreground);
   --destructive: var(--error);
@@ -229,6 +238,10 @@ body {
   body {
     @apply bg-background text-foreground;
   }
+  /* Bordes más gruesos en cards y tablas */
+  .card, [class*="rounded-xl"], table, .border {
+    border-width: 2px;
+  }
 }
 
 @layer base {
@@ -237,7 +250,7 @@ body {
   ::before,
   ::backdrop,
   ::file-selector-button {
-    border-color: var(--color-gray-200, currentcolor);
+    border-color: var(--border, #cbd5e1);
   }
 }
 
@@ -264,7 +277,7 @@ body {
 }
 
 @utility card-title {
-  @apply text-lg font-semibold text-foreground;
+  @apply text-xl font-semibold text-foreground;
 }
 
 @utility border-ld {
@@ -283,18 +296,14 @@ body {
 
 @layer components {
   body {
-    @apply text-sm overflow-x-hidden;
+    @apply text-[16px] overflow-x-hidden;
   }
 
   /*heading text color*/
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    @apply text-foreground font-semibold;
-  }
+  h1 { @apply text-foreground font-bold text-3xl; }
+  h2 { @apply text-foreground font-semibold text-2xl; }
+  h3 { @apply text-foreground font-semibold text-xl; }
+  h4, h5, h6 { @apply text-foreground font-semibold text-lg; }
 
   input::placeholder {
     @apply text-muted-foreground;

@@ -1,6 +1,15 @@
 import api from 'src/api/axios';
 import type { ClienteResponse, CrearClienteRequest, EditarClienteRequest } from 'src/types/cliente';
 
+export interface PageResponse<T> {
+  contenido: T[];
+  paginaActual: number;
+  totalPaginas: number;
+  totalElementos: number;
+  tamano: number;
+  esUltima: boolean;
+}
+
 const handleError = (ctx: string, error: any): never => {
   const data = error.response?.data;
   const msg = data?.error || data?.message || `Error en ${ctx}`;
@@ -14,6 +23,11 @@ export const clienteService = {
       const { data } = await api.get<ClienteResponse[]>('/customer');
       return data;
     } catch (e: any) { handleError('obtenerTodos clientes', e); return []; }
+  },
+
+  obtenerPaginado: async (pagina = 0, tamano = 10): Promise<PageResponse<ClienteResponse>> => {
+    const { data } = await api.get<PageResponse<ClienteResponse>>('/customer/paged', { params: { pagina, tamano } });
+    return data;
   },
 
   obtenerPorId: async (id: number): Promise<ClienteResponse> => {

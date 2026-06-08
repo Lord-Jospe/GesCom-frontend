@@ -87,6 +87,19 @@ export const UsuariosTable = ({ data, onEditar, onToggleEstado }: UsuariosTableP
       },
     },
     {
+      id: 'sueldo',
+      header: 'Sueldo',
+      accessorFn: (row) => row.sueldo ? `${row.monedaSueldo || 'USD'} ${row.sueldo.toFixed(2)}` : null,
+      cell: ({ getValue }) => {
+        const val = getValue() as string | null;
+        return val ? (
+          <span className="text-sm font-mono text-foreground">{val}</span>
+        ) : (
+          <span className="text-sm text-muted-foreground">—</span>
+        );
+      },
+    },
+    {
       id: 'estado',
       header: 'Estado',
       accessorFn: (row) => row.activo ? 'Activo' : 'Inactivo',

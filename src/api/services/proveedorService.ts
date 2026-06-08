@@ -1,5 +1,6 @@
 import api from 'src/api/axios';
 import type { ProveedorResponse, CrearProveedorRequest, EditarProveedorRequest } from 'src/types/proveedor';
+import type { PageResponse } from './clienteService';
 
 const handleError = (ctx: string, error: any): never => {
   const data = error.response?.data;
@@ -14,6 +15,11 @@ export const proveedorService = {
       const { data } = await api.get<ProveedorResponse[]>('/provider');
       return data;
     } catch (e: any) { handleError('obtenerTodos proveedores', e); return []; }
+  },
+
+  obtenerPaginado: async (pagina = 0, tamano = 10): Promise<PageResponse<ProveedorResponse>> => {
+    const { data } = await api.get<PageResponse<ProveedorResponse>>('/provider/paged', { params: { pagina, tamano } });
+    return data;
   },
 
   crear: async (req: CrearProveedorRequest): Promise<ProveedorResponse> => {

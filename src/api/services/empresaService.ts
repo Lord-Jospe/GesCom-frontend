@@ -1,5 +1,5 @@
 import api from 'src/api/axios';
-import type { EmpresaResponse, EditarEmpresaRequest, MonedaRequest, TasaBcvResponse, TasaBcvRequest } from 'src/types/empresa';
+import type { EmpresaResponse, EditarEmpresaRequest, MonedaRequest, SuscripcionResponse, TasaBcvResponse, TasaBcvRequest } from 'src/types/empresa';
 
 const handleError = (ctx: string, error: any): never => {
   const data = error.response?.data;
@@ -28,12 +28,21 @@ export const empresaService = {
       await api.patch('/company/money', req);
     } catch (e: any) { handleError('cambiarMoneda', e); }
   },
+
+  obtenerSuscripcion: async (): Promise<SuscripcionResponse | null> => {
+    try {
+      const { data } = await api.get<SuscripcionResponse>('/company/subscription');
+      return data;
+    } catch { return null; }
+  },
 };
 
 export const tasaBcvService = {
   registrar: async (req: TasaBcvRequest): Promise<TasaBcvResponse> => {
     try {
       const { data } = await api.post<TasaBcvResponse>('/exchange-rate', req);
+      // Notificar a otros componentes que la tasa cambió
+      window.dispatchEvent(new CustomEvent('tasa-bcv-actualizada', { detail: data }));
       return data;
     } catch (e: any) { return handleError('registrar tasa BCV', e); }
   },
@@ -45,10 +54,25 @@ export const tasaBcvService = {
     } catch (e: any) { handleError('historial tasas BCV', e); return []; }
   },
 
+  ultima: async (): Promise<TasaBcvResponse | null> => {
+    try {
+      const { data } = await api.get<TasaBcvResponse>('/exchange-rate/latest');
+      return data;
+    } catch { return null; }
+  },
+
   obtenerPorFecha: async (fecha: string): Promise<TasaBcvResponse> => {
     try {
       const { data } = await api.get<TasaBcvResponse>(`/exchange-rate/${fecha}`);
       return data;
     } catch (e: any) { handleError('tasa BCV por fecha', e); return {} as TasaBcvResponse; }
   },
+};
+
+export const formatearTasa = (tasa: number | null | undefined) =>
+  tasa != null ? `Bs. ${tasa.toFixed(2)}` : 'BCV';
+
+export const formatearFechaHora = (iso: string) => {
+  const d = new Date(iso);
+  return d.toLocaleString('es-VE', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 };

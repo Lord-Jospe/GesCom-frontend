@@ -9,6 +9,8 @@ export interface UsuarioResponse {
   email: string;
   rol: NombreRol;
   activo: boolean;
+  sueldo: number | null;
+  monedaSueldo: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -21,6 +23,8 @@ export interface CrearUsuarioRequest {
   email: string;
   password: string;
   rol: string;
+  sueldo?: number;
+  monedaSueldo?: string;
 }
 
 export interface EditarUsuarioRequest {
@@ -31,6 +35,8 @@ export interface EditarUsuarioRequest {
   password?: string;
   email?: string;
   rol?: string;
+  sueldo?: number;
+  monedaSueldo?: string;
 }
 
 export interface UsuarioPageResponse {

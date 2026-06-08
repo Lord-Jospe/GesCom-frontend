@@ -1,13 +1,13 @@
 export interface TasaBcvResponse {
   tasaId: number;
   tasa: number;
-  fecha: string;
+  fechaHora: string;
   registradoPor: string;
 }
 
 export interface TasaBcvRequest {
   tasa: number;
-  fecha: string;
+  fechaHora: string;
 }
 
 export interface EmpresaResponse {
@@ -42,6 +42,20 @@ export interface EditarEmpresaRequest {
   igtfActivo?: boolean;
   facturaPrefijo?: string;
   facturaSiguienteNumero?: number;
+}
+
+export interface SuscripcionResponse {
+  suscripcionId: number;
+  planNombre: string;
+  precioUsd: number;
+  fechaInicio: string;
+  fechaVence: string;
+  estado: string;
+  maxTransaccionesMes: number;
+  maxArchivosMes: number;
+  tieneInventario: boolean;
+  tieneNomina: boolean;
+  tieneContabilidad: boolean;
 }
 
 export interface MonedaRequest {

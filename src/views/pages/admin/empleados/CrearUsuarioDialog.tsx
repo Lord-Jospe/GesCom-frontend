@@ -30,7 +30,9 @@ const CrearUsuarioDialog = ({ open, onOpenChange, onCreado }: CrearUsuarioDialog
     email: '',
     password: '',
     rol: 'OPERADOR',
-  });
+    sueldo: undefined,
+    monedaSueldo: 'USD',
+  } as CrearUsuarioRequest);
   const [error, setError] = useState('');
   const [guardando, setGuardando] = useState(false);
   const [mostrarPassword, setMostrarPassword] = useState(false);
@@ -44,7 +46,9 @@ const CrearUsuarioDialog = ({ open, onOpenChange, onCreado }: CrearUsuarioDialog
       email: '',
       password: '',
       rol: 'OPERADOR',
-    });
+      sueldo: undefined,
+      monedaSueldo: 'USD',
+    } as CrearUsuarioRequest);
     setError('');
   };
 
@@ -182,6 +186,35 @@ const CrearUsuarioDialog = ({ open, onOpenChange, onCreado }: CrearUsuarioDialog
                 {roles.map((rol) => (
                   <SelectItem key={rol} value={rol}>{rol}</SelectItem>
                 ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="sueldo">Sueldo</Label>
+            <Input
+              id="sueldo"
+              type="number"
+              step="0.01"
+              value={form.sueldo ?? ''}
+              onChange={(e) => setForm({ ...form, sueldo: e.target.value ? Number(e.target.value) : undefined })}
+              placeholder="0.00"
+            />
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="monedaSueldo">Moneda del sueldo</Label>
+            <Select
+              value={form.monedaSueldo || 'USD'}
+              onValueChange={(val) => setForm({ ...form, monedaSueldo: val })}
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="USD">USD</SelectItem>
+                <SelectItem value="VES">VES (Bs.)</SelectItem>
               </SelectContent>
             </Select>
           </div>

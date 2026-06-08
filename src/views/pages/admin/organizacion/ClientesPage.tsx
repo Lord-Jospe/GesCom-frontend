@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import { clienteService } from 'src/api/services/clienteService';
+import { clienteService, type PageResponse } from 'src/api/services/clienteService';
 import type { ClienteResponse, CrearClienteRequest, TipoPersona } from 'src/types/cliente';
 import { Button } from 'src/components/ui/button';
 import { Input } from 'src/components/ui/input';
@@ -15,40 +15,34 @@ import { Badge } from 'src/components/ui/badge';
 import { Icon } from '@iconify/react';
 import { Pencil, RotateCcw, Trash2 } from 'lucide-react';
 
-type Filtro = 'todos' | 'activos' | 'inactivos';
-
+const TAMANO_PAGINA = 10;
 const tipoPersonaLabel: Record<string, string> = { NATURAL: 'Persona Natural', JURIDICA: 'Jurídica' };
 
 const ClientesPage = () => {
   const [clientes, setClientes] = useState<ClienteResponse[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filtro, setFiltro] = useState<Filtro>('todos');
   const [busqueda, setBusqueda] = useState('');
+  const [pagina, setPagina] = useState(0);
+  const [totalPaginas, setTotalPaginas] = useState(0);
+  const [totalElementos, setTotalElementos] = useState(0);
 
-  // diálogos
   const [openCrear, setOpenCrear] = useState(false);
   const [openEditar, setOpenEditar] = useState(false);
   const [openToggle, setOpenToggle] = useState(false);
   const [seleccionado, setSeleccionado] = useState<ClienteResponse | null>(null);
 
   const cargar = useCallback(async () => {
-    try { setLoading(true); setClientes(await clienteService.obtenerTodos()); }
-    catch (e: any) { toast.error(e.message); }
+    try {
+      setLoading(true);
+      const page = await clienteService.obtenerPaginado(pagina, TAMANO_PAGINA);
+      setClientes(page.contenido);
+      setTotalPaginas(page.totalPaginas);
+      setTotalElementos(page.totalElementos);
+    } catch (e: any) { toast.error(e.message); }
     finally { setLoading(false); }
-  }, []);
+  }, [pagina]);
 
   useEffect(() => { cargar(); }, [cargar]);
-
-  const datos = useMemo(() => {
-    let r = clientes;
-    if (filtro === 'activos') r = r.filter(c => c.isActive);
-    if (filtro === 'inactivos') r = r.filter(c => !c.isActive);
-    if (busqueda) r = r.filter(c =>
-      c.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
-      c.rifCedula.toLowerCase().includes(busqueda.toLowerCase())
-    );
-    return r;
-  }, [clientes, filtro, busqueda]);
 
   return (
     <div className="space-y-6">
@@ -64,15 +58,6 @@ const ClientesPage = () => {
       </div>
 
       <div className="flex items-center gap-3 flex-wrap">
-        <span className="text-sm text-muted-foreground">Mostrar:</span>
-        <Select value={filtro} onValueChange={(v) => setFiltro(v as Filtro)}>
-          <SelectTrigger className="w-32"><SelectValue /></SelectTrigger>
-          <SelectContent>
-            <SelectItem value="todos">Todos</SelectItem>
-            <SelectItem value="activos">Activos</SelectItem>
-            <SelectItem value="inactivos">Inactivos</SelectItem>
-          </SelectContent>
-        </Select>
         <Input placeholder="Buscar..." className="max-w-xs" value={busqueda} onChange={e => setBusqueda(e.target.value)} />
       </div>
 
@@ -91,9 +76,9 @@ const ClientesPage = () => {
               <th className="text-left px-4 py-3 font-semibold">Acciones</th>
             </tr></thead>
             <tbody>
-              {datos.length === 0 ? (
+              {clientes.length === 0 ? (
                 <tr><td colSpan={5} className="text-center py-12 text-muted-foreground">No hay clientes registrados.</td></tr>
-              ) : datos.map(c => (
+              ) : clientes.map(c => (
                 <tr key={c.clienteId} className="border-t hover:bg-muted/20">
                   <td className="px-4 py-3">
                     <p className="font-medium">{c.nombre}</p>
@@ -121,6 +106,18 @@ const ClientesPage = () => {
               ))}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {/* Paginación */}
+      {totalPaginas > 1 && (
+        <div className="flex items-center justify-between">
+          <p className="text-sm text-muted-foreground">{totalElementos} clientes</p>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" disabled={pagina === 0} onClick={() => setPagina(p => p - 1)}>Anterior</Button>
+            <span className="text-sm text-muted-foreground px-2">Pág. {pagina + 1} de {totalPaginas}</span>
+            <Button variant="outline" size="sm" disabled={pagina + 1 >= totalPaginas} onClick={() => setPagina(p => p + 1)}>Siguiente</Button>
+          </div>
         </div>
       )}
 

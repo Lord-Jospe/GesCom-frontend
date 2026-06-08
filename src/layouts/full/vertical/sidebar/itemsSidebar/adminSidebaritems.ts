@@ -39,11 +39,7 @@ const SidebarContent: MenuItem[] = [
         name: 'Mi empresa',
         icon: 'solar:buildings-2-linear',
         id: uniqueId(),
-        children: [
-          { id: uniqueId(), name: 'Perfil de empresa', icon: 'solar:buildings-linear', url: '/admin/mi-empresa' },
-          { id: uniqueId(), name: 'Configuración y moneda', icon: 'solar:dollar-minimalistic-linear', url: '/admin/mi-empresa' },
-          { id: uniqueId(), name: 'Plan y suscripción', icon: 'solar:star-linear', url: '/admin/mi-empresa' },
-        ],
+        url: '/admin/mi-empresa',
       },
       {
         name: 'Empleados',
@@ -51,7 +47,7 @@ const SidebarContent: MenuItem[] = [
         id: uniqueId(),
         children: [
           { id: uniqueId(), name: 'Lista de empleados', icon: 'solar:users-group-rounded-linear', url: '/admin/empleados' },
-          { id: uniqueId(), name: 'Gestión de nómina', icon: 'solar:card-transfer-linear', url: '/admin/empleados' },
+          { id: uniqueId(), name: 'Gestión de nómina', icon: 'solar:card-transfer-linear', url: '/admin/nomina' },
         ],
       },
       {
@@ -104,8 +100,8 @@ const SidebarContent: MenuItem[] = [
         id: uniqueId(),
         children: [
           { id: uniqueId(), name: 'Productos y stock', icon: 'solar:box-linear', url: '/admin/inventario' },
-          { id: uniqueId(), name: 'Movimientos', icon: 'solar:transfer-horizontal-linear', url: '/admin/inventario' },
-          { id: uniqueId(), name: 'Alertas', icon: 'solar:danger-triangle-linear', url: '/admin/inventario' },
+          { id: uniqueId(), name: 'Movimientos', icon: 'solar:transfer-horizontal-linear', url: '/admin/inventario/movimientos' },
+          { id: uniqueId(), name: 'Alertas', icon: 'solar:danger-triangle-linear', url: '/admin/inventario/alertas' },
         ],
       },
     ],

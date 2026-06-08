@@ -47,11 +47,17 @@ const PorPagarPage = Loadable(lazy(() => import('../views/pages/admin/facturacio
 
 // Inventario
 const InventarioPage = Loadable(lazy(() => import('../views/pages/admin/inventario/InventarioPage')));
+const MovimientosInventarioPage = Loadable(lazy(() => import('../views/pages/admin/inventario/MovimientosInventarioPage')));
+const AlertasInventarioPage = Loadable(lazy(() => import('../views/pages/admin/inventario/AlertasInventarioPage')));
 
 // Módulo Contable
 const AsientosContablesPage = Loadable(lazy(() => import('../views/pages/admin/contable/AsientosContablesPage')));
 const ReportesFinancierosPage = Loadable(lazy(() => import('../views/pages/admin/contable/ReportesFinancierosPage')));
 const GestionDocumentalPage = Loadable(lazy(() => import('../views/pages/admin/contable/GestionDocumentalPage')));
+
+// Nómina
+const NominaPage = Loadable(lazy(() => import('../views/pages/admin/organizacion/NominaPage')));
+const PlanesPage = Loadable(lazy(() => import('../views/pages/admin/organizacion/PlanesPage')));
 
 // Configuración
 const GestionUsuariosPage = Loadable(lazy(() => import('../views/pages/admin/configuracion/GestionUsuariosPage')));
@@ -106,7 +112,9 @@ const Router = [
       { path: 'user-profile', element: <UserProfile /> },
       // Organización
       { path: 'mi-empresa', element: <MiEmpresaPage /> },
+      { path: 'planes', element: <PlanesPage /> },
       { path: 'Empleados', element: <EmpleadoPage /> },
+      { path: 'nomina', element: <NominaPage /> },
       { path: 'clientes', element: <ClientesPage /> },
       { path: 'proveedores', element: <ProveedoresPage /> },
       // Facturación y cobranza
@@ -115,6 +123,8 @@ const Router = [
       { path: 'por-pagar', element: <PorPagarPage /> },
       // Inventario
       { path: 'inventario', element: <InventarioPage /> },
+      { path: 'inventario/movimientos', element: <MovimientosInventarioPage /> },
+      { path: 'inventario/alertas', element: <AlertasInventarioPage /> },
       // Módulo Contable
       { path: 'asientos-contables', element: <AsientosContablesPage /> },
       { path: 'reportes-financieros', element: <ReportesFinancierosPage /> },
@@ -141,6 +151,10 @@ const Router = [
       { path: 'por-pagar', element: <PorPagarPage /> },
       // Inventario
       { path: 'inventario', element: <InventarioPage /> },
+      { path: 'inventario/movimientos', element: <MovimientosInventarioPage /> },
+      { path: 'inventario/alertas', element: <AlertasInventarioPage /> },
+      // Nómina
+      { path: 'nomina', element: <NominaPage /> },
       // Módulo Contable
       { path: 'asientos-contables', element: <AsientosContablesPage /> },
       { path: 'reportes-financieros', element: <ReportesFinancierosPage /> },
@@ -165,6 +179,8 @@ const Router = [
       { path: 'por-pagar', element: <PorPagarPage /> },
       // Inventario
       { path: 'inventario', element: <InventarioPage /> },
+      { path: 'inventario/movimientos', element: <MovimientosInventarioPage /> },
+      { path: 'inventario/alertas', element: <AlertasInventarioPage /> },
     ]
   },
 ];
