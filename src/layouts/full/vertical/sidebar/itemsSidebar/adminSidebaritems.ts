@@ -95,15 +95,23 @@ const SidebarContent: MenuItem[] = [
     heading: 'Inventario',
     children: [
       {
-        name: 'Inventario',
+        name: 'Productos y stock',
         icon: 'solar:box-linear',
         id: uniqueId(),
-        children: [
-          { id: uniqueId(), name: 'Productos y stock', icon: 'solar:box-linear', url: '/admin/inventario' },
-          { id: uniqueId(), name: 'Movimientos', icon: 'solar:transfer-horizontal-linear', url: '/admin/inventario/movimientos' },
-          { id: uniqueId(), name: 'Alertas', icon: 'solar:danger-triangle-linear', url: '/admin/inventario/alertas' },
-        ],
+        url: '/admin/inventario',
       },
+      {
+        name: 'Movimientos',
+        icon: 'solar:transfer-horizontal-linear',
+        id: uniqueId(), 
+        url: '/admin/inventario/movimientos'
+      },
+      {
+        name: 'Alertas',
+        icon: 'solar:danger-triangle-linear', 
+        id: uniqueId(),
+        url: '/admin/inventario/alertas' 
+      }
     ],
   },
   {

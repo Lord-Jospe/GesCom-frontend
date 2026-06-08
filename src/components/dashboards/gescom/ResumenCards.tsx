@@ -25,13 +25,13 @@ export const ResumenCards = ({ data, columns = 4 }: ResumenCardsProps) => {
         <div key={card.key} className={`col-span-12 sm:col-span-6 ${colClass}`}>
           <CardBox className="shadow-none border border-border">
             <div className="flex items-center justify-between">
-              <div className="flex flex-col gap-1">
-                <p className="text-sm text-muted-foreground">{card.titulo}</p>
-                <div className="flex items-baseline gap-1">
+              <div className="flex flex-col gap-1 min-w-0">
+                <p className="text-sm text-muted-foreground truncate">{card.titulo}</p>
+                <div className="flex items-baseline gap-1 min-w-0">
                   {card.moneda && (
-                    <span className="text-sm text-muted-foreground">{card.moneda}</span>
+                    <span className="text-xs font-medium text-muted-foreground shrink-0">{card.moneda}</span>
                   )}
-                  <h3 className={`text-2xl font-bold ${card.color}`}>{card.valor}</h3>
+                  <h3 className={`font-bold truncate ${card.valor.length > 12 ? 'text-lg' : card.valor.length > 9 ? 'text-xl' : 'text-2xl'} ${card.color}`}>{card.valor}</h3>
                 </div>
               </div>
               <div className={`p-3 rounded-lg ${card.bgColor}`}>

@@ -249,23 +249,16 @@ const profileDD: ProfileType[] = [
   {
     img: acccountIcon,
     title: 'Mi perfil',
-    subtitle: 'Account settings',
-    icon: "tabler:user",
+    subtitle: 'Datos personales y contraseña',
+    icon: "solar:user-circle-linear",
     url: '/user-profile',
   },
   {
     img: inboxIcon,
-    title: 'Mis notas',
-    subtitle: 'Mis notas diarias',
-    icon: "tabler:mail",
-    url: '/apps/Notes',
-  },
-  {
-    img: taskIcon,
-    title: 'Mis blogs',
-    subtitle: 'Historias, ideas y actualizaciones',
-    icon: "tabler:list-check",
-    url: '/apps/blog/post',
+    title: 'Mi empresa',
+    subtitle: 'Perfil, moneda e impuestos',
+    icon: "solar:buildings-2-linear",
+    url: '/mi-empresa',
   },
 ];
 

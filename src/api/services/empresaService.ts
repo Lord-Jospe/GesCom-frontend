@@ -1,5 +1,5 @@
 import api from 'src/api/axios';
-import type { EmpresaResponse, EditarEmpresaRequest, MonedaRequest, SuscripcionResponse, TasaBcvResponse, TasaBcvRequest } from 'src/types/empresa';
+import type { EmpresaResponse, EditarEmpresaRequest, MonedaRequest, SuscripcionResponse, DashboardResumenResponse, DashboardChartsResponse, TasaBcvResponse, TasaBcvRequest } from 'src/types/empresa';
 
 const handleError = (ctx: string, error: any): never => {
   const data = error.response?.data;
@@ -67,6 +67,15 @@ export const tasaBcvService = {
       return data;
     } catch (e: any) { handleError('tasa BCV por fecha', e); return {} as TasaBcvResponse; }
   },
+};
+
+export const dashboardService = {
+  resumenHoy: async (): Promise<DashboardResumenResponse> =>
+    (await api.get<DashboardResumenResponse>('/dashboard/today')).data,
+  resumenMes: async (): Promise<DashboardResumenResponse> =>
+    (await api.get<DashboardResumenResponse>('/dashboard/monthly')).data,
+  charts: async (): Promise<DashboardChartsResponse> =>
+    (await api.get<DashboardChartsResponse>('/dashboard/charts')).data,
 };
 
 export const formatearTasa = (tasa: number | null | undefined) =>

@@ -165,14 +165,9 @@ const SidebarLayout = ({ onClose }: { onClose?: () => void }) => {
             </div>
           ))}
 
-          {/* Promo Section */}
-          <div className="mt-9 overflow-hidden">
-            <div className="flex w-full bg-lightprimary rounded-lg p-6">
-              <div className="lg:w-1/2 w-full">
-                <h5 className="text-base text-sidebar-foreground">Haven't Account?</h5>
-                <Button className="whitespace-nowrap mt-2 text-[13px]">Cerrar Sesión</Button>
-              </div>
-            </div>
+          {/* Footer sutil del sidebar */}
+          <div className="mt-6 pt-4 border-t border-sidebar-border">
+            <p className="text-[11px] text-sidebar-foreground/40 text-center">GesCom VE v1.0</p>
           </div>
         </div>
       </SimpleBar>

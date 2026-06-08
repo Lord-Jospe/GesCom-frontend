@@ -57,9 +57,9 @@ const Profile = () => {
                 className="px-4 py-2 flex justify-between items-center bg-hover group/link w-full cursor-pointer"
               >
                 <Link to={
-                    items.url === '/user-profile'
-                    ? `${basePath}/user-profile`
-                    : items.url
+                    items.url.startsWith('/user-profile') ? `${basePath}/user-profile` :
+                    items.url.startsWith('/mi-empresa') ? `${basePath}/mi-empresa` :
+                    items.url
                   }>
                   <div className="w-full">
                     <div className="ps-0 flex items-center gap-3 w-full">

@@ -58,6 +58,25 @@ export interface SuscripcionResponse {
   tieneContabilidad: boolean;
 }
 
+export interface DashboardResumenResponse {
+  ventas: number;
+  gastos: number;
+  ganancia: number;
+  transacciones: number;
+  moneda: string;
+}
+
+export interface DashboardChartsResponse {
+  ventas30Dias: { fecha: string; monto: number }[];
+  ingresosVsGastos6Meses: { mes: string; ingresos: number; gastos: number }[];
+  categorias: { categoria: string; monto: number; porcentaje: number }[];
+  porCobrar: number;
+  porPagar: number;
+  productosCriticos: number;
+  monedaBase: string;
+  tasaBcvActual: number;
+}
+
 export interface MonedaRequest {
   moneda: 'USD' | 'VES';
 }
