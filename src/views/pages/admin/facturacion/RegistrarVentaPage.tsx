@@ -144,18 +144,18 @@ const RegistrarVentaPage = () => {
                         <Select value={l.productoId ? String(l.productoId) : ''} onValueChange={v => seleccionarProducto(i, Number(v))}>
                           <SelectTrigger className="h-9 text-sm"><SelectValue placeholder="Seleccionar..." /></SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="">— Manual —</SelectItem>
-                            {productos.filter(p => p.activo).map(p => (
+                            <SelectItem value="__none__">— Manual —</SelectItem>
+                            {productos.filter(p => p.activo && (p.stockActual > 0 || p.ventaBajoPedido)).map(p => (
                               <SelectItem key={p.productoId} value={String(p.productoId)}>
-                                {p.nombre} {p.stockActual > 0 ? `(${p.stockActual})` : '(0)'}
+                                {p.nombre} (Stock: {p.stockActual})
                               </SelectItem>
                             ))}
                           </SelectContent>
                         </Select>
                       </td>
                       <td className="px-2 py-2"><Input value={l.descripcion} onChange={e => updateLinea(i, 'descripcion', e.target.value)} placeholder="Producto o servicio" className="h-9 text-sm" /></td>
-                      <td className="px-2 py-2"><Input type="number" min={1} value={l.cantidad} onChange={e => updateLinea(i, 'cantidad', Number(e.target.value))} className="h-9 text-sm text-right" /></td>
-                      <td className="px-2 py-2"><Input type="number" step="0.01" min={0} value={l.precioUnitario} onChange={e => updateLinea(i, 'precioUnitario', Number(e.target.value))} className="h-9 text-sm text-right" /></td>
+                      <td className="px-2 py-2"><Input type="number" min={1} value={l.cantidad} onChange={e => updateLinea(i, 'cantidad', Number(e.target.value))} onFocus={e => e.target.select()} className="h-9 text-sm text-right" /></td>
+                      <td className="px-2 py-2"><Input type="number" step="0.01" min={0} value={l.precioUnitario} onChange={e => updateLinea(i, 'precioUnitario', Number(e.target.value))} onFocus={e => e.target.select()} className="h-9 text-sm text-right" /></td>
                       <td className="px-2 py-2 text-right font-mono font-medium text-sm">{(l.cantidad * l.precioUnitario).toFixed(2)}</td>
                       <td className="px-2 py-2">{lineas.length > 1 && <Button variant="ghost" size="sm" className="size-8! text-red-500 hover:bg-red-50" onClick={() => setLineas(lineas.filter((_, idx) => idx !== i))}><Trash2 className="size-4" /></Button>}</td>
                     </tr>
@@ -179,7 +179,7 @@ const RegistrarVentaPage = () => {
             </div>
 
             <div className="mt-4 space-y-3">
-              <div className="flex flex-col gap-1.5"><Label className="text-xs">Descuento global (%)</Label><Input type="number" min={0} max={100} value={form.descuentoGlobalPorcentaje} onChange={e => setForm({...form, descuentoGlobalPorcentaje: Number(e.target.value)})} className="h-9" /></div>
+              <div className="flex flex-col gap-1.5"><Label className="text-xs">Descuento global (%)</Label><Input type="number" min={0} max={100} value={form.descuentoGlobalPorcentaje} onChange={e => setForm({...form, descuentoGlobalPorcentaje: Number(e.target.value)})} onFocus={e => e.target.select()} className="h-9" /></div>
               <div className="flex flex-col gap-1.5"><Label className="text-xs">Notas</Label><Input value={form.notas} onChange={e => setForm({...form, notas: e.target.value})} placeholder="Opcional" className="h-9" /></div>
             </div>
 

@@ -91,4 +91,19 @@ export const transaccionService = {
     const { data } = await api.get(`/transactions/${id}/invoice`, { responseType: 'blob' });
     return data;
   },
+
+  listarTodosAdjuntos: async (): Promise<AdjuntoResponse[]> => {
+    const { data } = await api.get<AdjuntoResponse[]>('/transactions/documents');
+    return data;
+  },
+
+  descargarAdjunto: async (adjuntoId: number): Promise<Blob> => {
+    const { data } = await api.get(`/transactions/attachments/${adjuntoId}`, { responseType: 'blob' });
+    return data;
+  },
+
+  eliminarAdjunto: async (adjuntoId: number): Promise<void> => {
+    try { await api.delete(`/transactions/attachments/${adjuntoId}`); }
+    catch (e: any) { handleError('eliminar adjunto', e); }
+  },
 };
