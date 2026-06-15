@@ -4,7 +4,7 @@ import { toast } from 'sonner';
 import { transaccionService } from 'src/api/services/transaccionService';
 import { proveedorService } from 'src/api/services/proveedorService';
 import { inventarioService } from 'src/api/services/inventarioService';
-import type { CrearTransaccionRequest, AgregarLineaRequest, MetodoPago } from 'src/types/transaccion';
+import type { AgregarLineaRequest, MetodoPago } from 'src/types/transaccion';
 import type { ProveedorResponse, CrearProveedorRequest, CategoriaProveedor } from 'src/types/proveedor';
 import type { ProductoResponse } from 'src/types/inventario';
 import { Button } from 'src/components/ui/button';

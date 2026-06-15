@@ -2,6 +2,7 @@ import { FC } from 'react';
 import { Outlet } from 'react-router';
 import Sidebar from './vertical/sidebar/Sidebar';
 import Header from './vertical/header/Header';
+import SubscriptionBanner from 'src/components/shared/SubscriptionBanner';
 
 const ContadorLayout: FC = () => {
   return (
@@ -15,6 +16,7 @@ const ContadorLayout: FC = () => {
           <div className="body-wrapper w-full bg-white dark:bg-dark">
             {/* Top Header  */}
             <Header />
+            <SubscriptionBanner />
 
             {/* Body Content  */}
             <div className={'container mx-auto px-6 py-30'}>
