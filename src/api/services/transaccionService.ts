@@ -69,9 +69,7 @@ export const transaccionService = {
   subirAdjunto: async (id: number, archivo: File): Promise<AdjuntoResponse> => {
     const form = new FormData();
     form.append('file', archivo);
-    const { data } = await api.post<AdjuntoResponse>(`/transactions/${id}/attachments`, form, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    });
+    const { data } = await api.post<AdjuntoResponse>(`/transactions/${id}/attachments`, form);
     return data;
   },
 
@@ -94,6 +92,13 @@ export const transaccionService = {
 
   listarTodosAdjuntos: async (): Promise<AdjuntoResponse[]> => {
     const { data } = await api.get<AdjuntoResponse[]>('/transactions/documents');
+    return data;
+  },
+
+  subirDocumentoSuelto: async (archivo: File): Promise<AdjuntoResponse> => {
+    const form = new FormData();
+    form.append('file', archivo);
+    const { data } = await api.post<AdjuntoResponse>('/transactions/documents/upload', form);
     return data;
   },
 

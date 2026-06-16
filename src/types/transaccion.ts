@@ -109,5 +109,7 @@ export interface AdjuntoResponse {
   nombreOriginal: string;
   tipoArchivo: string;
   tamanio: number;
+  transaccionId: number;
+  numeroFactura: string | null;
   createdAt: string;
 }

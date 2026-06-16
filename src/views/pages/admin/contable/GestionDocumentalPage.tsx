@@ -1,16 +1,12 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { transaccionService } from 'src/api/services/transaccionService';
-import type { AdjuntoResponse, TransaccionResponse } from 'src/types/transaccion';
+import type { AdjuntoResponse } from 'src/types/transaccion';
 import { Button } from 'src/components/ui/button';
 import { Input } from 'src/components/ui/input';
-import { Label } from 'src/components/ui/label';
 import { Badge } from 'src/components/ui/badge';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from 'src/components/ui/select';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from 'src/components/ui/dialog';
-import CardBox from 'src/components/shared/CardBox';
 import { Icon } from '@iconify/react';
-import { Upload, Download, Trash2, Eye, FileText, Image, Search, Filter } from 'lucide-react';
+import { Download, Trash2, FileText, Image, Paperclip, Search, ArrowUpDown, X, MoreHorizontal, FileSpreadsheet } from 'lucide-react';
 
 const formatSize = (bytes: number) => {
   if (bytes < 1024) return `${bytes} B`;
@@ -18,233 +14,308 @@ const formatSize = (bytes: number) => {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 };
 
-const esImagen = (tipo: string) => tipo && (tipo.startsWith('image/jpeg') || tipo.startsWith('image/png') || tipo.startsWith('image/webp'));
-const esPdf = (tipo: string) => tipo && tipo.startsWith('application/pdf');
+const esImagen = (tipo: string) => tipo && /^image\//.test(tipo);
+const esPdf = (tipo: string) => tipo && /pdf/.test(tipo);
+const esWord = (tipo: string) => tipo && /word|document/.test(tipo);
+const esExcel = (tipo: string) => tipo && /excel|spreadsheet/.test(tipo);
+
+type SortKey = 'fecha' | 'nombre' | 'tamano' | 'tipo';
+type FiltroTipo = 'TODOS' | 'IMAGENES' | 'ARCHIVOS';
+
+interface TipoInfo { icon: any; label: string; color: string; bg: string; }
+const fileConfig: Record<string, TipoInfo> = {
+  imagen:   { icon: Image,           label: 'Imagen',  color: 'text-blue-500',   bg: 'bg-blue-500/10' },
+  pdf:      { icon: FileText,        label: 'PDF',      color: 'text-red-500',    bg: 'bg-red-500/10' },
+  word:     { icon: FileText,        label: 'Word',     color: 'text-blue-400',  bg: 'bg-blue-500/10' },
+  excel:    { icon: FileSpreadsheet, label: 'Excel',    color: 'text-green-500',  bg: 'bg-green-500/10' },
+  otro:     { icon: FileText,        label: 'Archivo',  color: 'text-gray-400',   bg: 'bg-muted' },
+};
+
+const getTipo = (t: string): TipoInfo => {
+  if (esImagen(t)) return fileConfig.imagen;
+  if (esPdf(t)) return fileConfig.pdf;
+  if (esExcel(t)) return fileConfig.excel;
+  if (esWord(t)) return fileConfig.word;
+  return fileConfig.otro;
+};
 
 const GestionDocumentalPage = () => {
   const [adjuntos, setAdjuntos] = useState<AdjuntoResponse[]>([]);
-  const [transacciones, setTransacciones] = useState<TransaccionResponse[]>([]);
   const [loading, setLoading] = useState(false);
-
-  // Filtros
-  const [busqueda, setBusqueda] = useState('');
-  const [filtroTipo, setFiltroTipo] = useState<string>('TODOS');
-  const [filtroFechaDesde, setFiltroFechaDesde] = useState('');
-  const [filtroFechaHasta, setFiltroFechaHasta] = useState('');
-
-  // Upload
-  const [uploadTransaccionId, setUploadTransaccionId] = useState('');
-  const [archivo, setArchivo] = useState<File | null>(null);
-  const [uploading, setUploading] = useState(false);
-
-  // Preview
+  const [selected, setSelected] = useState<AdjuntoResponse | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [previewTipo, setPreviewTipo] = useState('');
+  const [zoom, setZoom] = useState(false);
+  const [busqueda, setBusqueda] = useState('');
+  const [filtroTipo, setFiltroTipo] = useState<FiltroTipo>('TODOS');
+  const [sortKey, setSortKey] = useState<SortKey>('fecha');
+  const [sortAsc, setSortAsc] = useState(false);
+  const [showSort, setShowSort] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  // Pan de imagen
+  const [pan, setPan] = useState({ x: 0, y: 0 });
+  const [dragging, setDragging] = useState(false);
+  const dragStart = useRef({ x: 0, y: 0, panX: 0, panY: 0 });
+  const fileRef = useRef<HTMLInputElement>(null);
 
   const cargar = async () => {
     setLoading(true);
-    try {
-      const [docs, txns] = await Promise.all([
-        transaccionService.listarTodosAdjuntos(),
-        transaccionService.listar(),
-      ]);
-      setAdjuntos(docs);
-      setTransacciones(txns);
-    } catch {}
+    try { setAdjuntos(await transaccionService.listarTodosAdjuntos()); } catch {}
     finally { setLoading(false); }
   };
 
   useEffect(() => { cargar(); }, []);
 
-  const handleUpload = async () => {
-    if (!uploadTransaccionId || !archivo) { toast.error('Selecciona una transacción y un archivo'); return; }
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
     setUploading(true);
     try {
-      await transaccionService.subirAdjunto(Number(uploadTransaccionId), archivo);
+      await transaccionService.subirDocumentoSuelto(file);
       toast.success('Documento subido');
-      setUploadTransaccionId(''); setArchivo(null);
       cargar();
-    } catch (e: any) { toast.error(e.message); }
-    finally { setUploading(false); }
+    } catch (err: any) { toast.error(err.message); }
+    finally { setUploading(false); if (fileRef.current) fileRef.current.value = ''; }
   };
 
-  const handlePreview = async (adjuntoId: number, tipo: string) => {
+  const handleClick = async (a: AdjuntoResponse) => {
+    setSelected(a);
+    setShowMenu(false);
+    setZoom(false);
     try {
-      const blob = await transaccionService.descargarAdjunto(adjuntoId);
+      const blob = await transaccionService.descargarAdjunto(a.adjuntoId);
       setPreviewUrl(URL.createObjectURL(blob));
-      setPreviewTipo(tipo);
-    } catch { toast.error('No se pudo cargar la vista previa'); }
+    } catch { toast.error('No se pudo cargar'); }
   };
 
-  const handleDownload = async (adjuntoId: number, nombre: string) => {
+  const handleDownload = async (a: AdjuntoResponse) => {
     try {
-      const blob = await transaccionService.descargarAdjunto(adjuntoId);
+      const blob = await transaccionService.descargarAdjunto(a.adjuntoId);
       const url = URL.createObjectURL(blob);
-      const a = document.createElement('a'); a.href = url; a.download = nombre;
-      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      const el = document.createElement('a'); el.href = url; el.download = a.nombreOriginal;
+      document.body.appendChild(el); el.click(); document.body.removeChild(el);
       URL.revokeObjectURL(url);
     } catch { toast.error('No se pudo descargar'); }
   };
 
-  const handleEliminar = async (adjuntoId: number) => {
-    if (!confirm('¿Eliminar este documento?')) return;
+  const handleEliminar = async (a: AdjuntoResponse) => {
+    if (!confirm(`¿Eliminar «${a.nombreOriginal}»?`)) return;
     try {
-      await transaccionService.eliminarAdjunto(adjuntoId);
-      toast.success('Documento eliminado');
+      await transaccionService.eliminarAdjunto(a.adjuntoId);
+      if (selected?.adjuntoId === a.adjuntoId) { setSelected(null); setPreviewUrl(null); }
+      toast.success('Eliminado');
       cargar();
-    } catch (e: any) { toast.error(e.message); }
+    } catch (err: any) { toast.error(err.message); }
   };
 
-  // Aplicar filtros
   const filtrados = adjuntos.filter(a => {
-    if (busqueda && !a.nombreOriginal.toLowerCase().includes(busqueda.toLowerCase())) return false;
-    if (filtroTipo === 'IMAGEN' && !esImagen(a.tipoArchivo)) return false;
-    if (filtroTipo === 'PDF' && !esPdf(a.tipoArchivo)) return false;
-    if (filtroFechaDesde && a.createdAt < filtroFechaDesde) return false;
-    if (filtroFechaHasta && a.createdAt > filtroFechaHasta + 'T23:59:59') return false;
+    if (busqueda) {
+      const q = busqueda.toLowerCase();
+      if (!a.nombreOriginal.toLowerCase().includes(q)
+        && !(a.numeroFactura && a.numeroFactura.toLowerCase().includes(q))) return false;
+    }
+    if (filtroTipo === 'IMAGENES' && !esImagen(a.tipoArchivo)) return false;
+    if (filtroTipo === 'ARCHIVOS' && esImagen(a.tipoArchivo)) return false;
     return true;
   });
 
-  // Buscar nombre de la transacción vinculada
-  const nombreTransaccion = (adjunto: AdjuntoResponse) => {
-    // AdjuntoResponse no tiene transaccionId, pero lo inferimos del contexto
-    return null;
-  };
+  const ordenados = [...filtrados].sort((a, b) => {
+    let cmp = 0;
+    switch (sortKey) {
+      case 'fecha': cmp = a.createdAt.localeCompare(b.createdAt); break;
+      case 'nombre': cmp = a.nombreOriginal.localeCompare(b.nombreOriginal, 'es'); break;
+      case 'tamano': cmp = a.tamanio - b.tamanio; break;
+      case 'tipo': cmp = (a.tipoArchivo || '').localeCompare(b.tipoArchivo || ''); break;
+    }
+    return sortAsc ? cmp : -cmp;
+  });
+
+  const sortOptions: { key: SortKey; label: string }[] = [
+    { key: 'fecha', label: 'Más recientes' },
+    { key: 'nombre', label: 'Nombre' },
+    { key: 'tamano', label: 'Tamaño' },
+    { key: 'tipo', label: 'Tipo de archivo' },
+  ];
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center gap-4">
-        <div className="p-3 rounded-2xl bg-warning/10 shrink-0">
-          <Icon icon="solar:folder-with-files-bold" width={32} className="text-warning" />
-        </div>
-        <div>
-          <h1 className="text-2xl font-bold">Gestión Documental</h1>
-          <p className="text-muted-foreground">Bóveda digital de facturas, recibos y documentos</p>
-        </div>
-      </div>
-
-      {/* Subir documento */}
-      <CardBox className="shadow-none border border-border">
-        <h3 className="text-base font-semibold mb-3 flex items-center gap-2">
-          <Upload className="size-4 text-primary" /> Subir documento
-        </h3>
-        <div className="flex flex-wrap items-end gap-3">
-          <div className="flex flex-col gap-1.5">
-            <Label className="text-xs">Transacción</Label>
-            <Select value={uploadTransaccionId} onValueChange={setUploadTransaccionId}>
-              <SelectTrigger className="w-64 h-9"><SelectValue placeholder="Seleccionar transacción..." /></SelectTrigger>
-              <SelectContent>
-                {transacciones.slice(0, 50).map(t => (
-                  <SelectItem key={t.transaccionId} value={String(t.transaccionId)}>
-                    {t.tipo === 'INGRESO' ? '🧾' : '💰'} {t.numeroFactura || `#${t.transaccionId}`} — {t.clienteNombre || t.proveedorNombre || '—'} ({t.fecha})
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="flex flex-col gap-1.5">
-            <Label className="text-xs">Archivo (JPG, PNG, PDF)</Label>
-            <Input type="file" accept=".jpg,.jpeg,.png,.pdf" onChange={e => setArchivo(e.target.files?.[0] || null)} className="h-9 text-sm" />
-          </div>
-          <Button onClick={handleUpload} disabled={uploading || !archivo || !uploadTransaccionId} className="h-9">
-            {uploading ? <Icon icon="svg-spinners:180-ring" width={16} className="mr-1 animate-spin" /> : <Upload className="size-4 mr-1" />}
-            Subir
-          </Button>
-        </div>
-      </CardBox>
-
-      {/* Filtros + Lista */}
-      <CardBox className="shadow-none border border-border">
-        <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
-          <h3 className="text-base font-semibold flex items-center gap-2">
-            <FileText className="size-4 text-muted-foreground" />
-            {filtrados.length} de {adjuntos.length} documento{adjuntos.length !== 1 ? 's' : ''}
-          </h3>
-          <div className="flex flex-wrap items-center gap-2">
-            <div className="relative w-48">
-              <Search className="size-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
-              <Input value={busqueda} onChange={e => setBusqueda(e.target.value)} placeholder="Buscar nombre..." className="h-8 pl-8 text-xs" />
+      <div className="flex gap-6">
+        {/* ─── Lista ──────────────────────────────────────── */}
+        <div className="w-[40%] shrink-0 space-y-4">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 rounded-xl bg-warning/10 shrink-0">
+              <Icon icon="solar:folder-with-files-bold" width={28} className="text-warning" />
             </div>
-            <Select value={filtroTipo} onValueChange={setFiltroTipo}>
-              <SelectTrigger className="w-24 h-8 text-xs"><Filter className="size-3 mr-1" /><SelectValue placeholder="Tipo" /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="TODOS">Todos</SelectItem>
-                <SelectItem value="IMAGEN">Imágenes</SelectItem>
-                <SelectItem value="PDF">PDF</SelectItem>
-              </SelectContent>
-            </Select>
-            <Input type="date" value={filtroFechaDesde} onChange={e => setFiltroFechaDesde(e.target.value)} className="h-8 w-32 text-xs" />
-            <span className="text-xs text-muted-foreground">a</span>
-            <Input type="date" value={filtroFechaHasta} onChange={e => setFiltroFechaHasta(e.target.value)} className="h-8 w-32 text-xs" />
-            {(busqueda || filtroTipo !== 'TODOS' || filtroFechaDesde || filtroFechaHasta) && (
-              <Button variant="ghost" size="sm" className="h-8 text-xs" onClick={() => { setBusqueda(''); setFiltroTipo('TODOS'); setFiltroFechaDesde(''); setFiltroFechaHasta(''); }}>
-                Limpiar
-              </Button>
+            <div>
+              <h1 className="text-2xl font-bold">Gestión Documental</h1>
+              <p className="text-sm text-muted-foreground">{adjuntos.length} documento{adjuntos.length !== 1 ? 's' : ''}</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="flex bg-muted rounded-lg p-0.5">
+              {(['TODOS','IMAGENES','ARCHIVOS'] as FiltroTipo[]).map(f => (
+                <button key={f}
+                  className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${filtroTipo === f ? 'bg-background shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
+                  onClick={() => setFiltroTipo(f)}
+                >{f === 'TODOS' ? 'Todos' : f === 'IMAGENES' ? 'Imágenes' : 'Archivos'}</button>
+              ))}
+            </div>
+            <div className="flex items-center gap-0.5 ml-auto">
+              <input ref={fileRef} type="file" accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,.xls,.xlsx" onChange={handleFileChange} className="hidden" />
+              <button className="p-1.5 rounded-full hover:bg-muted transition-colors disabled:opacity-50" disabled={uploading} onClick={() => fileRef.current?.click()} title="Subir">
+                {uploading ? <Icon icon="svg-spinners:180-ring" width={16} className="animate-spin" /> : <Paperclip className="size-4" />}
+              </button>
+              <div className="relative">
+                <button className="p-1.5 rounded-full hover:bg-muted transition-colors" onClick={() => setShowSort(!showSort)} title="Ordenar">
+                  <ArrowUpDown className="size-4" />
+                </button>
+                {showSort && (
+                  <div className="absolute right-0 top-full mt-1 w-44 bg-popover border rounded-lg shadow-lg z-20 p-1" onClick={() => setShowSort(false)}>
+                    {sortOptions.map(opt => (
+                      <button key={opt.key} className={`flex items-center justify-between w-full text-left px-2 py-1.5 rounded text-sm hover:bg-muted ${sortKey === opt.key ? 'bg-primary/10 text-primary font-medium' : ''}`}
+                        onClick={() => { if (sortKey === opt.key) setSortAsc(!sortAsc); else { setSortKey(opt.key); setSortAsc(false); } }}>
+                        {opt.label}
+                        {sortKey === opt.key && <Icon icon={sortAsc ? 'solar:sort-from-top-to-bottom-linear' : 'solar:sort-from-bottom-to-top-linear'} width={14} />}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+          <div className="relative">
+            <Search className="size-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+            <Input value={busqueda} onChange={e => setBusqueda(e.target.value)} placeholder="Buscar..." className="pl-9 h-9 text-sm" />
+            {busqueda && (
+              <button onClick={() => setBusqueda('')} className="absolute right-2 top-1/2 -translate-y-1/2 p-0.5 rounded hover:bg-muted">
+                <X className="size-3.5 text-muted-foreground" />
+              </button>
+            )}
+          </div>
+
+          <div className="max-h-[calc(100vh-340px)] overflow-y-auto">
+            {loading ? (
+              <div className="flex justify-center py-12"><Icon icon="svg-spinners:180-ring" width={24} className="text-primary animate-spin" /></div>
+            ) : ordenados.length === 0 ? (
+              <div className="text-center py-12 text-muted-foreground text-sm">{adjuntos.length === 0 ? 'Sin documentos.' : 'Sin resultados.'}</div>
+            ) : (
+              <div className="space-y-0.5">
+                {ordenados.map(a => {
+                  const t = getTipo(a.tipoArchivo);
+                  const Icono = t.icon;
+                  return (
+                    <div key={a.adjuntoId}
+                      className={`flex items-center gap-3 px-3 py-2.5 cursor-pointer hover:bg-muted/40 rounded-lg transition-colors ${selected?.adjuntoId === a.adjuntoId ? 'bg-muted/60' : ''}`}
+                      onClick={() => handleClick(a)}
+                    >
+                      <div className={`p-1.5 rounded-md shrink-0 ${t.bg}`}>
+                        <Icono className={`size-4 ${t.color}`} />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm truncate">{a.nombreOriginal}</p>
+                        <p className="text-xs text-muted-foreground mt-0.5">
+                          {formatSize(a.tamanio)}
+                          <span className={`ml-2 text-xs font-medium ${t.color}`}>{t.label}</span>
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             )}
           </div>
         </div>
 
-        {loading ? (
-          <div className="text-center py-12 text-muted-foreground">
-            <Icon icon="svg-spinners:180-ring" width={24} className="mx-auto mb-2 animate-spin" /> Cargando...
-          </div>
-        ) : filtrados.length === 0 ? (
-          <div className="text-center py-12 text-muted-foreground">
-            <Icon icon="solar:folder-open-linear" width={48} className="mx-auto mb-3 text-muted-foreground/50" />
-            <p className="text-lg font-medium">{adjuntos.length === 0 ? 'Bóveda vacía' : 'Sin resultados'}</p>
-            <p className="text-sm">{adjuntos.length === 0 ? 'Sube documentos vinculándolos a una transacción' : 'Ajusta los filtros'}</p>
-          </div>
-        ) : (
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {filtrados.map(a => (
-              <div key={a.adjuntoId} className="border rounded-lg p-3 hover:border-primary/40 hover:bg-muted/5 transition-all group">
-                <div className="flex items-start gap-3">
-                  <div className={`p-2 rounded-lg shrink-0 ${esImagen(a.tipoArchivo) ? 'bg-blue-50 text-blue-600' : esPdf(a.tipoArchivo) ? 'bg-red-50 text-red-600' : 'bg-gray-100 text-gray-600'}`}>
-                    {esImagen(a.tipoArchivo) ? <Image className="size-6" /> : <FileText className="size-6" />}
-                  </div>
+        {/* ─── Preview ────────────────────────────────────── */}
+        <div className="flex-1 min-w-0 flex flex-col">
+          {!selected ? (
+            <div className="flex flex-col items-center justify-center flex-1 text-muted-foreground border border-dashed rounded-xl bg-muted/5">
+              <Icon icon="solar:document-text-linear" width={48} className="mb-3 text-muted-foreground/30" />
+              <p className="text-sm">Selecciona un documento</p>
+            </div>
+          ) : (() => {
+            const t = getTipo(selected.tipoArchivo);
+            const Icono = t.icon;
+            return (
+              <div className="border border-border rounded-lg overflow-hidden flex flex-col" style={{ height: 'calc(100vh - 130px)' }}>
+                {/* Header */}
+                <div className={`flex items-center gap-3 px-4 py-2.5 shrink-0 ${t.bg} border-b border-border`}>
+                  <Icono className={`size-4 ${t.color}`} />
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium truncate" title={a.nombreOriginal}>{a.nombreOriginal}</p>
-                    <div className="flex items-center gap-2 mt-0.5">
-                      <span className="text-xs text-muted-foreground">{formatSize(a.tamanio)}</span>
-                      <span className="text-xs text-muted-foreground">·</span>
-                      <span className="text-xs text-muted-foreground">{new Date(a.createdAt).toLocaleDateString('es-VE', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
-                      {esImagen(a.tipoArchivo) ? <Badge className="text-xs bg-blue-50 text-blue-600 h-5">IMG</Badge> : <Badge className="text-xs bg-red-50 text-red-600 h-5">PDF</Badge>}
-                    </div>
+                    <p className="text-sm font-medium truncate">{selected.nombreOriginal}</p>
+                    <p className="text-xs text-muted-foreground">{t.label} · {formatSize(selected.tamanio)}</p>
+                  </div>
+                  {esImagen(selected.tipoArchivo) && (
+                    <button className="p-1 rounded hover:bg-black/10 transition-colors text-xs" onClick={() => { setZoom(!zoom); setPan({ x: 0, y: 0 }); }} title={zoom ? 'Alejar' : 'Acercar'}>
+                      {zoom ? 'Alejar' : 'Zoom'}
+                    </button>
+                  )}
+                  <div className="relative">
+                    <button className="p-1 rounded hover:bg-black/10 transition-colors" onClick={() => setShowMenu(!showMenu)}>
+                      <MoreHorizontal className="size-4" />
+                    </button>
+                    {showMenu && (
+                      <div className="absolute right-0 top-full mt-1 w-32 bg-popover border rounded-lg shadow-lg z-20 p-1" onClick={() => setShowMenu(false)}>
+                        <button className="flex items-center gap-2 w-full text-left px-3 py-2 rounded text-sm hover:bg-muted" onClick={() => handleDownload(selected)}>
+                          <Download className="size-4" /> Descargar
+                        </button>
+                        <button className="flex items-center gap-2 w-full text-left px-3 py-2 rounded text-sm hover:bg-muted text-red-500" onClick={() => handleEliminar(selected)}>
+                          <Trash2 className="size-4" /> Eliminar
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
-                <div className="flex gap-1 mt-2 pt-2 border-t opacity-0 group-hover:opacity-100 transition-opacity">
-                  <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => handlePreview(a.adjuntoId, a.tipoArchivo)}>
-                    <Eye className="size-3 mr-1" /> Ver
-                  </Button>
-                  <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => handleDownload(a.adjuntoId, a.nombreOriginal)}>
-                    <Download className="size-3 mr-1" /> Descargar
-                  </Button>
-                  <Button variant="ghost" size="sm" className="h-7 text-xs text-red-500 hover:bg-red-50 ml-auto" onClick={() => handleEliminar(a.adjuntoId)}>
-                    <Trash2 className="size-3" />
-                  </Button>
+
+                {/* Contenido — marco fijo, nunca se desborda */}
+                <div className="flex-1 bg-muted/10 overflow-hidden relative">
+                  {esImagen(selected.tipoArchivo) && previewUrl ? (
+                    <div
+                      className={`w-full h-full overflow-hidden ${zoom ? 'cursor-grab' : ''} ${dragging ? 'cursor-grabbing' : ''}`}
+                      onMouseDown={e => {
+                        if (!zoom || !esImagen(selected.tipoArchivo)) return;
+                        setDragging(true);
+                        dragStart.current = { x: e.clientX, y: e.clientY, panX: pan.x, panY: pan.y };
+                      }}
+                      onMouseMove={e => {
+                        if (!dragging) return;
+                        setPan({
+                          x: dragStart.current.panX + (e.clientX - dragStart.current.x),
+                          y: dragStart.current.panY + (e.clientY - dragStart.current.y),
+                        });
+                      }}
+                      onMouseUp={() => setDragging(false)}
+                      onMouseLeave={() => setDragging(false)}
+                      onDoubleClick={() => { setZoom(!zoom); setPan({ x: 0, y: 0 }); }}
+                    >
+                      <img
+                        src={previewUrl}
+                        alt={selected.nombreOriginal}
+                        className={zoom ? 'max-w-none' : 'max-w-full max-h-full object-contain mx-auto'}
+                        style={zoom ? { transform: `translate(${pan.x}px, ${pan.y}px)` } : {}}
+                        draggable={false}
+                      />
+                    </div>
+                  ) : esPdf(selected.tipoArchivo) && previewUrl ? (
+                    <iframe src={previewUrl} className="w-full h-full" title="PDF Preview" />
+                  ) : previewUrl ? (
+                    <div className="flex flex-col items-center justify-center h-full gap-3">
+                      <div className={`p-4 rounded-2xl ${t.bg}`}><Icono className={`size-10 ${t.color}`} /></div>
+                      <p className="text-sm font-medium">{selected.nombreOriginal}</p>
+                      <p className="text-xs text-muted-foreground">{t.label} · {formatSize(selected.tamanio)}</p>
+                      <Button size="sm" variant="outline" onClick={() => handleDownload(selected)}>
+                        <Download className="size-3.5 mr-1" /> Descargar
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="flex justify-center items-center h-full"><Icon icon="svg-spinners:180-ring" width={24} className="text-primary animate-spin" /></div>
+                  )}
                 </div>
               </div>
-            ))}
-          </div>
-        )}
-      </CardBox>
-
-      {/* Preview dialog */}
-      <Dialog open={!!previewUrl} onOpenChange={() => { setPreviewUrl(null); setPreviewTipo(''); }}>
-        <DialogContent className="max-w-3xl max-h-[85vh]">
-          <DialogHeader><DialogTitle>Vista previa</DialogTitle></DialogHeader>
-          {previewUrl && (
-            <div className="flex items-center justify-center min-h-[300px] bg-muted/10 rounded-lg overflow-auto">
-              {esImagen(previewTipo) ? (
-                <img src={previewUrl} alt="Preview" className="max-w-full max-h-[70vh] object-contain" />
-              ) : (
-                <iframe src={previewUrl} className="w-full h-[70vh]" title="PDF Preview" />
-              )}
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
+            );
+          })()}
+        </div>
+      </div>
     </div>
   );
 };
