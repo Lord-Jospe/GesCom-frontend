@@ -1,0 +1,63 @@
+import { useState } from 'react';
+import { contabilidadService } from 'src/api/services/contabilidadService';
+import type { EstadoResultadosResponse } from 'src/types/contabilidad';
+import { Button } from 'src/components/ui/button';
+import { Input } from 'src/components/ui/input';
+import { Label } from 'src/components/ui/label';
+import CardBox from 'src/components/shared/CardBox';
+import { Icon } from '@iconify/react';
+
+const hoy = new Date().toISOString().slice(0, 10);
+const inicioAnio = () => `${new Date().getFullYear()}-01-01`;
+
+const EstadoResultadosPage = () => {
+  const [desde, setDesde] = useState(inicioAnio);
+  const [hasta, setHasta] = useState(hoy);
+  const [data, setData] = useState<EstadoResultadosResponse | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  const generar = async () => {
+    setLoading(true);
+    try { setData(await contabilidadService.estadoResultados(desde, hasta)); } catch {}
+    finally { setLoading(false); }
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center gap-4">
+        <div className="p-3 rounded-2xl bg-success/10 shrink-0">
+          <Icon icon="solar:graph-up-bold" width={32} className="text-success" />
+        </div>
+        <div>
+          <h1 className="text-2xl font-bold">Estado de Resultados</h1>
+          <p className="text-muted-foreground">Ingresos, gastos y utilidad neta</p>
+        </div>
+      </div>
+
+      <CardBox className="shadow-none border border-border">
+        <div className="flex flex-wrap items-end gap-3">
+          <div className="flex flex-col gap-1.5"><Label className="text-xs">Desde</Label><Input type="date" value={desde} onChange={e => setDesde(e.target.value)} className="h-9 w-40" /></div>
+          <div className="flex flex-col gap-1.5"><Label className="text-xs">Hasta</Label><Input type="date" value={hasta} onChange={e => setHasta(e.target.value)} className="h-9 w-40" /></div>
+          <Button onClick={generar} disabled={loading} className="h-9">
+            {loading ? <Icon icon="svg-spinners:180-ring" width={16} className="mr-1 animate-spin" /> : <Icon icon="solar:filter-linear" width={16} className="mr-1" />}
+            Generar
+          </Button>
+        </div>
+      </CardBox>
+
+      {data && (
+        <CardBox className="shadow-none border-2 border-success/20 bg-gradient-to-b from-success/[0.03] to-transparent max-w-md mx-auto">
+          <h3 className="text-lg font-bold mb-4 text-center">Estado de Resultados</h3>
+          <p className="text-xs text-muted-foreground text-center mb-4">{data.fechaInicio} → {data.fechaFin}</p>
+          <div className="space-y-3 text-sm">
+            <div className="flex justify-between py-2"><span className="text-muted-foreground">Total Ingresos</span><span className="font-mono font-bold text-success">$ {data.totalIngresos.toFixed(2)}</span></div>
+            <div className="flex justify-between py-2 border-t"><span className="text-muted-foreground">Total Gastos</span><span className="font-mono font-bold text-destructive">$ {data.totalGastos.toFixed(2)}</span></div>
+            <div className="flex justify-between py-3 border-t-2 text-base"><span className="font-bold">Utilidad Neta</span><span className={`font-mono font-bold ${data.utilidadNeta >= 0 ? 'text-success' : 'text-destructive'}`}>$ {data.utilidadNeta.toFixed(2)}</span></div>
+          </div>
+        </CardBox>
+      )}
+    </div>
+  );
+};
+
+export default EstadoResultadosPage;

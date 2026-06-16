@@ -122,9 +122,9 @@ const SidebarContent: MenuItem[] = [
         icon: 'solar:book-2-broken',
         id: uniqueId(),
         children: [
-          { id: uniqueId(), name: 'Plan de cuentas', icon: 'solar:documents-linear', url: '/admin/asientos-contables' },
-          { id: uniqueId(), name: 'Libro diario', icon: 'solar:book-open-linear', url: '/admin/asientos-contables' },
-          { id: uniqueId(), name: 'Libro mayor', icon: 'solar:book-bookmark-linear', url: '/admin/asientos-contables' },
+          { id: uniqueId(), name: 'Libro diario', icon: 'solar:book-2-linear', url: '/admin/libro-diario' },
+          { id: uniqueId(), name: 'Libro mayor', icon: 'solar:book-bookmark-linear', url: '/admin/libro-mayor' },
+          { id: uniqueId(), name: 'Plan de cuentas', icon: 'solar:documents-linear', url: '/admin/plan-cuentas' },
         ],
       },
       {
@@ -132,20 +132,16 @@ const SidebarContent: MenuItem[] = [
         icon: 'solar:chart-2-bold',
         id: uniqueId(),
         children: [
-          { id: uniqueId(), name: 'Estado de resultados', icon: 'solar:graph-up-linear', url: '/admin/reportes-financieros' },
-          { id: uniqueId(), name: 'Balance general', icon: 'solar:align-vertical-spacing-linear', url: '/admin/reportes-financieros' },
-          { id: uniqueId(), name: 'Conciliación bancaria', icon: 'solar:bank-linear', url: '/admin/reportes-financieros' },
+          { id: uniqueId(), name: 'Estado de resultados', icon: 'solar:graph-up-linear', url: '/admin/estado-resultados' },
+          { id: uniqueId(), name: 'Balance general', icon: 'solar:align-vertical-spacing-linear', url: '/admin/balance-general' },
+          { id: uniqueId(), name: 'Cierre de período', icon: 'solar:lock-keyhole-linear', url: '/admin/cierre-periodo' },
         ],
       },
       {
         name: 'Gestión Documental',
         icon: 'solar:folder-with-files-linear',
         id: uniqueId(),
-        children: [
-          { id: uniqueId(), name: 'Bóveda de documentos', icon: 'solar:folder-open-linear', url: '/admin/gestion-documental' },
-          { id: uniqueId(), name: 'Exportar facturas', icon: 'solar:export-linear', url: '/admin/gestion-documental' },
-          { id: uniqueId(), name: 'Revisar facturas', icon: 'solar:document-search-linear', url: '/admin/gestion-documental' },
-        ],
+        url: '/admin/gestion-documental',
       },
     ],
   },

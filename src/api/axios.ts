@@ -2,9 +2,6 @@ import axios, { AxiosInstance, AxiosResponse, InternalAxiosRequestConfig } from 
 
 const api: AxiosInstance = axios.create({
     baseURL: import.meta.env.VITE_URL_BASE,
-    headers: {
-        'Content-Type': 'application/json',
-    },
 });
 
 // Agregar el token a cada petición

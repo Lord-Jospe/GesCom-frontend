@@ -56,6 +56,12 @@ const AlertasInventarioPage = Loadable(lazy(() => import('../views/pages/admin/i
 const AsientosContablesPage = Loadable(lazy(() => import('../views/pages/admin/contable/AsientosContablesPage')));
 const ReportesFinancierosPage = Loadable(lazy(() => import('../views/pages/admin/contable/ReportesFinancierosPage')));
 const GestionDocumentalPage = Loadable(lazy(() => import('../views/pages/admin/contable/GestionDocumentalPage')));
+const PlanCuentasPage = Loadable(lazy(() => import('../views/pages/admin/contable/PlanCuentasPage')));
+const LibroDiarioPage = Loadable(lazy(() => import('../views/pages/admin/contable/LibroDiarioPage')));
+const LibroMayorPage = Loadable(lazy(() => import('../views/pages/admin/contable/LibroMayorPage')));
+const EstadoResultadosPage = Loadable(lazy(() => import('../views/pages/admin/contable/EstadoResultadosPage')));
+const BalanceGeneralPage = Loadable(lazy(() => import('../views/pages/admin/contable/BalanceGeneralPage')));
+const CierrePeriodoPage = Loadable(lazy(() => import('../views/pages/admin/contable/CierrePeriodoPage')));
 
 // Nómina
 const NominaPage = Loadable(lazy(() => import('../views/pages/admin/organizacion/NominaPage')));
@@ -131,6 +137,12 @@ const Router = [
       { path: 'inventario/alertas', element: <AlertasInventarioPage /> },
       // Módulo Contable
       { path: 'asientos-contables', element: <AsientosContablesPage /> },
+      { path: 'plan-cuentas', element: <PlanCuentasPage /> },
+      { path: 'libro-diario', element: <LibroDiarioPage /> },
+      { path: 'libro-mayor', element: <LibroMayorPage /> },
+      { path: 'estado-resultados', element: <EstadoResultadosPage /> },
+      { path: 'balance-general', element: <BalanceGeneralPage /> },
+      { path: 'cierre-periodo', element: <CierrePeriodoPage /> },
       { path: 'reportes-financieros', element: <ReportesFinancierosPage /> },
       { path: 'gestion-documental', element: <GestionDocumentalPage /> },
       // Configuración
@@ -165,6 +177,12 @@ const Router = [
       { path: 'nomina', element: <NominaPage /> },
       // Módulo Contable
       { path: 'asientos-contables', element: <AsientosContablesPage /> },
+      { path: 'plan-cuentas', element: <PlanCuentasPage /> },
+      { path: 'libro-diario', element: <LibroDiarioPage /> },
+      { path: 'libro-mayor', element: <LibroMayorPage /> },
+      { path: 'estado-resultados', element: <EstadoResultadosPage /> },
+      { path: 'balance-general', element: <BalanceGeneralPage /> },
+      { path: 'cierre-periodo', element: <CierrePeriodoPage /> },
       { path: 'reportes-financieros', element: <ReportesFinancierosPage /> },
       { path: 'gestion-documental', element: <GestionDocumentalPage /> },
     ]

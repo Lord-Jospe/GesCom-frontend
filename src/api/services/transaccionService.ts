@@ -69,9 +69,7 @@ export const transaccionService = {
   subirAdjunto: async (id: number, archivo: File): Promise<AdjuntoResponse> => {
     const form = new FormData();
     form.append('file', archivo);
-    const { data } = await api.post<AdjuntoResponse>(`/transactions/${id}/attachments`, form, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    });
+    const { data } = await api.post<AdjuntoResponse>(`/transactions/${id}/attachments`, form);
     return data;
   },
 
@@ -90,5 +88,27 @@ export const transaccionService = {
   descargarFactura: async (id: number): Promise<Blob> => {
     const { data } = await api.get(`/transactions/${id}/invoice`, { responseType: 'blob' });
     return data;
+  },
+
+  listarTodosAdjuntos: async (): Promise<AdjuntoResponse[]> => {
+    const { data } = await api.get<AdjuntoResponse[]>('/transactions/documents');
+    return data;
+  },
+
+  subirDocumentoSuelto: async (archivo: File): Promise<AdjuntoResponse> => {
+    const form = new FormData();
+    form.append('file', archivo);
+    const { data } = await api.post<AdjuntoResponse>('/transactions/documents/upload', form);
+    return data;
+  },
+
+  descargarAdjunto: async (adjuntoId: number): Promise<Blob> => {
+    const { data } = await api.get(`/transactions/attachments/${adjuntoId}`, { responseType: 'blob' });
+    return data;
+  },
+
+  eliminarAdjunto: async (adjuntoId: number): Promise<void> => {
+    try { await api.delete(`/transactions/attachments/${adjuntoId}`); }
+    catch (e: any) { handleError('eliminar adjunto', e); }
   },
 };
