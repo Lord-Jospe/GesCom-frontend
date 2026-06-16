@@ -54,6 +54,17 @@ const RegistrarVentaPage = () => {
 
   const handle = async () => {
     if (lineas.some(l => !l.descripcion.trim() || l.cantidad <= 0 || l.precioUnitario <= 0)) { setError('Completa todas las líneas con descripción, cantidad y precio válidos.'); return; }
+    // Validar stock para líneas con producto seleccionado
+    const lineaSinStock = lineas.find(l => {
+      if (!l.productoId) return false;
+      const prod = productos.find(p => p.productoId === l.productoId);
+      return prod && !prod.ventaBajoPedido && l.cantidad > prod.stockActual;
+    });
+    if (lineaSinStock) {
+      const prod = productos.find(p => p.productoId === lineaSinStock.productoId);
+      setError(`Stock insuficiente para «${prod?.nombre || 'producto'}». Disponible: ${prod?.stockActual ?? 0}. Active "Venta bajo pedido" para permitir stock negativo.`);
+      return;
+    }
     try { setG(true);
       await transaccionService.crear({
         tipo: 'INGRESO', clienteId: form.clienteId || undefined, fecha: form.fecha, moneda: form.moneda,
@@ -147,7 +158,7 @@ const RegistrarVentaPage = () => {
                             <SelectItem value="__none__">— Manual —</SelectItem>
                             {productos.filter(p => p.activo && (p.stockActual > 0 || p.ventaBajoPedido)).map(p => (
                               <SelectItem key={p.productoId} value={String(p.productoId)}>
-                                {p.nombre} (Stock: {p.stockActual})
+                                {p.nombre} (Stock: {p.stockActual}){p.ventaBajoPedido ? ' · Bajo pedido' : ''}
                               </SelectItem>
                             ))}
                           </SelectContent>

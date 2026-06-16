@@ -142,7 +142,7 @@ const RegistrarGastoPage = () => {
                             <SelectItem value="__none__">— Manual —</SelectItem>
                             {productos.filter(p => p.activo).map(p => (
                               <SelectItem key={p.productoId} value={String(p.productoId)}>
-                                {p.nombre} (Stock: {p.stockActual})
+                                {p.nombre} (Stock: {p.stockActual}){p.ventaBajoPedido ? ' · Bajo pedido' : ''}
                               </SelectItem>
                             ))}
                           </SelectContent>

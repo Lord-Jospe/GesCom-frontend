@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router';
+import { toast } from 'sonner';
 import { transaccionService } from 'src/api/services/transaccionService';
 import type { TransaccionResponse, FiltroTransaccionRequest, TipoTransaccion, EstadoTransaccion } from 'src/types/transaccion';
 import { Button } from 'src/components/ui/button';
@@ -7,7 +8,7 @@ import { Input } from 'src/components/ui/input';
 import { Badge } from 'src/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from 'src/components/ui/select';
 import { Icon } from '@iconify/react';
-import { ArrowDown, ArrowUp, LayoutList, GitCommitHorizontal } from 'lucide-react';
+import { ArrowDown, ArrowUp, LayoutList, GitCommitHorizontal, Download } from 'lucide-react';
 
 const estadoColor: Record<string, string> = {
   PAGADA: 'bg-green-100 text-green-700', PENDIENTE: 'bg-yellow-100 text-yellow-700',
@@ -26,6 +27,17 @@ const HistorialTransaccionesPage = () => {
   }, [filtro]);
 
   useEffect(() => { cargar(); }, [cargar]);
+
+  const descargarFactura = async (id: number, numero: string) => {
+    try {
+      const blob = await transaccionService.descargarFactura(id);
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url;
+      a.download = `Factura-${numero || id}.pdf`;
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch { toast.error('No se pudo descargar la factura'); }
+  };
 
   return (
     <div className="space-y-6">
@@ -64,12 +76,12 @@ const HistorialTransaccionesPage = () => {
 
       {loading ? <div className="flex justify-center py-16"><Icon icon="svg-spinners:180-ring" width={32} className="text-primary animate-spin" /></div>
       : data.length === 0 ? <p className="text-center py-16 text-muted-foreground">Sin transacciones.</p>
-      : vista === 'tabla' ? <TablaView data={data} /> : <TimelineView data={data} />}
+      : vista === 'tabla' ? <TablaView data={data} onDescargar={descargarFactura} /> : <TimelineView data={data} onDescargar={descargarFactura} />}
     </div>
   );
 };
 
-function TablaView({ data }: { data: TransaccionResponse[] }) {
+function TablaView({ data, onDescargar }: { data: TransaccionResponse[]; onDescargar: (id: number, num: string) => void }) {
   return (
     <div className="overflow-x-auto border rounded-lg">
       <table className="w-full text-sm">
@@ -81,6 +93,7 @@ function TablaView({ data }: { data: TransaccionResponse[] }) {
           <th className="text-right px-3 py-3 font-semibold">Total</th>
           <th className="text-left px-3 py-3 font-semibold">Estado</th>
           <th className="text-left px-3 py-3 font-semibold">Método</th>
+          <th className="w-10"></th>
         </tr></thead>
         <tbody>
           {data.map(t => (
@@ -96,6 +109,13 @@ function TablaView({ data }: { data: TransaccionResponse[] }) {
               <td className="px-3 py-2 text-right font-mono font-medium">{t.moneda === 'USD' ? '$' : 'Bs.'} {t.total.toFixed(2)}</td>
               <td className="px-3 py-2"><Badge className={estadoColor[t.estado] || ''}>{t.estado}</Badge></td>
               <td className="px-3 py-2 text-muted-foreground text-xs">{t.metodoPago}</td>
+              <td className="px-2 py-2">
+                {t.tipo === 'INGRESO' && (
+                  <Button variant="ghost" size="sm" className="size-8!" title="Descargar factura PDF" onClick={() => onDescargar(t.transaccionId, t.numeroFactura || String(t.transaccionId))}>
+                    <Download className="size-4 text-primary" />
+                  </Button>
+                )}
+              </td>
             </tr>
           ))}
         </tbody>
@@ -104,7 +124,7 @@ function TablaView({ data }: { data: TransaccionResponse[] }) {
   );
 }
 
-function TimelineView({ data }: { data: TransaccionResponse[] }) {
+function TimelineView({ data, onDescargar }: { data: TransaccionResponse[]; onDescargar: (id: number, num: string) => void }) {
   return (
     <div className="flex justify-center">
       <div className="relative w-full">
@@ -133,6 +153,11 @@ function TimelineView({ data }: { data: TransaccionResponse[] }) {
                     </span>
                     <Badge className={estadoColor[t.estado] || ''}>{t.estado}</Badge>
                     <span className="text-xs text-muted-foreground">{t.metodoPago}</span>
+                    {ingreso && (
+                      <Button variant="ghost" size="sm" className="h-7 text-xs ml-auto" title="Descargar factura PDF" onClick={() => onDescargar(t.transaccionId, t.numeroFactura || String(t.transaccionId))}>
+                        <Download className="size-3.5 mr-1 text-primary" /> PDF
+                      </Button>
+                    )}
                   </div>
                 </div>
               </div>

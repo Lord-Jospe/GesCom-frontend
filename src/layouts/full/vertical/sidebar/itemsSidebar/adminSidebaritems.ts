@@ -122,9 +122,9 @@ const SidebarContent: MenuItem[] = [
         icon: 'solar:book-2-broken',
         id: uniqueId(),
         children: [
-          { id: uniqueId(), name: 'Plan de cuentas', icon: 'solar:documents-linear', url: '/admin/plan-cuentas' },
           { id: uniqueId(), name: 'Libro diario', icon: 'solar:book-2-linear', url: '/admin/libro-diario' },
           { id: uniqueId(), name: 'Libro mayor', icon: 'solar:book-bookmark-linear', url: '/admin/libro-mayor' },
+          { id: uniqueId(), name: 'Plan de cuentas', icon: 'solar:documents-linear', url: '/admin/plan-cuentas' },
         ],
       },
       {
