@@ -1,14 +1,16 @@
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { transaccionService } from 'src/api/services/transaccionService';
-import type { AdjuntoResponse } from 'src/types/transaccion';
+import type { AdjuntoResponse, TransaccionResponse } from 'src/types/transaccion';
 import { Button } from 'src/components/ui/button';
 import { Input } from 'src/components/ui/input';
 import { Label } from 'src/components/ui/label';
+import { Badge } from 'src/components/ui/badge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from 'src/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from 'src/components/ui/dialog';
 import CardBox from 'src/components/shared/CardBox';
 import { Icon } from '@iconify/react';
-import { Upload, Download, Trash2, Eye, FileText, Image, Search } from 'lucide-react';
+import { Upload, Download, Trash2, Eye, FileText, Image, Search, Filter } from 'lucide-react';
 
 const formatSize = (bytes: number) => {
   if (bytes < 1024) return `${bytes} B`;
@@ -21,17 +23,34 @@ const esPdf = (tipo: string) => tipo && tipo.startsWith('application/pdf');
 
 const GestionDocumentalPage = () => {
   const [adjuntos, setAdjuntos] = useState<AdjuntoResponse[]>([]);
+  const [transacciones, setTransacciones] = useState<TransaccionResponse[]>([]);
   const [loading, setLoading] = useState(false);
+
+  // Filtros
   const [busqueda, setBusqueda] = useState('');
+  const [filtroTipo, setFiltroTipo] = useState<string>('TODOS');
+  const [filtroFechaDesde, setFiltroFechaDesde] = useState('');
+  const [filtroFechaHasta, setFiltroFechaHasta] = useState('');
+
+  // Upload
   const [uploadTransaccionId, setUploadTransaccionId] = useState('');
   const [archivo, setArchivo] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
+
+  // Preview
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [previewTipo, setPreviewTipo] = useState('');
 
   const cargar = async () => {
     setLoading(true);
-    try { setAdjuntos(await transaccionService.listarTodosAdjuntos()); } catch {}
+    try {
+      const [docs, txns] = await Promise.all([
+        transaccionService.listarTodosAdjuntos(),
+        transaccionService.listar(),
+      ]);
+      setAdjuntos(docs);
+      setTransacciones(txns);
+    } catch {}
     finally { setLoading(false); }
   };
 
@@ -52,10 +71,9 @@ const GestionDocumentalPage = () => {
   const handlePreview = async (adjuntoId: number, tipo: string) => {
     try {
       const blob = await transaccionService.descargarAdjunto(adjuntoId);
-      const url = URL.createObjectURL(blob);
-      setPreviewUrl(url);
+      setPreviewUrl(URL.createObjectURL(blob));
       setPreviewTipo(tipo);
-    } catch (e: any) { toast.error('No se pudo cargar la vista previa'); }
+    } catch { toast.error('No se pudo cargar la vista previa'); }
   };
 
   const handleDownload = async (adjuntoId: number, nombre: string) => {
@@ -65,7 +83,7 @@ const GestionDocumentalPage = () => {
       const a = document.createElement('a'); a.href = url; a.download = nombre;
       document.body.appendChild(a); a.click(); document.body.removeChild(a);
       URL.revokeObjectURL(url);
-    } catch (e: any) { toast.error('No se pudo descargar'); }
+    } catch { toast.error('No se pudo descargar'); }
   };
 
   const handleEliminar = async (adjuntoId: number) => {
@@ -77,9 +95,21 @@ const GestionDocumentalPage = () => {
     } catch (e: any) { toast.error(e.message); }
   };
 
-  const filtrados = busqueda
-    ? adjuntos.filter(a => a.nombreOriginal.toLowerCase().includes(busqueda.toLowerCase()) || String(a.adjuntoId).includes(busqueda))
-    : adjuntos;
+  // Aplicar filtros
+  const filtrados = adjuntos.filter(a => {
+    if (busqueda && !a.nombreOriginal.toLowerCase().includes(busqueda.toLowerCase())) return false;
+    if (filtroTipo === 'IMAGEN' && !esImagen(a.tipoArchivo)) return false;
+    if (filtroTipo === 'PDF' && !esPdf(a.tipoArchivo)) return false;
+    if (filtroFechaDesde && a.createdAt < filtroFechaDesde) return false;
+    if (filtroFechaHasta && a.createdAt > filtroFechaHasta + 'T23:59:59') return false;
+    return true;
+  });
+
+  // Buscar nombre de la transacción vinculada
+  const nombreTransaccion = (adjunto: AdjuntoResponse) => {
+    // AdjuntoResponse no tiene transaccionId, pero lo inferimos del contexto
+    return null;
+  };
 
   return (
     <div className="space-y-6">
@@ -101,8 +131,17 @@ const GestionDocumentalPage = () => {
         </h3>
         <div className="flex flex-wrap items-end gap-3">
           <div className="flex flex-col gap-1.5">
-            <Label className="text-xs">Transacción #</Label>
-            <Input type="number" min={1} value={uploadTransaccionId} onChange={e => setUploadTransaccionId(e.target.value)} placeholder="ID de la transacción" className="h-9 w-40" />
+            <Label className="text-xs">Transacción</Label>
+            <Select value={uploadTransaccionId} onValueChange={setUploadTransaccionId}>
+              <SelectTrigger className="w-64 h-9"><SelectValue placeholder="Seleccionar transacción..." /></SelectTrigger>
+              <SelectContent>
+                {transacciones.slice(0, 50).map(t => (
+                  <SelectItem key={t.transaccionId} value={String(t.transaccionId)}>
+                    {t.tipo === 'INGRESO' ? '🧾' : '💰'} {t.numeroFactura || `#${t.transaccionId}`} — {t.clienteNombre || t.proveedorNombre || '—'} ({t.fecha})
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           <div className="flex flex-col gap-1.5">
             <Label className="text-xs">Archivo (JPG, PNG, PDF)</Label>
@@ -115,16 +154,34 @@ const GestionDocumentalPage = () => {
         </div>
       </CardBox>
 
-      {/* Búsqueda y lista */}
+      {/* Filtros + Lista */}
       <CardBox className="shadow-none border border-border">
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
           <h3 className="text-base font-semibold flex items-center gap-2">
             <FileText className="size-4 text-muted-foreground" />
-            {adjuntos.length} documento{adjuntos.length !== 1 ? 's' : ''}
+            {filtrados.length} de {adjuntos.length} documento{adjuntos.length !== 1 ? 's' : ''}
           </h3>
-          <div className="relative w-64">
-            <Search className="size-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-            <Input value={busqueda} onChange={e => setBusqueda(e.target.value)} placeholder="Buscar por nombre..." className="h-9 pl-9 text-sm" />
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="relative w-48">
+              <Search className="size-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
+              <Input value={busqueda} onChange={e => setBusqueda(e.target.value)} placeholder="Buscar nombre..." className="h-8 pl-8 text-xs" />
+            </div>
+            <Select value={filtroTipo} onValueChange={setFiltroTipo}>
+              <SelectTrigger className="w-24 h-8 text-xs"><Filter className="size-3 mr-1" /><SelectValue placeholder="Tipo" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="TODOS">Todos</SelectItem>
+                <SelectItem value="IMAGEN">Imágenes</SelectItem>
+                <SelectItem value="PDF">PDF</SelectItem>
+              </SelectContent>
+            </Select>
+            <Input type="date" value={filtroFechaDesde} onChange={e => setFiltroFechaDesde(e.target.value)} className="h-8 w-32 text-xs" />
+            <span className="text-xs text-muted-foreground">a</span>
+            <Input type="date" value={filtroFechaHasta} onChange={e => setFiltroFechaHasta(e.target.value)} className="h-8 w-32 text-xs" />
+            {(busqueda || filtroTipo !== 'TODOS' || filtroFechaDesde || filtroFechaHasta) && (
+              <Button variant="ghost" size="sm" className="h-8 text-xs" onClick={() => { setBusqueda(''); setFiltroTipo('TODOS'); setFiltroFechaDesde(''); setFiltroFechaHasta(''); }}>
+                Limpiar
+              </Button>
+            )}
           </div>
         </div>
 
@@ -135,24 +192,27 @@ const GestionDocumentalPage = () => {
         ) : filtrados.length === 0 ? (
           <div className="text-center py-12 text-muted-foreground">
             <Icon icon="solar:folder-open-linear" width={48} className="mx-auto mb-3 text-muted-foreground/50" />
-            <p className="text-lg font-medium">Bóveda vacía</p>
-            <p className="text-sm">Sube documentos vinculándolos a una transacción</p>
+            <p className="text-lg font-medium">{adjuntos.length === 0 ? 'Bóveda vacía' : 'Sin resultados'}</p>
+            <p className="text-sm">{adjuntos.length === 0 ? 'Sube documentos vinculándolos a una transacción' : 'Ajusta los filtros'}</p>
           </div>
         ) : (
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {filtrados.map(a => (
               <div key={a.adjuntoId} className="border rounded-lg p-3 hover:border-primary/40 hover:bg-muted/5 transition-all group">
                 <div className="flex items-start gap-3">
-                  {/* Icono según tipo */}
                   <div className={`p-2 rounded-lg shrink-0 ${esImagen(a.tipoArchivo) ? 'bg-blue-50 text-blue-600' : esPdf(a.tipoArchivo) ? 'bg-red-50 text-red-600' : 'bg-gray-100 text-gray-600'}`}>
                     {esImagen(a.tipoArchivo) ? <Image className="size-6" /> : <FileText className="size-6" />}
                   </div>
                   <div className="min-w-0 flex-1">
                     <p className="text-sm font-medium truncate" title={a.nombreOriginal}>{a.nombreOriginal}</p>
-                    <p className="text-xs text-muted-foreground mt-0.5">{formatSize(a.tamanio)} · {new Date(a.createdAt).toLocaleDateString('es-VE', { day: '2-digit', month: 'short', year: 'numeric' })}</p>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <span className="text-xs text-muted-foreground">{formatSize(a.tamanio)}</span>
+                      <span className="text-xs text-muted-foreground">·</span>
+                      <span className="text-xs text-muted-foreground">{new Date(a.createdAt).toLocaleDateString('es-VE', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
+                      {esImagen(a.tipoArchivo) ? <Badge className="text-xs bg-blue-50 text-blue-600 h-5">IMG</Badge> : <Badge className="text-xs bg-red-50 text-red-600 h-5">PDF</Badge>}
+                    </div>
                   </div>
                 </div>
-                {/* Acciones */}
                 <div className="flex gap-1 mt-2 pt-2 border-t opacity-0 group-hover:opacity-100 transition-opacity">
                   <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => handlePreview(a.adjuntoId, a.tipoArchivo)}>
                     <Eye className="size-3 mr-1" /> Ver
