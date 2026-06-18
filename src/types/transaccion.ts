@@ -64,6 +64,7 @@ export interface CrearTransaccionRequest {
   metodoPago: MetodoPago;
   descuentoGlobalPorcentaje?: number;
   descuentoGlobalMonto?: number;
+  pendiente?: boolean;
   notas?: string;
   lineas: AgregarLineaRequest[];
 }
