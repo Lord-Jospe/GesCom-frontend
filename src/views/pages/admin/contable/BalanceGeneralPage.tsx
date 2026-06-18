@@ -7,7 +7,7 @@ import { Label } from 'src/components/ui/label';
 import CardBox from 'src/components/shared/CardBox';
 import { Icon } from '@iconify/react';
 import { FileDown } from 'lucide-react';
-import { exportarExcel, exportarPDF } from 'src/lib/exportUtils';
+import { exportarExcel } from 'src/lib/exportUtils';
 
 const hoy = new Date().toISOString().slice(0, 10);
 
@@ -46,7 +46,7 @@ const BalanceGeneralPage = () => {
               <Button variant="outline" size="sm" onClick={() => exportarExcel([{ Concepto: 'Activos', Monto: data.totalActivos }, { Concepto: 'Pasivos', Monto: data.totalPasivos }, { Concepto: 'Patrimonio', Monto: data.totalPatrimonio }], 'balance-general')}>
                 <FileDown className="size-3.5 mr-1" /> Excel
               </Button>
-              <Button variant="outline" size="sm" onClick={() => exportarPDF('Balance General', [{header:'Concepto',dataKey:'Concepto'},{header:'Monto',dataKey:'Monto'}], [{ Concepto: 'Activos', Monto: `$ ${data.totalActivos.toFixed(2)}` }, { Concepto: 'Pasivos', Monto: `$ ${data.totalPasivos.toFixed(2)}` }, { Concepto: 'Patrimonio', Monto: `$ ${data.totalPatrimonio.toFixed(2)}` }], 'balance-general', [{label:'Fecha',value:data.fecha},{label:'Cuadrado',value:data.cuadrado ? 'Sí' : 'No'}]))}>
+              <Button variant="outline" size="sm" onClick={() => contabilidadService.descargarPDF(`/reports/balance-sheet?fecha=${fecha}`)}>
                 <FileDown className="size-3.5 mr-1" /> PDF
               </Button>
             </div>

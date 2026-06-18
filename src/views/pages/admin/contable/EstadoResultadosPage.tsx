@@ -7,7 +7,7 @@ import { Label } from 'src/components/ui/label';
 import CardBox from 'src/components/shared/CardBox';
 import { Icon } from '@iconify/react';
 import { FileDown } from 'lucide-react';
-import { exportarExcel, exportarPDF } from 'src/lib/exportUtils';
+import { exportarExcel } from 'src/lib/exportUtils';
 
 const hoy = new Date().toISOString().slice(0, 10);
 const inicioAnio = () => `${new Date().getFullYear()}-01-01`;
@@ -49,7 +49,7 @@ const EstadoResultadosPage = () => {
               <Button variant="outline" size="sm" onClick={() => exportarExcel([{ Concepto: 'Ingresos', Monto: data.totalIngresos }, { Concepto: 'Gastos', Monto: data.totalGastos }, { Concepto: 'Utilidad Neta', Monto: data.utilidadNeta }], 'estado-resultados')}>
                 <FileDown className="size-3.5 mr-1" /> Excel
               </Button>
-              <Button variant="outline" size="sm" onClick={() => exportarPDF('Estado de Resultados', [{header:'Concepto',dataKey:'Concepto'},{header:'Monto',dataKey:'Monto'}], [{ Concepto: 'Ingresos', Monto: `$ ${data.totalIngresos.toFixed(2)}` }, { Concepto: 'Gastos', Monto: `$ ${data.totalGastos.toFixed(2)}` }, { Concepto: 'Utilidad Neta', Monto: `$ ${data.utilidadNeta.toFixed(2)}` }], 'estado-resultados', [{label:'Período',value:`${data.fechaInicio} → ${data.fechaFin}`}]))}>
+              <Button variant="outline" size="sm" onClick={() => contabilidadService.descargarPDF(`/reports/income-statement?desde=${desde}&hasta=${hasta}`)}>
                 <FileDown className="size-3.5 mr-1" /> PDF
               </Button>
             </div>

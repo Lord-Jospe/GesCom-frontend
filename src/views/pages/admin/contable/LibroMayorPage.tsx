@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from 's
 import CardBox from 'src/components/shared/CardBox';
 import { Icon } from '@iconify/react';
 import { FileDown } from 'lucide-react';
-import { exportarExcel, exportarPDF } from 'src/lib/exportUtils';
+import { exportarExcel } from 'src/lib/exportUtils';
 
 const hoy = new Date().toISOString().slice(0, 10);
 const inicioMes = () => { const d = new Date(); d.setDate(1); return d.toISOString().slice(0, 10); };
@@ -66,7 +66,7 @@ const LibroMayorPage = () => {
               <Button variant="outline" size="sm" onClick={() => exportarExcel(libroMayor.movimientos.map(m => ({ Cuenta: m.cuentaCodigo, Nombre: m.cuentaNombre, Débito: m.esDebito ? m.monto.toFixed(2) : '', Crédito: !m.esDebito ? m.monto.toFixed(2) : '' })), 'libro-mayor')}>
                 <FileDown className="size-3.5 mr-1" /> Excel
               </Button>
-              <Button variant="outline" size="sm" onClick={() => exportarPDF(`Libro Mayor: ${libroMayor.cuentaNombre}`, [{header:'Cuenta',dataKey:'Cuenta'},{header:'Nombre',dataKey:'Nombre'},{header:'Débito',dataKey:'Débito'},{header:'Crédito',dataKey:'Crédito'}], libroMayor.movimientos.map(m => ({ Cuenta: m.cuentaCodigo, Nombre: m.cuentaNombre, Débito: m.esDebito ? `$ ${m.monto.toFixed(2)}` : '', Crédito: !m.esDebito ? `$ ${m.monto.toFixed(2)}` : '' })), 'libro-mayor', [{label:'Saldo Final',value:`$ ${libroMayor.saldoFinal.toFixed(2)}`}]))}>
+              <Button variant="outline" size="sm" onClick={() => contabilidadService.descargarPDF(`/reports/ledger/${cuentaId}?desde=${desde}&hasta=${hasta}`)}>
                 <FileDown className="size-3.5 mr-1" /> PDF
               </Button>
             </div>

@@ -10,7 +10,7 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '
 import CardBox from 'src/components/shared/CardBox';
 import { Icon } from '@iconify/react';
 import { Plus, Trash2, Calculator, FileDown } from 'lucide-react';
-import { exportarExcel, exportarPDF } from 'src/lib/exportUtils';
+import { exportarExcel } from 'src/lib/exportUtils';
 
 const hoy = new Date().toISOString().slice(0, 10);
 
@@ -49,7 +49,7 @@ const LibroDiarioPage = () => {
           <Button variant="outline" size="sm" onClick={() => exportarExcel(asientos.map(a => ({ '#': a.numeroAsiento, Fecha: a.fecha, Descripción: a.descripcion, Débito: a.totalDebito.toFixed(2), Crédito: a.totalCredito.toFixed(2), Tipo: a.esAutomatico ? 'Auto' : 'Manual' })), 'libro-diario')}>
             <FileDown className="size-3.5 mr-1" /> Excel
           </Button>
-          <Button variant="outline" size="sm" onClick={() => exportarPDF('Libro Diario', [{header:'#',dataKey:'#'},{header:'Fecha',dataKey:'Fecha'},{header:'Descripción',dataKey:'Descripción'},{header:'Débito',dataKey:'Débito'},{header:'Crédito',dataKey:'Crédito'}], asientos.map(a => ({ '#': a.numeroAsiento, Fecha: a.fecha, Descripción: a.descripcion, Débito: `$ ${a.totalDebito.toFixed(2)}`, Crédito: `$ ${a.totalCredito.toFixed(2)}` })), 'libro-diario')}>
+          <Button variant="outline" size="sm" onClick={() => contabilidadService.descargarPDF(`/reports/journal?desde=${desde}&hasta=${hasta}`)}>
             <FileDown className="size-3.5 mr-1" /> PDF
           </Button>
           <Button onClick={() => setOpenCrear(true)}>

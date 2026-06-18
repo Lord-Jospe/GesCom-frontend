@@ -14,7 +14,7 @@ import { Icon } from '@iconify/react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from 'src/components/ui/tabs';
 import CardBox from 'src/components/shared/CardBox';
 import { FileDown } from 'lucide-react';
-import { exportarExcel, exportarPDF } from 'src/lib/exportUtils';
+import { exportarExcel } from 'src/lib/exportUtils';
 
 const hoy = new Date().toISOString().slice(0, 10);
 const inicioMes = hoy.slice(0, 7) + '-01';
@@ -53,12 +53,6 @@ function HistorialTab() {
 
   if (loading) return <div className="flex justify-center py-12"><Icon icon="svg-spinners:180-ring" width={28} className="text-primary animate-spin" /></div>;
 
-  const data = nominas.map(n => ({
-    Empleado: n.nombreEmpleado, Período: `${n.periodoInicio} → ${n.periodoFin}`,
-    'Salario base': `$ ${n.salarioBase.toFixed(2)}`, Deducciones: `$ ${n.totalDeducciones.toFixed(2)}`,
-    Neto: `$ ${n.salarioNeto.toFixed(2)}`, Estado: n.estado,
-  }));
-
   return (
     <div>
       {nominas.length > 0 && (
@@ -66,7 +60,7 @@ function HistorialTab() {
           <Button variant="outline" size="sm" onClick={() => exportarExcel(nominas.map(n => ({ Empleado: n.nombreEmpleado, Período: `${n.periodoInicio} → ${n.periodoFin}`, 'Salario base': n.salarioBase, Deducciones: n.totalDeducciones, Neto: n.salarioNeto, Estado: n.estado })), 'nomina')}>
             <FileDown className="size-3.5 mr-1" /> Excel
           </Button>
-          <Button variant="outline" size="sm" onClick={() => exportarPDF('Nómina', [{header:'Empleado',dataKey:'Empleado'},{header:'Período',dataKey:'Período'},{header:'Salario base',dataKey:'Salario base'},{header:'Deducciones',dataKey:'Deducciones'},{header:'Neto',dataKey:'Neto'},{header:'Estado',dataKey:'Estado'}], data, 'nomina')}>
+          <Button variant="outline" size="sm" onClick={() => nominaService.descargarPDF()}>
             <FileDown className="size-3.5 mr-1" /> PDF
           </Button>
         </div>
