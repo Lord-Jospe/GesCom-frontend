@@ -120,7 +120,7 @@ const Router = [
       // Organización
       { path: 'mi-empresa', element: <MiEmpresaPage /> },
       { path: 'planes', element: <PlanesPage /> },
-      { path: 'Empleados', element: <EmpleadoPage /> },
+      { path: 'empleados', element: <EmpleadoPage /> },
       { path: 'nomina', element: <NominaPage /> },
       { path: 'clientes', element: <ClientesPage /> },
       { path: 'proveedores', element: <ProveedoresPage /> },
@@ -171,8 +171,6 @@ const Router = [
       { path: 'inventario', element: <InventarioPage /> },
       { path: 'inventario/movimientos', element: <MovimientosInventarioPage /> },
       { path: 'inventario/alertas', element: <AlertasInventarioPage /> },
-      // Nómina
-      { path: 'nomina', element: <NominaPage /> },
       // Módulo Contable
       { path: 'asientos-contables', element: <AsientosContablesPage /> },
       { path: 'plan-cuentas', element: <PlanCuentasPage /> },
