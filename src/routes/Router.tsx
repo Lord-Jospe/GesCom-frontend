@@ -68,7 +68,6 @@ const NominaPage = Loadable(lazy(() => import('../views/pages/admin/organizacion
 const PlanesPage = Loadable(lazy(() => import('../views/pages/admin/organizacion/PlanesPage')));
 
 // Configuración
-const GestionUsuariosPage = Loadable(lazy(() => import('../views/pages/admin/configuracion/GestionUsuariosPage')));
 const AjustesSistemaPage = Loadable(lazy(() => import('../views/pages/admin/configuracion/AjustesSistemaPage')));
 
 /* ****Apps***** */
@@ -146,7 +145,6 @@ const Router = [
       { path: 'reportes-financieros', element: <ReportesFinancierosPage /> },
       { path: 'gestion-documental', element: <GestionDocumentalPage /> },
       // Configuración
-      { path: 'gestion-usuarios', element: <GestionUsuariosPage /> },
       { path: 'ajustes-sistema', element: <AjustesSistemaPage /> },
     ]
   },

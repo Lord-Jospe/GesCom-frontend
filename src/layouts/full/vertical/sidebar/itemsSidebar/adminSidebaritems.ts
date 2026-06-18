@@ -146,14 +146,8 @@ const SidebarContent: MenuItem[] = [
     ],
   },
   {
-    heading: 'Configuración y Seguridad',
+    heading: 'Configuración',
     children: [
-      {
-        name: 'Gestión de Usuarios',
-        icon: 'solar:user-block-bold-duotone',
-        id: uniqueId(),
-        url: '/admin/gestion-usuarios',
-      },
       {
         name: 'Ajustes del Sistema',
         icon: 'solar:settings-linear',
