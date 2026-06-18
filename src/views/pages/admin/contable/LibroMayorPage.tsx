@@ -7,6 +7,8 @@ import { Label } from 'src/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from 'src/components/ui/select';
 import CardBox from 'src/components/shared/CardBox';
 import { Icon } from '@iconify/react';
+import { FileDown } from 'lucide-react';
+import { exportarExcel, exportarPDF } from 'src/lib/exportUtils';
 
 const hoy = new Date().toISOString().slice(0, 10);
 const inicioMes = () => { const d = new Date(); d.setDate(1); return d.toISOString().slice(0, 10); };
@@ -59,6 +61,16 @@ const LibroMayorPage = () => {
             {loading ? <Icon icon="svg-spinners:180-ring" width={16} className="mr-1 animate-spin" /> : <Icon icon="solar:filter-linear" width={16} className="mr-1" />}
             Consultar
           </Button>
+          {libroMayor && (
+            <div className="flex gap-2 ml-auto">
+              <Button variant="outline" size="sm" onClick={() => exportarExcel(libroMayor.movimientos.map(m => ({ Cuenta: m.cuentaCodigo, Nombre: m.cuentaNombre, Débito: m.esDebito ? m.monto.toFixed(2) : '', Crédito: !m.esDebito ? m.monto.toFixed(2) : '' })), 'libro-mayor')}>
+                <FileDown className="size-3.5 mr-1" /> Excel
+              </Button>
+              <Button variant="outline" size="sm" onClick={() => exportarPDF(`Libro Mayor: ${libroMayor.cuentaNombre}`, [{header:'Cuenta',dataKey:'Cuenta'},{header:'Nombre',dataKey:'Nombre'},{header:'Débito',dataKey:'Débito'},{header:'Crédito',dataKey:'Crédito'}], libroMayor.movimientos.map(m => ({ Cuenta: m.cuentaCodigo, Nombre: m.cuentaNombre, Débito: m.esDebito ? `$ ${m.monto.toFixed(2)}` : '', Crédito: !m.esDebito ? `$ ${m.monto.toFixed(2)}` : '' })), 'libro-mayor', [{label:'Saldo Final',value:`$ ${libroMayor.saldoFinal.toFixed(2)}`}]))}>
+                <FileDown className="size-3.5 mr-1" /> PDF
+              </Button>
+            </div>
+          )}
         </div>
       </CardBox>
 
