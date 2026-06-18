@@ -37,9 +37,14 @@ const handle = (ctx: string, e: any): never => {
 };
 
 export const conciliacionService = {
-  obtener: async (): Promise<ConciliacionResponse> => {
-    try { const { data } = await api.get<ConciliacionResponse>('/reconciliation'); return data; }
+  obtener: async (desde: string, hasta: string): Promise<ConciliacionResponse> => {
+    try { const { data } = await api.get<ConciliacionResponse>('/reconciliation', { params: { desde, hasta } }); return data; }
     catch (e: any) { return handle('conciliación', e); }
+  },
+
+  autoConciliar: async (): Promise<number> => {
+    try { const { data } = await api.post<{count:number}>('/reconciliation/auto-match'); return data.count; }
+    catch (e: any) { return handle('auto-match', e); }
   },
 
   agregarMovimiento: async (body: { fecha: string; descripcion: string; monto: number; tipo: string }): Promise<MovimientoBancoResponse> => {

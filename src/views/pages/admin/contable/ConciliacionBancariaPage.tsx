@@ -8,7 +8,7 @@ import { Badge } from 'src/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from 'src/components/ui/select';
 import CardBox from 'src/components/shared/CardBox';
 import { Icon } from '@iconify/react';
-import { Plus, Upload, Link2, Unlink2, CheckCircle2, AlertTriangle, Banknote, Trash2, Check } from 'lucide-react';
+import { Plus, Upload, Link2, Unlink2, CheckCircle2, AlertTriangle, Banknote, Trash2, Check, Zap } from 'lucide-react';
 
 const hoy = new Date().toISOString().slice(0, 10);
 
@@ -17,17 +17,18 @@ const ConciliacionBancariaPage = () => {
   const [loading, setLoading] = useState(true);
   const [showAdd, setShowAdd] = useState(false);
   const [linking, setLinking] = useState<{ movBancoId: number } | null>(null);
+  const [fechaFiltro, setFechaFiltro] = useState(hoy);
   const fileRef = useRef<HTMLInputElement>(null);
 
   // Form
   const [fecha, setFecha] = useState(hoy);
   const [desc, setDesc] = useState('');
   const [monto, setMonto] = useState('');
-  const [tipo, setTipo] = useState('CREDITO');
+  const [tipo, setTipo] = useState('INGRESO');
 
   const cargar = async () => {
     setLoading(true);
-    try { setData(await conciliacionService.obtener()); } catch {}
+    try { setData(await conciliacionService.obtener(fechaFiltro, fechaFiltro)); } catch {}
     finally { setLoading(false); }
   };
 
@@ -106,13 +107,27 @@ const ConciliacionBancariaPage = () => {
           <h1 className="text-2xl font-bold">Conciliación Bancaria</h1>
           <p className="text-muted-foreground">Cuadra tus movimientos bancarios con las transacciones registradas</p>
         </div>
+      </div>
+
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Input type="date" value={fechaFiltro} onChange={e => setFechaFiltro(e.target.value)} className="h-9 w-36 text-sm" />
+          <Button variant="outline" size="sm" onClick={cargar}>Filtrar</Button>
+        </div>
         <div className="flex items-center gap-2">
           <input ref={fileRef} type="file" accept=".csv" onChange={handleCSV} className="hidden" />
           <Button variant="outline" size="sm" onClick={() => fileRef.current?.click()}>
             <Upload className="size-4 mr-1" /> Importar CSV
           </Button>
+          <Button variant="outline" size="sm" onClick={async () => {
+            const n = await conciliacionService.autoConciliar();
+            toast.success(`${n} conciliado(s)`);
+            cargar();
+          }}>
+            <Zap className="size-4 mr-1" /> Conciliar todo
+          </Button>
           <Button size="sm" onClick={() => setShowAdd(!showAdd)}>
-            <Plus className="size-4 mr-1" /> Agregar
+            <Plus className="size-4 mr-1" /> Agregar movimiento
           </Button>
         </div>
       </div>
@@ -127,7 +142,7 @@ const ConciliacionBancariaPage = () => {
             <div className="flex flex-col gap-1.5"><Label className="text-xs">Tipo</Label>
               <Select value={tipo} onValueChange={setTipo}>
                 <SelectTrigger className="h-9 w-28"><SelectValue /></SelectTrigger>
-                <SelectContent><SelectItem value="CREDITO">Crédito</SelectItem><SelectItem value="DEBITO">Débito</SelectItem></SelectContent>
+                <SelectContent><SelectItem value="INGRESO">Ingreso</SelectItem><SelectItem value="EGRESO">Egreso</SelectItem></SelectContent>
               </Select>
             </div>
             <Button onClick={handleAdd} className="h-9"><Plus className="size-4 mr-1" /> Agregar</Button>
@@ -149,12 +164,12 @@ const ConciliacionBancariaPage = () => {
                 <div key={m.movimientoBancoId} className="border-t px-4 py-3 hover:bg-muted/20">
                   <div className="flex items-center justify-between mb-1">
                     <span className="text-sm font-medium truncate">{m.descripcion}</span>
-                    <Badge className={m.tipo === 'CREDITO' ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-600'}>{m.tipo === 'CREDITO' ? '+' : '−'}${m.monto.toFixed(2)}</Badge>
+                    <Badge className={m.tipo === 'INGRESO' ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-600'}>{m.tipo === 'INGRESO' ? '+' : '−'}${m.monto.toFixed(2)}</Badge>
                   </div>
                   <div className="flex items-center gap-2 text-xs text-muted-foreground">
                     <span>{m.fecha}</span>
                     <span>·</span>
-                    <span>↔ {m.numeroFactura || `#${m.transaccionId}`}</span>
+                    <span>{m.transaccionId ? `↔ ${m.numeroFactura || `#${m.transaccionId}`}` : 'Conciliado manualmente'}</span>
                   </div>
                   <Button variant="ghost" size="sm" className="h-6 text-xs text-red-400 hover:text-red-600 mt-1" onClick={() => handleDesvincular(m.movimientoBancoId)}>
                     <Unlink2 className="size-3 mr-1" /> Desvincular
@@ -176,7 +191,7 @@ const ConciliacionBancariaPage = () => {
                 <div key={m.movimientoBancoId} className="border-t px-4 py-3 hover:bg-muted/20">
                   <div className="flex items-center justify-between mb-1">
                     <span className="text-sm font-medium truncate">{m.descripcion}</span>
-                    <Badge className={m.tipo === 'CREDITO' ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-600'}>{m.tipo === 'CREDITO' ? '+' : '−'}${m.monto.toFixed(2)}</Badge>
+                    <Badge className={m.tipo === 'INGRESO' ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-600'}>{m.tipo === 'INGRESO' ? '+' : '−'}${m.monto.toFixed(2)}</Badge>
                   </div>
                   <span className="text-xs text-muted-foreground">{m.fecha}</span>
                   <div className="flex gap-1 mt-2 flex-wrap">
@@ -227,7 +242,7 @@ const ConciliacionBancariaPage = () => {
                   <div className="flex items-center gap-2 text-xs text-muted-foreground">
                     <span>{tx.fecha}</span>
                     <span>·</span>
-                    <span>{tx.numeroFactura || `#${tx.transaccionId}`}</span>
+                    <span>{tx.numeroFactura ? tx.numeroFactura : `#${tx.transaccionId}`}</span>
                     <span>·</span>
                     <span>{tx.metodoPago}</span>
                   </div>
