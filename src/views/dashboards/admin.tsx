@@ -101,12 +101,12 @@ const Admindash = () => {
               {ventas30d.length === 0 ? (
                 <div className="flex items-center justify-center h-40 text-muted-foreground text-sm">Sin datos</div>
               ) : (
-                <div className="flex items-end gap-0.5 h-36 px-1">
+                <div className="flex items-end gap-0.5 h-36 px-1 overflow-hidden">
                   {ventas30d.map((d, i) => (
-                    <div key={i} className="flex-1 flex flex-col justify-end items-center group relative">
+                    <div key={i} className="flex-1 flex flex-col justify-end items-center group relative min-w-0">
                       <div className="bg-primary/70 hover:bg-primary rounded-t-sm w-full transition-all cursor-pointer"
                         style={{ height: `${Math.max((d.monto / maxV30) * 100, 2)}%` }} />
-                      <span className="text-[9px] text-muted-foreground mt-1 rotate-45 origin-left whitespace-nowrap">{d.fecha?.substring(5)}</span>
+                      <span className="text-[8px] text-muted-foreground mt-1 truncate w-full text-center">{d.fecha?.substring(5)}</span>
                     </div>
                   ))}
                 </div>
@@ -141,29 +141,30 @@ const Admindash = () => {
             </CardBox>
           </div>
 
-          {/* Categorías */}
+          {/* Categorías — Donut */}
           <div className="lg:col-span-4 col-span-12">
             <CardBox className="shadow-none border border-border h-full">
               <h3 className="text-base font-semibold mb-1">Por categoría</h3>
               <p className="text-xs text-muted-foreground mb-4">Distribución de ventas</p>
-              <div className="space-y-3">
-                {charts.categorias.length === 0 ? (
-                  <div className="flex items-center justify-center h-40 text-muted-foreground text-sm">Sin datos</div>
-                ) : charts.categorias.slice(0, 6).map((c, i) => {
-                  const colors = ['bg-primary', 'bg-info', 'bg-warning', 'bg-success', 'bg-secondary', 'bg-destructive/60'];
-                  return (
-                    <div key={i}>
-                      <div className="flex justify-between text-sm mb-1">
-                        <span className="text-foreground truncate max-w-[60%]">{c.categoria}</span>
-                        <span className="text-muted-foreground text-xs">{c.porcentaje}%</span>
-                      </div>
-                      <div className="w-full h-2 rounded-full bg-muted">
-                        <div className={`h-2 rounded-full transition-all ${colors[i]}`} style={{ width: `${Math.max(c.porcentaje, 3)}%` }} />
-                      </div>
-                    </div>
-                  );
+              {charts.categorias.length === 0 ? (
+                <div className="flex items-center justify-center h-40 text-muted-foreground text-sm">Sin datos</div>
+              ) : (
+                <div className="flex items-center gap-4">
+                  <DonutChart data={charts.categorias.slice(0, 6)} size={120} />
+                  <div className="flex-1 space-y-2 text-xs">
+                    {charts.categorias.slice(0, 6).map((c, i) => {
+                      const colors = ['#5d87ff','#8754ec','#f6b51e','#13deb9','#49beff','#ef4444'];
+                      return (
+                        <div key={i} className="flex items-center gap-2">
+                          <span className="size-2.5 rounded-full shrink-0" style={{ backgroundColor: colors[i] }} />
+                          <span className="truncate flex-1">{c.categoria}</span>
+                          <span className="font-medium">{c.porcentaje}%</span>
+                        </div>
+                      );
                 })}
-              </div>
+                  </div>
+                </div>
+              )}
             </CardBox>
           </div>
         </div>
@@ -272,5 +273,37 @@ const Admindash = () => {
     </div>
   );
 };
+
+// ─── Donut Chart SVG ──────────────────────────────
+
+function DonutChart({ data, size = 120 }: { data: { categoria: string; porcentaje: number }[]; size?: number }) {
+  const stroke = 16;
+  const r = (size - stroke) / 2;
+  const circ = 2 * Math.PI * r;
+  const colors = ['#5d87ff','#8754ec','#f6b51e','#13deb9','#49beff','#ef4444'];
+  let offset = 0;
+
+  return (
+    <svg width={size} height={size} className="shrink-0">
+      {data.map((d, i) => {
+        const dash = (d.porcentaje / 100) * circ;
+        const seg = (
+          <circle key={i} cx={size / 2} cy={size / 2} r={r} fill="none"
+            stroke={colors[i]} strokeWidth={stroke}
+            strokeDasharray={`${dash} ${circ - dash}`}
+            strokeDashoffset={-offset}
+            strokeLinecap="butt"
+            className="transition-all duration-500"
+          />
+        );
+        offset += dash;
+        return seg;
+      })}
+      <text x={size / 2} y={size / 2} textAnchor="middle" dominantBaseline="central" className="text-lg font-bold" fill="currentColor">
+        {data.length}
+      </text>
+    </svg>
+  );
+}
 
 export default Admindash;
