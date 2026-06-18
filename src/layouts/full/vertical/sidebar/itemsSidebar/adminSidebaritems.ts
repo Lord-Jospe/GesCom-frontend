@@ -135,6 +135,7 @@ const SidebarContent: MenuItem[] = [
           { id: uniqueId(), name: 'Estado de resultados', icon: 'solar:graph-up-linear', url: '/admin/estado-resultados' },
           { id: uniqueId(), name: 'Balance general', icon: 'solar:align-vertical-spacing-linear', url: '/admin/balance-general' },
           { id: uniqueId(), name: 'Cierre de período', icon: 'solar:lock-keyhole-linear', url: '/admin/cierre-periodo' },
+          { id: uniqueId(), name: 'Conciliación bancaria', icon: 'solar:card-transfer-linear', url: '/admin/conciliacion-bancaria' },
         ],
       },
       {

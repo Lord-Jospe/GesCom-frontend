@@ -66,9 +66,9 @@ const ContadorSidebarContent: MenuItem[] = [
         icon: 'solar:book-2-broken',
         id: uniqueId(),
         children: [
-          { id: uniqueId(), name: 'Plan de cuentas', icon: 'solar:documents-linear', url: '/contador/asientos-contables' },
-          { id: uniqueId(), name: 'Libro diario', icon: 'solar:book-open-linear', url: '/contador/asientos-contables' },
-          { id: uniqueId(), name: 'Libro mayor', icon: 'solar:book-bookmark-linear', url: '/contador/asientos-contables' },
+          { id: uniqueId(), name: 'Plan de cuentas', icon: 'solar:documents-linear', url: '/contador/plan-cuentas' },
+          { id: uniqueId(), name: 'Libro diario', icon: 'solar:book-2-linear', url: '/contador/libro-diario' },
+          { id: uniqueId(), name: 'Libro mayor', icon: 'solar:book-bookmark-linear', url: '/contador/libro-mayor' },
         ],
       },
       {
@@ -76,20 +76,16 @@ const ContadorSidebarContent: MenuItem[] = [
         icon: 'solar:chart-2-bold',
         id: uniqueId(),
         children: [
-          { id: uniqueId(), name: 'Estado de resultados', icon: 'solar:graph-up-linear', url: '/contador/reportes-financieros' },
-          { id: uniqueId(), name: 'Balance general', icon: 'solar:align-vertical-spacing-linear', url: '/contador/reportes-financieros' },
-          { id: uniqueId(), name: 'Conciliación bancaria', icon: 'solar:bank-linear', url: '/contador/reportes-financieros' },
+          { id: uniqueId(), name: 'Estado de resultados', icon: 'solar:graph-up-linear', url: '/contador/estado-resultados' },
+          { id: uniqueId(), name: 'Balance general', icon: 'solar:align-vertical-spacing-linear', url: '/contador/balance-general' },
+          { id: uniqueId(), name: 'Conciliación bancaria', icon: 'solar:card-transfer-linear', url: '/contador/conciliacion-bancaria' },
         ],
       },
       {
         name: 'Gestión Documental',
         icon: 'solar:folder-with-files-linear',
         id: uniqueId(),
-        children: [
-          { id: uniqueId(), name: 'Bóveda de documentos', icon: 'solar:folder-open-linear', url: '/contador/gestion-documental' },
-          { id: uniqueId(), name: 'Exportar facturas', icon: 'solar:export-linear', url: '/contador/gestion-documental' },
-          { id: uniqueId(), name: 'Revisar facturas', icon: 'solar:document-search-linear', url: '/contador/gestion-documental' },
-        ],
+        url: '/contador/gestion-documental',
       },
     ],
   },

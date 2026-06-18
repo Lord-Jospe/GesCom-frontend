@@ -62,6 +62,7 @@ const LibroMayorPage = Loadable(lazy(() => import('../views/pages/admin/contable
 const EstadoResultadosPage = Loadable(lazy(() => import('../views/pages/admin/contable/EstadoResultadosPage')));
 const BalanceGeneralPage = Loadable(lazy(() => import('../views/pages/admin/contable/BalanceGeneralPage')));
 const CierrePeriodoPage = Loadable(lazy(() => import('../views/pages/admin/contable/CierrePeriodoPage')));
+const ConciliacionBancariaPage = Loadable(lazy(() => import('../views/pages/admin/contable/ConciliacionBancariaPage')));
 
 // Nómina
 const NominaPage = Loadable(lazy(() => import('../views/pages/admin/organizacion/NominaPage')));
@@ -142,6 +143,7 @@ const Router = [
       { path: 'estado-resultados', element: <EstadoResultadosPage /> },
       { path: 'balance-general', element: <BalanceGeneralPage /> },
       { path: 'cierre-periodo', element: <CierrePeriodoPage /> },
+      { path: 'conciliacion-bancaria', element: <ConciliacionBancariaPage /> },
       { path: 'reportes-financieros', element: <ReportesFinancierosPage /> },
       { path: 'gestion-documental', element: <GestionDocumentalPage /> },
       // Configuración
@@ -179,6 +181,7 @@ const Router = [
       { path: 'estado-resultados', element: <EstadoResultadosPage /> },
       { path: 'balance-general', element: <BalanceGeneralPage /> },
       { path: 'cierre-periodo', element: <CierrePeriodoPage /> },
+      { path: 'conciliacion-bancaria', element: <ConciliacionBancariaPage /> },
       { path: 'reportes-financieros', element: <ReportesFinancierosPage /> },
       { path: 'gestion-documental', element: <GestionDocumentalPage /> },
     ]
