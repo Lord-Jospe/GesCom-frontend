@@ -17,9 +17,11 @@ export const paymentService = {
     try { await api.post('/payment/qr', form); } catch (e: any) { handle('subir QR', e); }
   },
 
-  subirComprobante: async (file: File): Promise<void> => {
+  subirComprobante: async (file: File, planSolicitado?: string): Promise<void> => {
     const form = new FormData(); form.append('file', file);
-    try { await api.post('/payment/proof', form); } catch (e: any) { handle('subir comprobante', e); }
+    if (planSolicitado) form.append('plan', planSolicitado);
+    try { await api.post('/payment/proof', form); }
+    catch (e: any) { handle('subir comprobante', e); }
   },
 
   misComprobantes: async (): Promise<any[]> => {
@@ -39,6 +41,10 @@ export const paymentService = {
   revisarComprobante: async (id: number, estado: string, notas?: string): Promise<void> => {
     try { await api.post(`/payment/admin/proofs/${id}`, { estado, notas }); }
     catch (e: any) { handle('revisar comprobante', e); }
+  },
+
+  historial: async (): Promise<any[]> => {
+    const { data } = await api.get('/payment/admin/history'); return data;
   },
 
   stats: async (): Promise<any> => {

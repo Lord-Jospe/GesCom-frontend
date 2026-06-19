@@ -73,6 +73,7 @@ const AjustesSistemaPage = Loadable(lazy(() => import('../views/pages/admin/conf
 
 // Super Admin
 const SuperAdminPage = Loadable(lazy(() => import('../views/pages/super-admin/SuperAdminPage')));
+const SuperAdminEmpresasPage = Loadable(lazy(() => import('../views/pages/super-admin/EmpresasPage')));
 
 /* ****Apps***** */
 //const Form = Loadable(lazy(() => import('../views/utilities/form/Form')));
@@ -163,6 +164,7 @@ const Router = [
     ),
     children: [
       { index: true, element: <SuperAdminPage /> },
+      { path: 'empresas', element: <SuperAdminEmpresasPage /> },
     ]
   },
 

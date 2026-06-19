@@ -11,6 +11,7 @@ import { useAuth } from 'src/context/AuthContext';
 import { inventarioService } from 'src/api/services/inventarioService';
 import { transaccionService } from 'src/api/services/transaccionService';
 import { empresaService } from 'src/api/services/empresaService';
+import { paymentService } from 'src/api/services/paymentService';
 import type { ProductoResponse } from 'src/types/inventario';
 import type { TransaccionResponse } from 'src/types/transaccion';
 import type { SuscripcionResponse } from 'src/types/empresa';
@@ -44,6 +45,27 @@ const Messages = () => {
     const cob = porCobrar.status === 'fulfilled' ? porCobrar.value : [];
     const pag = porPagar.status === 'fulfilled' ? porPagar.value : [];
     const su = sub.status === 'fulfilled' ? sub.value : null;
+
+    // Comprobantes de pago
+    try {
+      if (user?.rol === 'SUPER_ADMIN') {
+        const stats = await paymentService.stats();
+        if (stats.pendientes > 0) {
+          items.push({ icon: 'solar:card-transfer-linear', bg: 'bg-blue-500/10', color: 'text-blue-500',
+            title: 'Comprobantes pendientes', subtitle: `${stats.pendientes} comprobante(s) por revisar`, url: '/super-admin?tab=comprobantes' });
+        }
+      } else {
+        const proofs = await paymentService.misComprobantes();
+        proofs.filter((p: any) => p.estado === 'APROBADO' || p.estado === 'RECHAZADO').slice(0, 3).forEach((p: any) => {
+          items.push({ icon: p.estado === 'APROBADO' ? 'solar:check-circle-bold' : 'solar:close-circle-bold',
+            bg: p.estado === 'APROBADO' ? 'bg-green-500/10' : 'bg-red-500/10',
+            color: p.estado === 'APROBADO' ? 'text-green-500' : 'text-red-500',
+            title: `Pago ${p.estado === 'APROBADO' ? 'aprobado' : 'rechazado'}`,
+            subtitle: `Tu comprobante fue ${p.estado === 'APROBADO' ? 'aprobado. ¡Plan actualizado!' : 'rechazado. Contacta soporte.'}`,
+            url: '/admin/planes' });
+        });
+      }
+    } catch { /* sin acceso */ }
 
     // Stock crítico
     c.forEach(p => {

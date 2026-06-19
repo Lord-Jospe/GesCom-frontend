@@ -3,18 +3,24 @@ import type { MenuItem } from './adminSidebaritems';
 
 const SidebarContent: MenuItem[] = [
   {
-    heading: 'Gestión Global',
+    heading: 'Super Admin',
     children: [
+      {
+        name: 'Dashboard',
+        icon: 'solar:chart-2-linear',
+        id: uniqueId(),
+        url: '/super-admin',
+      },
       {
         name: 'Empresas',
         icon: 'solar:buildings-2-linear',
         id: uniqueId(),
-        url: '/super-admin',
+        url: '/super-admin/empresas',
       },
     ],
   },
   {
-    heading: 'Administración',
+    heading: 'Acceso',
     children: [
       {
         name: 'Panel Admin',
