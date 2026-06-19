@@ -22,6 +22,7 @@ const AjustesSistemaPage = () => {
   const [form, setForm] = useState({
     ivaActivo: true, ivaPorcentaje: '16', igtfActivo: false,
     facturaPrefijo: '', facturaSiguienteNumero: '1',
+    ssoPorcentaje: '4', incesPorcentaje: '0.5', faovPorcentaje: '1',
   });
   const original = useRef({ ...form });
 
@@ -229,6 +230,31 @@ const AjustesSistemaPage = () => {
           <Label>Stock mínimo por defecto</Label>
           <Input type="number" min={1} value={stockMinimoDefault} onChange={e => setStockMinimoDefault(e.target.value)} className="h-9" />
           <p className="text-xs text-muted-foreground">Los productos nuevos usarán este umbral. Puedes cambiarlo por producto.</p>
+        </div>
+      </CardBox>
+
+      {/* Deducciones de nómina */}
+      <CardBox className="shadow-none border border-border">
+        <h3 className="text-base font-semibold mb-4 flex items-center gap-2">
+          <Icon icon="solar:card-transfer-linear" width={20} className="text-primary" /> Deducciones de nómina
+        </h3>
+        <p className="text-xs text-muted-foreground mb-4">Porcentajes aplicados al calcular la nómina. Puedes modificarlos según la ley vigente.</p>
+        <div className="grid sm:grid-cols-3 gap-4">
+          <div className="flex flex-col gap-1.5">
+            <Label>SSO (%)</Label>
+            <Input type="number" step="0.01" min="0" max="100" value={form.ssoPorcentaje || '4'} onChange={e => setForm({...form, ssoPorcentaje: e.target.value})} className="h-9" />
+            <p className="text-[11px] text-muted-foreground">Seguro Social Obligatorio</p>
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <Label>INCES (%)</Label>
+            <Input type="number" step="0.01" min="0" max="100" value={form.incesPorcentaje || '0.5'} onChange={e => setForm({...form, incesPorcentaje: e.target.value})} className="h-9" />
+            <p className="text-[11px] text-muted-foreground">Instituto Nacional de Capacitación</p>
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <Label>FAOV (%)</Label>
+            <Input type="number" step="0.01" min="0" max="100" value={form.faovPorcentaje || '1'} onChange={e => setForm({...form, faovPorcentaje: e.target.value})} className="h-9" />
+            <p className="text-[11px] text-muted-foreground">Fondo de Ahorro Obligatorio para Vivienda</p>
+          </div>
         </div>
       </CardBox>
 

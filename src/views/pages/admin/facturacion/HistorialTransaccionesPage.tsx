@@ -171,7 +171,7 @@ function TablaView({ data, onDescargar, onEditar, onAnular }: { data: Transaccio
               <td className="px-3 py-2"><Badge className={estadoColor[t.estado] || ''}>{t.estado}</Badge></td>
               <td className="px-3 py-2 text-muted-foreground text-xs">{t.metodoPago}</td>
               <td className="px-2 py-2">
-                <div className="flex items-center gap-0.5">
+                <div className="flex items-center justify-end gap-0.5 w-20">
                   {t.tipo === 'INGRESO' && (
                     <Button variant="ghost" size="sm" className="size-7!" title="Descargar factura" onClick={() => onDescargar(t.transaccionId, t.numeroFactura || String(t.transaccionId))}>
                       <Download className="size-3.5 text-primary" />
