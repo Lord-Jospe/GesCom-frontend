@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Icon } from '@iconify/react';
+import { X } from 'lucide-react';
 import SimpleBar from 'simplebar-react';
 import 'simplebar-react/dist/simplebar.min.css';
 import { Link } from 'react-router';
@@ -17,6 +18,7 @@ import type { TransaccionResponse } from 'src/types/transaccion';
 import type { SuscripcionResponse } from 'src/types/empresa';
 
 interface Alerta {
+  id: string;
   icon: string;
   bg: string;
   color: string;
@@ -29,6 +31,16 @@ const Messages = () => {
   const { user } = useAuth();
   const base = `/${(user?.rol || 'ADMIN').toLowerCase()}`;
   const [alertas, setAlertas] = useState<Alerta[]>([]);
+  const [dismissed, setDismissed] = useState<Set<string>>(() => {
+    try { return new Set(JSON.parse(localStorage.getItem('gescom-dismissed-alerts') || '[]')); }
+    catch { return new Set(); }
+  });
+
+  const dismissAlert = (id: string) => {
+    const next = new Set([...dismissed, id]);
+    setDismissed(next);
+    localStorage.setItem('gescom-dismissed-alerts', JSON.stringify([...next]));
+  };
 
   const cargar = async () => {
     const items: Alerta[] = [];
@@ -51,13 +63,13 @@ const Messages = () => {
       if (user?.rol === 'SUPER_ADMIN') {
         const stats = await paymentService.stats();
         if (stats.pendientes > 0) {
-          items.push({ icon: 'solar:card-transfer-linear', bg: 'bg-blue-500/10', color: 'text-blue-500',
+          items.push({ id: 'proofs-pending', icon: 'solar:card-transfer-linear', bg: 'bg-blue-500/10', color: 'text-blue-500',
             title: 'Comprobantes pendientes', subtitle: `${stats.pendientes} comprobante(s) por revisar`, url: '/super-admin?tab=comprobantes' });
         }
       } else {
         const proofs = await paymentService.misComprobantes();
         proofs.filter((p: any) => p.estado === 'APROBADO' || p.estado === 'RECHAZADO').slice(0, 3).forEach((p: any) => {
-          items.push({ icon: p.estado === 'APROBADO' ? 'solar:check-circle-bold' : 'solar:close-circle-bold',
+          items.push({ id: `proof-${p.comprobanteId}`, icon: p.estado === 'APROBADO' ? 'solar:check-circle-bold' : 'solar:close-circle-bold',
             bg: p.estado === 'APROBADO' ? 'bg-green-500/10' : 'bg-red-500/10',
             color: p.estado === 'APROBADO' ? 'text-green-500' : 'text-red-500',
             title: `Pago ${p.estado === 'APROBADO' ? 'aprobado' : 'rechazado'}`,
@@ -70,29 +82,29 @@ const Messages = () => {
     // Stock crítico
     c.forEach(p => {
           if (p.stockActual <= 0) {
-            items.push({ icon: 'solar:danger-triangle-bold', bg: 'bg-red-500/10', color: 'text-red-500', title: 'Producto agotado', subtitle: `${p.nombre} — stock en cero`, url: `${base}/inventario/alertas` });
+            items.push({ id: `stock-0-${p.productoId}`, icon: 'solar:danger-triangle-bold', bg: 'bg-red-500/10', color: 'text-red-500', title: 'Producto agotado', subtitle: `${p.nombre} — stock en cero`, url: `${base}/inventario/alertas` });
           } else {
-            items.push({ icon: 'solar:danger-triangle-bold', bg: 'bg-yellow-500/10', color: 'text-yellow-600', title: 'Stock bajo', subtitle: `${p.nombre} — ${p.stockActual} unidad(es)`, url: `${base}/inventario/alertas` });
+            items.push({ id: `stock-low-${p.productoId}`, icon: 'solar:danger-triangle-bold', bg: 'bg-yellow-500/10', color: 'text-yellow-600', title: 'Stock bajo', subtitle: `${p.nombre} — ${p.stockActual} unidad(es)`, url: `${base}/inventario/alertas` });
           }
         });
     cob.forEach(t => {
           const dias = Math.floor((Date.now() - new Date(t.fecha).getTime()) / 86400000);
           if (dias > 15) {
-            items.push({ icon: 'solar:hand-money-linear', bg: 'bg-orange-500/10', color: 'text-orange-500', title: 'Cobranza vencida', subtitle: `${t.clienteNombre} — $${t.saldoPendiente.toFixed(2)} · ${dias} días`, url: `${base}/por-cobrar` });
+            items.push({ id: `cxc-${t.transaccionId}`, icon: 'solar:hand-money-linear', bg: 'bg-orange-500/10', color: 'text-orange-500', title: 'Cobranza vencida', subtitle: `${t.clienteNombre} — $${t.saldoPendiente.toFixed(2)} · ${dias} días`, url: `${base}/por-cobrar` });
           }
         });
     pag.forEach(t => {
           const dias = Math.floor((Date.now() - new Date(t.fecha).getTime()) / 86400000);
           if (dias > 15) {
-            items.push({ icon: 'solar:wallet-money-linear', bg: 'bg-red-500/10', color: 'text-red-500', title: 'Pago vencido', subtitle: `${t.proveedorNombre} — $${t.saldoPendiente.toFixed(2)} · ${dias} días`, url: `${base}/por-pagar` });
+            items.push({ id: `cxp-${t.transaccionId}`, icon: 'solar:wallet-money-linear', bg: 'bg-red-500/10', color: 'text-red-500', title: 'Pago vencido', subtitle: `${t.proveedorNombre} — $${t.saldoPendiente.toFixed(2)} · ${dias} días`, url: `${base}/por-pagar` });
           }
         });
     if (su) {
           const diasSub = Math.ceil((new Date(su.fechaVence).getTime() - Date.now()) / 86400000);
           if (diasSub <= 7 && diasSub > 0) {
-            items.push({ icon: 'solar:star-bold', bg: 'bg-yellow-500/10', color: 'text-yellow-600', title: 'Suscripción por vencer', subtitle: `Plan ${su.planNombre} — ${diasSub} día(s) restante(s)`, url: `${base}/mi-empresa` });
+            items.push({ id: 'sub-vencer', icon: 'solar:star-bold', bg: 'bg-yellow-500/10', color: 'text-yellow-600', title: 'Suscripción por vencer', subtitle: `Plan ${su.planNombre} — ${diasSub} día(s) restante(s)`, url: `${base}/mi-empresa` });
           } else if (diasSub <= 0) {
-            items.push({ icon: 'solar:danger-triangle-bold', bg: 'bg-red-500/10', color: 'text-red-500', title: 'Suscripción vencida', subtitle: `Plan ${su.planNombre} — renueva para continuar`, url: `${base}/mi-empresa` });
+            items.push({ id: 'sub-vencida', icon: 'solar:danger-triangle-bold', bg: 'bg-red-500/10', color: 'text-red-500', title: 'Suscripción vencida', subtitle: `Plan ${su.planNombre} — renueva para continuar`, url: `${base}/mi-empresa` });
           }
         }
     setAlertas(items);
@@ -100,7 +112,7 @@ const Messages = () => {
 
     useEffect(() => { cargar(); }, []); // eslint-disable-line
 
-  const count = alertas.length;
+  const count = alertas.filter(a => !dismissed.has(a.id)).length;
 
   return (
     <div className="relative group/menu px-4 sm:px-15">
@@ -132,17 +144,24 @@ const Messages = () => {
             </div>
           ) : (
             <SimpleBar className="max-h-80 mt-3">
-              {alertas.map((a, i) => (
+              {alertas.filter(a => !dismissed.has(a.id)).map((a, i) => (
                 <DropdownMenuItem className="px-6 py-3 flex justify-between items-center bg-hover group/link w-full cursor-pointer" key={i}>
-                  <Link to={a.url} className="flex items-center w-full">
+                  <Link to={a.url} className="flex items-center w-full min-w-0">
                     <span className={`shrink-0 p-2.5 rounded-lg ${a.bg}`}>
                       <Icon icon={a.icon} width={18} className={a.color} />
                     </span>
-                    <div className="ps-3 min-w-0">
+                    <div className="ps-3 min-w-0 flex-1">
                       <h5 className="mb-0.5 text-sm group-hover/link:text-primary font-medium">{a.title}</h5>
                       <span className="text-xs block truncate text-muted-foreground">{a.subtitle}</span>
                     </div>
                   </Link>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); e.preventDefault(); dismissAlert(a.id); }}
+                    className="shrink-0 ml-2 p-1 rounded-full hover:bg-muted/50 text-muted-foreground hover:text-foreground transition-colors"
+                    title="Cerrar"
+                  >
+                    <X className="size-3.5" />
+                  </button>
                 </DropdownMenuItem>
               ))}
             </SimpleBar>

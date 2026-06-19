@@ -29,12 +29,12 @@ const planes = [
   {
     nombre: 'Emprendedor', precio: '8', color: 'border-primary', badge: 'Más popular', badgeColor: 'bg-primary text-white',
     desc: 'Vendedores de Instagram, puestos de comida, freelancers.',
-    features: ['Transacciones ilimitadas', 'Bóveda: 50 fotos / mes', 'Reporte PDF mensual', 'Multimoneda BCV', 'Soporte por WhatsApp'],
+    features: ['Transacciones limitadas', 'Bóveda: 50 fotos / mes', 'Usuario: 3', 'Reporte PDF mensual', 'Multimoneda BCV', 'Inventario', 'Soporte por WhatsApp'],
   },
   {
     nombre: 'Empresa', precio: '20', color: 'border-border', badge: 'Premium', badgeColor: 'bg-secondary text-white',
     desc: 'Bodegones, farmacias, talleres, ferreterías.',
-    features: ['Transacciones ilimitadas', 'Bóveda ilimitada', 'Todos los reportes PDF', 'Multimoneda BCV', 'Control de inventario', 'Cuentas por cobrar', 'Soporte por WhatsApp'],
+    features: ['Transacciones ilimitadas', 'Bóveda ilimitada','Usuario: ilimitados', 'Gestión de nómina', 'Todos los reportes PDF', 'Multimoneda BCV', 'Control de inventario', 'Cuentas por cobrar y pagar', 'Conciliación bancaria', 'Módulo contable', 'Soporte por WhatsApp'],
   },
 ];
 
