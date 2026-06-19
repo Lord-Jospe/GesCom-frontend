@@ -29,7 +29,9 @@ const AuthLogin = () => {
       const user = await login(email, password);
 
       // Redirigir según rol
-      if (user.rol === 'ADMIN') {
+      if (user.rol === 'SUPER_ADMIN') {
+        navigate('/super-admin');
+      } else if (user.rol === 'ADMIN') {
         navigate('/admin');
       } else if (user.rol === 'CONTADOR') {
         navigate('/contador');

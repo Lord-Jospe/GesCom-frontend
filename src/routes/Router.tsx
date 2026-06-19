@@ -71,6 +71,9 @@ const PlanesPage = Loadable(lazy(() => import('../views/pages/admin/organizacion
 // Configuración
 const AjustesSistemaPage = Loadable(lazy(() => import('../views/pages/admin/configuracion/AjustesSistemaPage')));
 
+// Super Admin
+const SuperAdminPage = Loadable(lazy(() => import('../views/pages/super-admin/SuperAdminPage')));
+
 /* ****Apps***** */
 //const Form = Loadable(lazy(() => import('../views/utilities/form/Form')));
 
@@ -111,7 +114,7 @@ const Router = [
   {
     path: '/admin',
     element:  (
-      <PrivateRoute allowedRoles={['ADMIN']}>
+      <PrivateRoute allowedRoles={['ADMIN', 'SUPER_ADMIN']}>
         <AdminLayout />
       </PrivateRoute>
     ),
@@ -150,6 +153,19 @@ const Router = [
       { path: 'ajustes-sistema', element: <AjustesSistemaPage /> },
     ]
   },
+  /*Super Admin*/
+  {
+    path: '/super-admin',
+    element: (
+      <PrivateRoute allowedRoles={['SUPER_ADMIN']}>
+        <AdminLayout />
+      </PrivateRoute>
+    ),
+    children: [
+      { index: true, element: <SuperAdminPage /> },
+    ]
+  },
+
   /*Contador*/
   {
     path: '/contador',
