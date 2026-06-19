@@ -73,7 +73,6 @@ const AjustesSistemaPage = Loadable(lazy(() => import('../views/pages/admin/conf
 
 // Super Admin
 const SuperAdminPage = Loadable(lazy(() => import('../views/pages/super-admin/SuperAdminPage')));
-const PasarelaPagoPage = Loadable(lazy(() => import('../views/pages/admin/organizacion/PasarelaPagoPage')));
 
 /* ****Apps***** */
 //const Form = Loadable(lazy(() => import('../views/utilities/form/Form')));
@@ -125,7 +124,6 @@ const Router = [
       // Organización
       { path: 'mi-empresa', element: <MiEmpresaPage /> },
       { path: 'planes', element: <PlanesPage /> },
-      { path: 'pasarela-pago', element: <PasarelaPagoPage /> },
       { path: 'empleados', element: <EmpleadoPage /> },
       { path: 'nomina', element: <NominaPage /> },
       { path: 'clientes', element: <ClientesPage /> },

@@ -1,10 +1,13 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { toast } from 'sonner';
 import { empresaService } from 'src/api/services/empresaService';
+import { paymentService } from 'src/api/services/paymentService';
 import type { SuscripcionResponse } from 'src/types/empresa';
 import CardBox from 'src/components/shared/CardBox';
 import { Badge } from 'src/components/ui/badge';
 import { Button } from 'src/components/ui/button';
 import { Icon } from '@iconify/react';
+import { Upload, CheckCircle, Clock } from 'lucide-react';
 
 const planesDisponibles = [
   {
@@ -40,10 +43,22 @@ const PlanesPage = () => {
   const [suscripcion, setSuscripcion] = useState<SuscripcionResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [planSeleccionado, setPlanSeleccionado] = useState<string | null>(null);
+  const [qrUrl, setQrUrl] = useState<string | null>(null);
+  const [comprobantes, setComprobantes] = useState<any[]>([]);
+  const [uploading, setUploading] = useState(false);
+  const pagoRef = useRef<HTMLDivElement>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     empresaService.obtenerSuscripcion().then(setSuscripcion).finally(() => setLoading(false));
+    paymentService.obtenerQR().then(blob => { if (blob) setQrUrl(URL.createObjectURL(blob)); });
+    paymentService.misComprobantes().then(setComprobantes).catch(() => {});
   }, []);
+
+  const seleccionarPlan = (nombre: string) => {
+    setPlanSeleccionado(nombre);
+    setTimeout(() => pagoRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
+  };
 
   if (loading) return <div className="flex justify-center py-16"><Icon icon="svg-spinners:180-ring" width={32} className="text-primary animate-spin" /></div>;
 
@@ -100,7 +115,7 @@ const PlanesPage = () => {
                 <Button
                   className="mt-6 w-full"
                   variant={plan.nombre === 'Emprendedor' ? 'default' : 'outline'}
-                  onClick={() => setPlanSeleccionado(plan.nombre)}
+                  onClick={() => seleccionarPlan(plan.nombre)}
                 >
                   {planSeleccionado === plan.nombre ? 'Seleccionado' : `Migrar a ${plan.nombre}`}
                 </Button>
@@ -110,32 +125,70 @@ const PlanesPage = () => {
         })}
       </div>
 
-      {/* Pago con Binance Pay */}
+      {/* Pago con Binance */}
       {planSeleccionado && (
-        <CardBox className="shadow-none border-2 border-primary">
-          <h3 className="text-lg font-semibold mb-4">Completar pago — Plan {planSeleccionado}</h3>
-          <p className="text-sm text-muted-foreground mb-6">Escanea el código QR con tu app de Binance para completar la migración.</p>
+        <div ref={pagoRef}>
+          <CardBox className="shadow-none border-2 border-primary">
+            <h3 className="text-lg font-semibold mb-4">Completar pago — Plan {planSeleccionado}</h3>
 
-          <div className="flex flex-col md:flex-row items-center gap-8">
-            <div className="flex flex-col items-center p-4 rounded-lg bg-muted/20 border border-dashed border-border min-w-[200px]">
-              <Icon icon="solar:qr-code-linear" width={48} className="text-muted-foreground mb-2" />
-              <p className="text-sm font-medium">Binance Pay</p>
-              <div className="w-44 h-44 bg-white rounded-lg mt-3 flex items-center justify-center border">
-                <Icon icon="solar:qr-code-linear" width={80} className="text-muted-foreground/40" />
+            <div className="flex flex-col md:flex-row items-start gap-8">
+              {/* QR */}
+              <div className="flex flex-col items-center p-4 rounded-lg bg-white border min-w-[220px]">
+                <p className="text-sm font-semibold mb-3">Binance Pay</p>
+                {qrUrl ? (
+                  <img src={qrUrl} alt="QR Binance" className="w-48 h-48 object-contain rounded-lg border" />
+                ) : (
+                  <div className="w-48 h-48 bg-muted/10 rounded-lg flex items-center justify-center border border-dashed">
+                    <Icon icon="solar:qr-code-linear" width={64} className="text-muted-foreground/30" />
+                  </div>
+                )}
+                <p className="text-xs text-muted-foreground mt-2 text-center">Escanea con tu app de Binance</p>
               </div>
-              <p className="text-xs text-muted-foreground mt-2 text-center">QR se generará al integrar la API de Binance</p>
-            </div>
 
-            <div className="flex-1 space-y-2 text-sm">
-              <p className="text-muted-foreground">Una vez realizado el pago, tu plan se actualizará automáticamente.</p>
-              <ul className="space-y-1 text-muted-foreground">
-                <li>· Recibirás un comprobante por correo</li>
-                <li>· La factura estará disponible en tu bóveda digital</li>
-                <li>· El cambio de plan aplica de inmediato</li>
-              </ul>
+              {/* Instrucciones + upload */}
+              <div className="flex-1 space-y-4">
+                <div className="text-sm space-y-1 bg-muted/10 rounded-lg p-4">
+                  <p className="font-semibold mb-2">Instrucciones:</p>
+                  <p>1. Abre tu app de Binance</p>
+                  <p>2. Escanea el código QR</p>
+                  <p>3. Envía <strong>${planesDisponibles.find(p => p.nombre === planSeleccionado)?.precio}</strong> USD</p>
+                  <p>4. Toma una captura del comprobante</p>
+                  <p>5. Súbela aquí abajo</p>
+                </div>
+
+                <input ref={fileRef} type="file" accept="image/*" onChange={async (e) => {
+                  const f = e.target.files?.[0]; if (!f) return;
+                  setUploading(true);
+                  try {
+                    await paymentService.subirComprobante(f);
+                    toast.success('Comprobante subido. Será revisado.');
+                    paymentService.misComprobantes().then(setComprobantes).catch(() => {});
+                  } catch (err: any) { toast.error(err.message); }
+                  finally { setUploading(false); if (fileRef.current) fileRef.current.value = ''; }
+                }} className="hidden" />
+                <Button onClick={() => fileRef.current?.click()} disabled={uploading} className="w-full">
+                  {uploading ? <Icon icon="svg-spinners:180-ring" width={16} className="mr-1 animate-spin" /> : <Upload className="size-4 mr-1" />}
+                  {uploading ? 'Subiendo...' : 'Subir comprobante de pago'}
+                </Button>
+
+                {/* Historial */}
+                {comprobantes.length > 0 && (
+                  <div className="space-y-1.5">
+                    <p className="text-xs font-semibold text-muted-foreground">Tus comprobantes:</p>
+                    {comprobantes.slice(0, 3).map(c => (
+                      <div key={c.comprobanteId} className="flex items-center justify-between text-xs p-2 rounded bg-muted/10">
+                        <span className="truncate flex-1">{c.nombreArchivo}</span>
+                        <Badge className={c.estado === 'PENDIENTE' ? 'bg-yellow-100 text-yellow-700' : c.estado === 'APROBADO' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}>
+                          {c.estado}
+                        </Badge>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
-        </CardBox>
+          </CardBox>
+        </div>
       )}
     </div>
   );
