@@ -106,7 +106,7 @@ function FormCuenta({ cuentas, onCreada }: { cuentas: PlanCuentaResponse[]; onCr
     try {
       await contabilidadService.crearCuenta({
         tipoCuenta: tipo, codigo: codigo.trim(), nombre: nombre.trim(),
-        cuentaPadreId: padreId ? Number(padreId) : undefined,
+        cuentaPadreId: (padreId && padreId !== '__none__') ? Number(padreId) : undefined,
       });
       toast.success('Cuenta creada');
       onCreada();
@@ -117,8 +117,8 @@ function FormCuenta({ cuentas, onCreada }: { cuentas: PlanCuentaResponse[]; onCr
     <div className="space-y-4 mt-2">
       {error && <div className="bg-red-50 border border-red-200 text-red-600 text-sm px-3 py-2 rounded-md">{error}</div>}
       <div className="grid grid-cols-2 gap-3">
-        <div className="flex flex-col gap-1.5"><Label>Código *</Label><Input value={codigo} onChange={e => setCodigo(e.target.value)} placeholder="Ej: 1.1.4" /></div>
-        <div className="flex flex-col gap-1.5"><Label>Nombre *</Label><Input value={nombre} onChange={e => setNombre(e.target.value)} placeholder="Ej: Caja Chica" /></div>
+        <div className="flex flex-col gap-1.5"><Label>Código *</Label><Input value={codigo} onChange={e => setCodigo(e.target.value)} placeholder="Codigo " /></div>
+        <div className="flex flex-col gap-1.5"><Label>Nombre *</Label><Input value={nombre} onChange={e => setNombre(e.target.value)} placeholder="Nombre" /></div>
       </div>
       <div className="grid grid-cols-2 gap-3">
         <div className="flex flex-col gap-1.5"><Label>Tipo de cuenta</Label>
@@ -131,7 +131,7 @@ function FormCuenta({ cuentas, onCreada }: { cuentas: PlanCuentaResponse[]; onCr
           <Select value={padreId} onValueChange={setPadreId}>
             <SelectTrigger><SelectValue placeholder="Ninguna (raíz)" /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="">Ninguna</SelectItem>
+              <SelectItem value="__none__">Ninguna</SelectItem>
               {activas.map(c => <SelectItem key={c.cuentaId} value={String(c.cuentaId)}>{c.codigo} - {c.nombre}</SelectItem>)}
             </SelectContent>
           </Select>

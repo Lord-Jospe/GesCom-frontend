@@ -59,11 +59,11 @@ const BalanceGeneralPage = () => {
           <h3 className="text-lg font-bold mb-4 text-center">Balance General</h3>
           <p className="text-xs text-muted-foreground text-center mb-4">Al {data.fecha}</p>
           <div className="space-y-3 text-sm">
-            <div className="flex justify-between py-3 bg-emerald-50 rounded-lg px-3"><span className="font-semibold">Total Activos</span><span className="font-mono font-bold text-emerald-700">$ {data.totalActivos.toFixed(2)}</span></div>
-            <div className="flex justify-between py-3 bg-red-50 rounded-lg px-3"><span className="font-semibold">Total Pasivos</span><span className="font-mono font-bold text-red-700">$ {data.totalPasivos.toFixed(2)}</span></div>
-            <div className="flex justify-between py-3 bg-purple-50 rounded-lg px-3"><span className="font-semibold">Total Patrimonio</span><span className="font-mono font-bold text-purple-700">$ {data.totalPatrimonio.toFixed(2)}</span></div>
+            <div className="flex justify-between py-3 bg-emerald-500/10 rounded-lg px-3"><span className="font-semibold">Total Activos</span><span className="font-mono font-bold text-emerald-400">$ {data.totalActivos.toFixed(2)}</span></div>
+            <div className="flex justify-between py-3 bg-red-500/10 rounded-lg px-3"><span className="font-semibold">Total Pasivos</span><span className="font-mono font-bold text-red-400">$ {data.totalPasivos.toFixed(2)}</span></div>
+            <div className="flex justify-between py-3 bg-purple-500/10 rounded-lg px-3"><span className="font-semibold">Total Patrimonio</span><span className="font-mono font-bold text-purple-400">$ {data.totalPatrimonio.toFixed(2)}</span></div>
             <div className="border-t-2 pt-3 flex justify-between"><span className="font-bold">Pasivo + Patrimonio</span><span className="font-mono font-bold">$ {(data.totalPasivos + data.totalPatrimonio).toFixed(2)}</span></div>
-            <div className={`text-center text-sm font-bold py-2 rounded-lg ${data.cuadrado ? 'bg-success/10 text-success' : 'bg-red-100 text-red-700'}`}>
+            <div className={`text-center text-sm font-bold py-2 rounded-lg ${data.cuadrado ? 'bg-success/10 text-success' : 'bg-red-500/10 text-red-400'}`}>
               {data.cuadrado ? '✅ Activos = Pasivos + Patrimonio' : '⚠️ Balance descuadrado'}
             </div>
           </div>
