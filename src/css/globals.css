@@ -7,6 +7,7 @@
 @import './layouts/header.css' layer(utilities);
 @import './override/reboot.css' layer(utilities);
 @import 'tw-animate-css';
+@import './pages/adminDashboard.css';
 
 @custom-variant dark (&:is(.dark *));
 
