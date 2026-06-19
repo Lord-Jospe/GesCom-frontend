@@ -7,6 +7,7 @@
 @import './layouts/header.css' layer(utilities);
 @import './override/reboot.css' layer(utilities);
 @import 'tw-animate-css';
+@import './pages/adminDashboard.css';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -319,5 +320,15 @@ pre,
 
   .sales-overview select {
     @apply pr-9!;
+  }
+
+  /* Ocultar flechitas/spinners en inputs numéricos */
+  input[type='number']::-webkit-inner-spin-button,
+  input[type='number']::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  input[type='number'] {
+    -moz-appearance: textfield;
   }
 }

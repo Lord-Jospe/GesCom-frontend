@@ -64,6 +64,7 @@ export interface CrearTransaccionRequest {
   metodoPago: MetodoPago;
   descuentoGlobalPorcentaje?: number;
   descuentoGlobalMonto?: number;
+  pendiente?: boolean;
   notas?: string;
   lineas: AgregarLineaRequest[];
 }
@@ -109,5 +110,7 @@ export interface AdjuntoResponse {
   nombreOriginal: string;
   tipoArchivo: string;
   tamanio: number;
+  transaccionId: number;
+  numeroFactura: string | null;
   createdAt: string;
 }

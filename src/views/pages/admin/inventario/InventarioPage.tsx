@@ -7,11 +7,12 @@ import { Input } from 'src/components/ui/input';
 import { Label } from 'src/components/ui/label';
 import { Badge } from 'src/components/ui/badge';
 import { Switch } from 'src/components/ui/switch';
+import { Tooltip, TooltipContent, TooltipTrigger } from 'src/components/ui/tooltip';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from 'src/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from 'src/components/ui/select';
 import CardBox from 'src/components/shared/CardBox';
 import { Icon } from '@iconify/react';
-import { Pencil, RotateCcw, Trash2, Plus, Minus, AlertTriangle, ArrowDown, ArrowUp } from 'lucide-react';
+import { Pencil, RotateCcw, Trash2, Plus, Minus, AlertTriangle, ArrowDown, ArrowUp, Info } from 'lucide-react';
 
 const unidades: UnidadMedida[] = ['UNIDAD', 'KG', 'GR', 'LITRO', 'ML', 'GALON', 'METRO', 'CM', 'CAJA', 'PAR', 'DOCENA'];
 const TAM = 12;
@@ -59,7 +60,7 @@ const InventarioPage = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold">Productos</h1>
-          <p className="text-muted-foreground">{productos.length} productos · {criticos.length} alertas</p>
+          <p className="text-muted-foreground">{productos.length} productos · {criticos.length} alertas · <ValorInventario /></p>
         </div>
         <div className="flex items-center gap-3">
           <Input placeholder="Buscar..." className="w-48 lg:w-64" value={busqueda} onChange={e => setBusqueda(e.target.value)} />
@@ -110,7 +111,10 @@ const InventarioPage = () => {
                       </Button>
                     </div>
                   </div>
-                  <h3 className="font-semibold truncate">{p.nombre}</h3>
+                  <div className="flex items-center gap-2 mb-1">
+                    <h3 className="font-semibold truncate">{p.nombre}</h3>
+                    {p.ventaBajoPedido && <Badge className="bg-purple-100 text-purple-700 text-xs shrink-0">Bajo pedido</Badge>}
+                  </div>
                   <p className="text-xs text-muted-foreground mb-3">{p.codigo || 'Sin código'} · {p.categoria || 'General'}</p>
                   <div className="mb-3">
                     <div className="flex justify-between text-xs mb-1"><span className="text-muted-foreground">Stock</span><span className="font-mono font-medium">{p.stockActual} / {p.stockMinimo}</span></div>
@@ -180,7 +184,20 @@ function DialogProducto({ open, onOpenChange, onGuardado, producto }: {
           <div className="flex flex-col gap-1.5"><Label>Precio venta</Label><Input type="number" step="0.01" value={form.precioVenta ?? ''} onChange={e => setForm({...form, precioVenta: e.target.value ? Number(e.target.value) : undefined})} /></div>
           <div className="flex flex-col gap-1.5"><Label>Stock mínimo</Label><Input type="number" value={form.stockMinimo ?? 5} onChange={e => setForm({...form, stockMinimo: Number(e.target.value)})} /></div>
           {esEditar ? null : <div className="flex flex-col gap-1.5"><Label>Stock inicial</Label><Input type="number" value={form.stockInicial ?? ''} onChange={e => setForm({...form, stockInicial: e.target.value ? Number(e.target.value) : undefined})} /></div>}
-          <div className="flex items-center gap-3"><Switch checked={form.ventaBajoPedido || false} onCheckedChange={v => setForm({...form, ventaBajoPedido: v})} /><Label>Venta bajo pedido</Label></div>
+          <div className="flex items-center gap-3">
+            <Switch checked={form.ventaBajoPedido || false} onCheckedChange={v => setForm({...form, ventaBajoPedido: v})} />
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span className="flex items-center gap-1 cursor-help">
+                  <Label className="cursor-help">Venta bajo pedido</Label>
+                  <Info className="size-3.5 text-muted-foreground" />
+                </span>
+              </TooltipTrigger>
+              <TooltipContent side="top" className="max-w-xs text-xs">
+                Permite vender este producto aunque no haya stock disponible. El stock quedará en negativo y deberás reponerlo después. Útil para productos que fabricas o compras bajo demanda.
+              </TooltipContent>
+            </Tooltip>
+          </div>
           <div className="col-span-2 flex flex-col gap-1.5"><Label>Descripción</Label><Input value={form.descripcion || ''} onChange={e => setForm({...form, descripcion: e.target.value})} /></div>
         </div>
         <DialogFooter className="mt-4">
@@ -235,6 +252,13 @@ export function MovimientoDialog({ open, onOpenChange, producto, onGuardado }: {
       </DialogContent>
     </Dialog>
   );
+}
+
+function ValorInventario() {
+  const [valor, setValor] = useState<number | null>(null);
+  useEffect(() => { inventarioService.valorTotal().then(setValor).catch(() => {}); }, []);
+  if (valor === null) return null;
+  return <span className="font-semibold text-primary">Valor total: ${valor.toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>;
 }
 
 export default InventarioPage;

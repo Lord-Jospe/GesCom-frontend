@@ -3,11 +3,14 @@ import { useNavigate } from 'react-router';
 import { toast } from 'sonner';
 import { transaccionService } from 'src/api/services/transaccionService';
 import { proveedorService } from 'src/api/services/proveedorService';
-import type { CrearTransaccionRequest, AgregarLineaRequest, MetodoPago } from 'src/types/transaccion';
+import { inventarioService } from 'src/api/services/inventarioService';
+import type { AgregarLineaRequest, MetodoPago } from 'src/types/transaccion';
 import type { ProveedorResponse, CrearProveedorRequest, CategoriaProveedor } from 'src/types/proveedor';
+import type { ProductoResponse } from 'src/types/inventario';
 import { Button } from 'src/components/ui/button';
 import { Input } from 'src/components/ui/input';
 import { Label } from 'src/components/ui/label';
+import { Switch } from 'src/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from 'src/components/ui/select';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from 'src/components/ui/dialog';
 import CardBox from 'src/components/shared/CardBox';
@@ -22,16 +25,31 @@ const categorias: CategoriaProveedor[] = ['MERCANCIA', 'SERVICIOS', 'TRANSPORTE'
 const RegistrarGastoPage = () => {
   const nav = useNavigate();
   const [proveedores, setProveedores] = useState<ProveedorResponse[]>([]);
-  const [form, setForm] = useState({ proveedorId: 0, fecha: hoy, moneda: 'USD' as 'USD'|'VES', metodoPago: 'EFECTIVO' as MetodoPago, descuentoGlobalPorcentaje: 0, notas: '' });
+  const [productos, setProductos] = useState<ProductoResponse[]>([]);
+  const [form, setForm] = useState({ proveedorId: 0, fecha: hoy, moneda: 'USD' as 'USD'|'VES', metodoPago: 'EFECTIVO' as MetodoPago, descuentoGlobalPorcentaje: 0, pendiente: false, notas: '' });
   const [lineas, setLineas] = useState<AgregarLineaRequest[]>([{ descripcion: '', cantidad: 1, precioUnitario: 0 }]);
   const [error, setError] = useState(''); const [g, setG] = useState(false);
   const [openCrearProv, setOpenCrearProv] = useState(false);
 
   const cargarProvs = () => { proveedorService.obtenerTodos().then(setProveedores).catch(() => {}); };
-  useEffect(() => { cargarProvs(); }, []);
+  useEffect(() => { cargarProvs(); inventarioService.obtenerTodos().then(setProductos).catch(() => {}); }, []);
 
   const updateLinea = (i: number, f: keyof AgregarLineaRequest, v: any) => setLineas(prev => prev.map((l, idx) => idx === i ? { ...l, [f]: v } : l));
   const addLinea = () => setLineas([...lineas, { descripcion: '', cantidad: 1, precioUnitario: 0 }]);
+  const seleccionarProducto = (i: number, productoId: number) => {
+    const prod = productos.find(p => p.productoId === productoId);
+    if (prod) {
+      setLineas(prev => prev.map((l, idx) => idx === i ? {
+        ...l,
+        productoId: prod.productoId,
+        descripcion: prod.nombre,
+        precioUnitario: prod.costoUnitario ?? 0, // en compras se usa el costo
+      } : l));
+    } else {
+      // Manual: conserva descripción y precio, solo quita la referencia al producto
+      setLineas(prev => prev.map((l, idx) => idx === i ? { ...l, productoId: undefined } : l));
+    }
+  };
   const subtotal = lineas.reduce((s, l) => s + l.cantidad * l.precioUnitario, 0);
   const total = subtotal;
 
@@ -40,7 +58,7 @@ const RegistrarGastoPage = () => {
     try { setG(true);
       await transaccionService.crear({
         tipo: 'EGRESO', proveedorId: form.proveedorId || undefined, fecha: form.fecha, moneda: form.moneda,
-        metodoPago: form.metodoPago, notas: form.notas || undefined, lineas,
+        metodoPago: form.metodoPago, pendiente: form.pendiente || undefined, notas: form.notas || undefined, lineas,
       });
       toast.success('Gasto registrado');
       nav('/admin/caja-facturacion');
@@ -108,6 +126,7 @@ const RegistrarGastoPage = () => {
             <div className="overflow-x-auto border rounded-lg">
               <table className="w-full text-sm">
                 <thead className="bg-muted/30"><tr>
+                  <th className="text-left px-3 py-2.5 font-semibold w-40">Producto</th>
                   <th className="text-left px-3 py-2.5 font-semibold">Descripción</th>
                   <th className="text-right px-3 py-2.5 font-semibold w-20">Cant.</th>
                   <th className="text-right px-3 py-2.5 font-semibold w-28">Precio Unit.</th>
@@ -117,9 +136,22 @@ const RegistrarGastoPage = () => {
                 <tbody>
                   {lineas.map((l, i) => (
                     <tr key={i} className="border-t hover:bg-muted/10 transition-colors">
+                      <td className="px-2 py-2">
+                        <Select value={l.productoId ? String(l.productoId) : ''} onValueChange={v => seleccionarProducto(i, Number(v))}>
+                          <SelectTrigger className="h-9 text-sm"><SelectValue placeholder="Seleccionar..." /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="__none__">— Manual —</SelectItem>
+                            {productos.filter(p => p.activo).map(p => (
+                              <SelectItem key={p.productoId} value={String(p.productoId)}>
+                                {p.nombre} (Stock: {p.stockActual}){p.ventaBajoPedido ? ' · Bajo pedido' : ''}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </td>
                       <td className="px-2 py-2"><Input value={l.descripcion} onChange={e => updateLinea(i, 'descripcion', e.target.value)} placeholder="Producto o servicio" className="h-9 text-sm" /></td>
-                      <td className="px-2 py-2"><Input type="number" min={1} value={l.cantidad} onChange={e => updateLinea(i, 'cantidad', Number(e.target.value))} className="h-9 text-sm text-right" /></td>
-                      <td className="px-2 py-2"><Input type="number" step="0.01" min={0} value={l.precioUnitario} onChange={e => updateLinea(i, 'precioUnitario', Number(e.target.value))} className="h-9 text-sm text-right" /></td>
+                      <td className="px-2 py-2"><Input type="number" min={1} value={l.cantidad} onChange={e => updateLinea(i, 'cantidad', Number(e.target.value))} onFocus={e => e.target.select()} className="h-9 text-sm text-right" /></td>
+                      <td className="px-2 py-2"><Input type="number" step="0.01" min={0} value={l.precioUnitario} onChange={e => updateLinea(i, 'precioUnitario', Number(e.target.value))} onFocus={e => e.target.select()} className="h-9 text-sm text-right" /></td>
                       <td className="px-2 py-2 text-right font-mono font-medium text-sm">{(l.cantidad * l.precioUnitario).toFixed(2)}</td>
                       <td className="px-2 py-2">{lineas.length > 1 && <Button variant="ghost" size="sm" className="size-8! text-red-500 hover:bg-red-50" onClick={() => setLineas(lineas.filter((_, idx) => idx !== i))}><Trash2 className="size-4" /></Button>}</td>
                     </tr>
@@ -141,6 +173,10 @@ const RegistrarGastoPage = () => {
             </div>
 
             <div className="mt-4">
+              <div className="flex items-center justify-between">
+                <div><Label className="text-xs">Pendiente</Label><p className="text-[11px] text-muted-foreground">Queda en cuentas por pagar</p></div>
+                <Switch checked={form.pendiente} onCheckedChange={v => setForm({...form, pendiente: v})} />
+              </div>
               <div className="flex flex-col gap-1.5"><Label className="text-xs">Notas</Label><Input value={form.notas} onChange={e => setForm({...form, notas: e.target.value})} placeholder="Opcional" className="h-9" /></div>
             </div>
 
