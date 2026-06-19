@@ -11,6 +11,7 @@ import adminItems, { MenuItem } from './itemsSidebar/adminSidebaritems';
 import contadorItems from './itemsSidebar/contadorSideBaritems';
 import operadorItems from './itemsSidebar/operadorSidebarItems';
 import superAdminItems from './itemsSidebar/superAdminSidebarItems';
+import { useSubscription } from 'src/hooks/useSubscription';
 
 
 
@@ -105,6 +106,7 @@ const SidebarLayout = ({ onClose }: { onClose?: () => void }) => {
   const pathname = location.pathname;
   const { theme } = useTheme();
   const { user } = useAuth();
+  const subscription = useSubscription();
 
   // Only allow "light" or "dark" for AMSidebar
   const sidebarMode = theme === 'light' || theme === 'dark' ? theme : undefined;
@@ -124,7 +126,28 @@ const SidebarLayout = ({ onClose }: { onClose?: () => void }) => {
     }
   };
 
-  const SidebarContent = getSidebarByRole(user?.rol) || [];
+  let items = getSidebarByRole(user?.rol) || [];
+
+  // Filtrar items según plan
+  if (subscription && user?.rol === 'ADMIN') {
+    items = items.map(section => ({
+      ...section,
+      children: section.children?.map(child => {
+        // Empleados: quitar Gestión de nómina si no tiene nómina
+        if (child.name === 'Empleados' && !subscription.tieneNomina && child.children) {
+          return { ...child, children: child.children.filter(c => c.name !== 'Gestión de nómina') };
+        }
+        return child;
+      })
+    })).filter(section => {
+      // Quitar secciones enteras que el plan no incluye
+      if (section.heading === 'Inventario' && !subscription.tieneInventario) return false;
+      if (section.heading === 'Módulo Contable' && !subscription.tieneContabilidad) return false;
+      return true;
+    });
+  }
+
+  const SidebarContent = items;
 
   const homeByRole: Record<string, string> = {
     SUPER_ADMIN: '/super-admin',

@@ -39,10 +39,14 @@ const SubscriptionBanner = () => {
         {isExpired
           ? `Tu suscripción venció. Renueva el plan ${sub.planNombre} para continuar.`
           : isWarning
-          ? `Tu plan ${sub.planNombre} vence en ${dias} día${dias !== 1 ? 's' : ''}.`
+          ? `Plan ${sub.planNombre} — vence en ${dias} día${dias !== 1 ? 's' : ''}.`
           : isInfo
-          ? `Plan ${sub.planNombre} — quedan ${dias} días.`
+          ? `Plan ${sub.planNombre} — ${dias} días restantes.`
           : `Plan ${sub.planNombre} activo — ${dias} día${dias !== 1 ? 's' : ''} restantes.`}
+        {sub.maxTransaccionesMes > 0 && ` · ${sub.maxTransaccionesMes} transacciones/mes`}
+        {sub.maxArchivosMes > 0 && ` · ${sub.maxArchivosMes} archivos/mes`}
+        {!sub.tieneInventario && ' · Sin inventario'}
+        {!sub.tieneContabilidad && ' · Sin contabilidad'}
       </span>
       <button
         onClick={() => setDismissed(true)}
