@@ -53,6 +53,7 @@ export interface SuscripcionResponse {
   estado: string;
   maxTransaccionesMes: number;
   maxArchivosMes: number;
+  maxUsuarios: number | null;
   tieneInventario: boolean;
   tieneNomina: boolean;
   tieneContabilidad: boolean;
