@@ -29,58 +29,60 @@ const Messages = () => {
   const base = `/${(user?.rol || 'ADMIN').toLowerCase()}`;
   const [alertas, setAlertas] = useState<Alerta[]>([]);
 
-  useEffect(() => {
-    const cargar = async () => {
-      const items: Alerta[] = [];
-      try {
-        const [criticos, porCobrar, porPagar, sub] = await Promise.all([
-          inventarioService.stockCritico(),
-          transaccionService.cuentasPorCobrar(),
-          transaccionService.cuentasPorPagar(),
-          empresaService.obtenerSuscripcion(),
-        ]);
-        // Stock crítico
-        criticos.forEach(p => {
-          if (p.stockActual === 0) {
+  const cargar = async () => {
+    const items: Alerta[] = [];
+
+    // Cada llamada independiente — si una falla, las otras siguen
+    const [criticos, porCobrar, porPagar, sub] = await Promise.allSettled([
+      inventarioService.stockCritico(),
+      transaccionService.cuentasPorCobrar(),
+      transaccionService.cuentasPorPagar(),
+      empresaService.obtenerSuscripcion(),
+    ]);
+
+    const c = criticos.status === 'fulfilled' ? criticos.value : [];
+    const cob = porCobrar.status === 'fulfilled' ? porCobrar.value : [];
+    const pag = porPagar.status === 'fulfilled' ? porPagar.value : [];
+    const su = sub.status === 'fulfilled' ? sub.value : null;
+
+    // Stock crítico
+    c.forEach(p => {
+          if (p.stockActual <= 0) {
             items.push({ icon: 'solar:danger-triangle-bold', bg: 'bg-red-500/10', color: 'text-red-500', title: 'Producto agotado', subtitle: `${p.nombre} — stock en cero`, url: `${base}/inventario/alertas` });
           } else {
             items.push({ icon: 'solar:danger-triangle-bold', bg: 'bg-yellow-500/10', color: 'text-yellow-600', title: 'Stock bajo', subtitle: `${p.nombre} — ${p.stockActual} unidad(es)`, url: `${base}/inventario/alertas` });
           }
         });
-        // Cuentas por cobrar con más de 15 días
-        porCobrar.forEach(t => {
+    cob.forEach(t => {
           const dias = Math.floor((Date.now() - new Date(t.fecha).getTime()) / 86400000);
           if (dias > 15) {
             items.push({ icon: 'solar:hand-money-linear', bg: 'bg-orange-500/10', color: 'text-orange-500', title: 'Cobranza vencida', subtitle: `${t.clienteNombre} — $${t.saldoPendiente.toFixed(2)} · ${dias} días`, url: `${base}/por-cobrar` });
           }
         });
-        // Cuentas por pagar con más de 15 días
-        porPagar.forEach(t => {
+    pag.forEach(t => {
           const dias = Math.floor((Date.now() - new Date(t.fecha).getTime()) / 86400000);
           if (dias > 15) {
             items.push({ icon: 'solar:wallet-money-linear', bg: 'bg-red-500/10', color: 'text-red-500', title: 'Pago vencido', subtitle: `${t.proveedorNombre} — $${t.saldoPendiente.toFixed(2)} · ${dias} días`, url: `${base}/por-pagar` });
           }
         });
-        // Suscripción por vencer
-        if (sub) {
-          const diasSub = Math.ceil((new Date(sub.fechaVence).getTime() - Date.now()) / 86400000);
+    if (su) {
+          const diasSub = Math.ceil((new Date(su.fechaVence).getTime() - Date.now()) / 86400000);
           if (diasSub <= 7 && diasSub > 0) {
-            items.push({ icon: 'solar:star-bold', bg: 'bg-yellow-500/10', color: 'text-yellow-600', title: 'Suscripción por vencer', subtitle: `Plan ${sub.planNombre} — ${diasSub} día(s) restante(s)`, url: `${base}/mi-empresa` });
+            items.push({ icon: 'solar:star-bold', bg: 'bg-yellow-500/10', color: 'text-yellow-600', title: 'Suscripción por vencer', subtitle: `Plan ${su.planNombre} — ${diasSub} día(s) restante(s)`, url: `${base}/mi-empresa` });
           } else if (diasSub <= 0) {
-            items.push({ icon: 'solar:danger-triangle-bold', bg: 'bg-red-500/10', color: 'text-red-500', title: 'Suscripción vencida', subtitle: `Plan ${sub.planNombre} — renueva para continuar`, url: `${base}/mi-empresa` });
+            items.push({ icon: 'solar:danger-triangle-bold', bg: 'bg-red-500/10', color: 'text-red-500', title: 'Suscripción vencida', subtitle: `Plan ${su.planNombre} — renueva para continuar`, url: `${base}/mi-empresa` });
           }
         }
-      } catch { /* sin datos */ }
-      setAlertas(items);
+    setAlertas(items);
     };
-    cargar();
-  }, []);
+
+    useEffect(() => { cargar(); }, []); // eslint-disable-line
 
   const count = alertas.length;
 
   return (
     <div className="relative group/menu px-4 sm:px-15">
-      <DropdownMenu>
+      <DropdownMenu onOpenChange={(open) => { if (open) cargar(); }}>
         <DropdownMenuTrigger asChild>
           <div className="relative">
             <span className="relative after:absolute after:w-10 after:h-10 after:rounded-full hover:text-primary after:-top-1/2 hover:after:bg-lightprimary text-foreground dark:text-muted-foreground rounded-full flex justify-center items-center cursor-pointer group-hover/menu:after:bg-lightprimary group-hover/menu:!text-primary">

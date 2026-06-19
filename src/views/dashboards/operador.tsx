@@ -111,11 +111,11 @@ const Operadordash = () => {
         ) : (
           <div className="space-y-2">
             {criticos.map(p => (
-              <div key={p.productoId} className="flex items-center justify-between p-3 rounded-lg bg-red-50 border border-red-100">
+              <div key={p.productoId} className="flex items-center justify-between p-3 rounded-lg bg-red-500/10 border border-red-500/20">
                 <div className="flex items-center gap-3"><Icon icon="solar:danger-triangle-bold" width={20} className="text-red-500" />
                   <div><p className="text-sm font-medium">{p.nombre}</p><p className="text-xs text-muted-foreground">Stock: {p.stockActual} / {p.stockMinimo}</p></div>
                 </div>
-                <Badge className={p.stockActual === 0 ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700'}>{p.stockActual === 0 ? 'Agotado' : 'Bajo'}</Badge>
+                <Badge className={p.stockActual <= 0 ? 'bg-red-500/20 text-red-400' : 'bg-yellow-500/20 text-yellow-400'}>{p.stockActual <= 0 ? 'Crítico' : 'Bajo'}</Badge>
               </div>
             ))}
           </div>

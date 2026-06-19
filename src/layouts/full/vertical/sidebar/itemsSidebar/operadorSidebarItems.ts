@@ -32,18 +32,11 @@ const OperadorSidebarContent: MenuItem[] = [
   {
     heading: 'Inventario',
     children: [
-      {
-        name: 'Inventario',
-        icon: 'solar:box-linear',
-        id: uniqueId(),
-        children: [
           { id: uniqueId(), name: 'Productos y stock', icon: 'solar:box-linear', url: '/operador/inventario' },
           { id: uniqueId(), name: 'Movimientos', icon: 'solar:transfer-horizontal-linear', url: '/operador/inventario/movimientos' },
           { id: uniqueId(), name: 'Alertas', icon: 'solar:danger-triangle-linear', url: '/operador/inventario/alertas' },
         ],
       },
-    ],
-  },
   {
     heading: 'Cuenta',
     children: [
