@@ -81,4 +81,13 @@ export const contabilidadService = {
       await api.post('/accounting/close-period', null, { params: { desde, hasta } });
     } catch (e: any) { handle('cerrar período', e); }
   },
+
+  // PDF: descarga via blob y abre en pestaña nueva
+  descargarPDF: async (path: string) => {
+    try {
+      const { data } = await api.get(path, { responseType: 'blob' });
+      const url = URL.createObjectURL(new Blob([data], { type: 'application/pdf' }));
+      window.open(url, '_blank');
+    } catch (e: any) { handle('descargar PDF', e); }
+  },
 };

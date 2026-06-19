@@ -8,7 +8,9 @@ import { Input } from 'src/components/ui/input';
 import { Badge } from 'src/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from 'src/components/ui/select';
 import { Icon } from '@iconify/react';
-import { ArrowDown, ArrowUp, LayoutList, GitCommitHorizontal, Download } from 'lucide-react';
+import { ArrowDown, ArrowUp, LayoutList, GitCommitHorizontal, Download, Pencil, Ban } from 'lucide-react';
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from 'src/components/ui/dialog';
+import { Label } from 'src/components/ui/label';
 
 const estadoColor: Record<string, string> = {
   PAGADA: 'bg-green-100 text-green-700', PENDIENTE: 'bg-yellow-100 text-yellow-700',
@@ -37,6 +39,36 @@ const HistorialTransaccionesPage = () => {
       document.body.appendChild(a); a.click(); document.body.removeChild(a);
       URL.revokeObjectURL(url);
     } catch { toast.error('No se pudo descargar la factura'); }
+  };
+
+  const [editarTx, setEditarTx] = useState<TransaccionResponse | null>(null);
+  const [editFecha, setEditFecha] = useState('');
+  const [editMetodo, setEditMetodo] = useState('');
+  const [anularTx, setAnularTx] = useState<TransaccionResponse | null>(null);
+  const [motivoAnulacion, setMotivoAnulacion] = useState('');
+  const [saving, setSaving] = useState(false);
+
+  const handleEditar = async () => {
+    if (!editarTx) return;
+    setSaving(true);
+    try {
+      await transaccionService.editar(editarTx.transaccionId, {
+        fecha: editFecha || undefined,
+        metodoPago: (editMetodo || undefined) as any,
+      });
+      toast.success('Transacción editada');
+      setEditarTx(null); cargar();
+    } catch (e: any) { toast.error(e.message); } finally { setSaving(false); }
+  };
+
+  const handleAnular = async () => {
+    if (!anularTx || !motivoAnulacion.trim()) return;
+    setSaving(true);
+    try {
+      await transaccionService.anular(anularTx.transaccionId, motivoAnulacion);
+      toast.success('Transacción anulada');
+      setAnularTx(null); setMotivoAnulacion(''); cargar();
+    } catch (e: any) { toast.error(e.message); } finally { setSaving(false); }
   };
 
   return (
@@ -76,12 +108,41 @@ const HistorialTransaccionesPage = () => {
 
       {loading ? <div className="flex justify-center py-16"><Icon icon="svg-spinners:180-ring" width={32} className="text-primary animate-spin" /></div>
       : data.length === 0 ? <p className="text-center py-16 text-muted-foreground">Sin transacciones.</p>
-      : vista === 'tabla' ? <TablaView data={data} onDescargar={descargarFactura} /> : <TimelineView data={data} onDescargar={descargarFactura} />}
-    </div>
-  );
+      : vista === 'tabla' ? <TablaView data={data} onDescargar={descargarFactura} onEditar={(t) => { setEditarTx(t); setEditFecha(t.fecha); setEditMetodo(t.metodoPago); }} onAnular={(t) => setAnularTx(t)} /> : <TimelineView data={data} onDescargar={descargarFactura} onEditar={(t) => { setEditarTx(t); setEditFecha(t.fecha); setEditMetodo(t.metodoPago); }} onAnular={(t) => setAnularTx(t)} />}
+
+    {/* Diálogo editar */}
+    <Dialog open={!!editarTx} onOpenChange={() => setEditarTx(null)}>
+      <DialogContent className="max-w-sm"><DialogHeader><DialogTitle>Editar transacción</DialogTitle></DialogHeader>
+        <div className="space-y-3 mt-2">
+          <div className="flex flex-col gap-1.5"><Label>Fecha</Label><Input type="date" value={editFecha} onChange={e => setEditFecha(e.target.value)} /></div>
+          <div className="flex flex-col gap-1.5"><Label>Método de pago</Label>
+            <Select value={editMetodo} onValueChange={setEditMetodo}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="EFECTIVO">Efectivo</SelectItem><SelectItem value="TRANSFERENCIA">Transferencia</SelectItem>
+                <SelectItem value="PAGO_MOVIL">Pago Móvil</SelectItem><SelectItem value="DIVISAS">Divisas</SelectItem><SelectItem value="OTRO">Otro</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+        <DialogFooter><Button variant="outline" onClick={() => setEditarTx(null)}>Cancelar</Button><Button onClick={handleEditar} disabled={saving}>Guardar</Button></DialogFooter>
+      </DialogContent>
+    </Dialog>
+
+    {/* Diálogo anular */}
+    <Dialog open={!!anularTx} onOpenChange={() => setAnularTx(null)}>
+      <DialogContent className="max-w-sm"><DialogHeader><DialogTitle>Anular transacción</DialogTitle></DialogHeader>
+        <div className="space-y-3 mt-2">
+          <p className="text-sm text-muted-foreground">Esta acción no se puede deshacer. La transacción se marcará como anulada.</p>
+          <div className="flex flex-col gap-1.5"><Label>Motivo de anulación</Label><Input value={motivoAnulacion} onChange={e => setMotivoAnulacion(e.target.value)} placeholder="Ej: Error en el monto" /></div>
+        </div>
+        <DialogFooter><Button variant="outline" onClick={() => setAnularTx(null)}>Cancelar</Button><Button variant="destructive" onClick={handleAnular} disabled={saving || !motivoAnulacion.trim()}>Anular</Button></DialogFooter>
+      </DialogContent>
+    </Dialog>
+  </div>);
 };
 
-function TablaView({ data, onDescargar }: { data: TransaccionResponse[]; onDescargar: (id: number, num: string) => void }) {
+function TablaView({ data, onDescargar, onEditar, onAnular }: { data: TransaccionResponse[]; onDescargar: (id: number, num: string) => void; onEditar: (t: TransaccionResponse) => void; onAnular: (t: TransaccionResponse) => void }) {
   return (
     <div className="overflow-x-auto border rounded-lg">
       <table className="w-full text-sm">
@@ -110,11 +171,23 @@ function TablaView({ data, onDescargar }: { data: TransaccionResponse[]; onDesca
               <td className="px-3 py-2"><Badge className={estadoColor[t.estado] || ''}>{t.estado}</Badge></td>
               <td className="px-3 py-2 text-muted-foreground text-xs">{t.metodoPago}</td>
               <td className="px-2 py-2">
-                {t.tipo === 'INGRESO' && (
-                  <Button variant="ghost" size="sm" className="size-8!" title="Descargar factura PDF" onClick={() => onDescargar(t.transaccionId, t.numeroFactura || String(t.transaccionId))}>
-                    <Download className="size-4 text-primary" />
-                  </Button>
-                )}
+                <div className="flex items-center justify-end gap-0.5 w-20">
+                  {t.tipo === 'INGRESO' && (
+                    <Button variant="ghost" size="sm" className="size-7!" title="Descargar factura" onClick={() => onDescargar(t.transaccionId, t.numeroFactura || String(t.transaccionId))}>
+                      <Download className="size-3.5 text-primary" />
+                    </Button>
+                  )}
+                  {t.estado !== 'ANULADA' && (
+                    <>
+                      <Button variant="ghost" size="sm" className="size-7!" title="Editar" onClick={() => onEditar(t)}>
+                        <Pencil className="size-3.5 text-muted-foreground" />
+                      </Button>
+                      <Button variant="ghost" size="sm" className="size-7!" title="Anular" onClick={() => onAnular(t)}>
+                        <Ban className="size-3.5 text-red-500" />
+                      </Button>
+                    </>
+                  )}
+                </div>
               </td>
             </tr>
           ))}
@@ -124,7 +197,7 @@ function TablaView({ data, onDescargar }: { data: TransaccionResponse[]; onDesca
   );
 }
 
-function TimelineView({ data, onDescargar }: { data: TransaccionResponse[]; onDescargar: (id: number, num: string) => void }) {
+function TimelineView({ data, onDescargar, onEditar, onAnular }: { data: TransaccionResponse[]; onDescargar: (id: number, num: string) => void; onEditar: (t: TransaccionResponse) => void; onAnular: (t: TransaccionResponse) => void }) {
   return (
     <div className="flex justify-center">
       <div className="relative w-full">
@@ -154,9 +227,19 @@ function TimelineView({ data, onDescargar }: { data: TransaccionResponse[]; onDe
                     <Badge className={estadoColor[t.estado] || ''}>{t.estado}</Badge>
                     <span className="text-xs text-muted-foreground">{t.metodoPago}</span>
                     {ingreso && (
-                      <Button variant="ghost" size="sm" className="h-7 text-xs ml-auto" title="Descargar factura PDF" onClick={() => onDescargar(t.transaccionId, t.numeroFactura || String(t.transaccionId))}>
+                      <Button variant="ghost" size="sm" className="h-7 text-xs" title="Factura PDF" onClick={() => onDescargar(t.transaccionId, t.numeroFactura || String(t.transaccionId))}>
                         <Download className="size-3.5 mr-1 text-primary" /> PDF
                       </Button>
+                    )}
+                    {t.estado !== 'ANULADA' && (
+                      <div className="flex items-center gap-0.5 ml-auto">
+                        <Button variant="ghost" size="sm" className="h-7 text-xs" title="Editar" onClick={() => onEditar(t)}>
+                          <Pencil className="size-3.5" />
+                        </Button>
+                        <Button variant="ghost" size="sm" className="h-7 text-xs text-red-500" title="Anular" onClick={() => onAnular(t)}>
+                          <Ban className="size-3.5" />
+                        </Button>
+                      </div>
                     )}
                   </div>
                 </div>

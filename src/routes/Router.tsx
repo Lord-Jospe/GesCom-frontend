@@ -62,14 +62,18 @@ const LibroMayorPage = Loadable(lazy(() => import('../views/pages/admin/contable
 const EstadoResultadosPage = Loadable(lazy(() => import('../views/pages/admin/contable/EstadoResultadosPage')));
 const BalanceGeneralPage = Loadable(lazy(() => import('../views/pages/admin/contable/BalanceGeneralPage')));
 const CierrePeriodoPage = Loadable(lazy(() => import('../views/pages/admin/contable/CierrePeriodoPage')));
+const ConciliacionBancariaPage = Loadable(lazy(() => import('../views/pages/admin/contable/ConciliacionBancariaPage')));
 
 // Nómina
 const NominaPage = Loadable(lazy(() => import('../views/pages/admin/organizacion/NominaPage')));
 const PlanesPage = Loadable(lazy(() => import('../views/pages/admin/organizacion/PlanesPage')));
 
 // Configuración
-const GestionUsuariosPage = Loadable(lazy(() => import('../views/pages/admin/configuracion/GestionUsuariosPage')));
 const AjustesSistemaPage = Loadable(lazy(() => import('../views/pages/admin/configuracion/AjustesSistemaPage')));
+
+// Super Admin
+const SuperAdminPage = Loadable(lazy(() => import('../views/pages/super-admin/SuperAdminPage')));
+const SuperAdminEmpresasPage = Loadable(lazy(() => import('../views/pages/super-admin/EmpresasPage')));
 
 /* ****Apps***** */
 //const Form = Loadable(lazy(() => import('../views/utilities/form/Form')));
@@ -111,7 +115,7 @@ const Router = [
   {
     path: '/admin',
     element:  (
-      <PrivateRoute allowedRoles={['ADMIN']}>
+      <PrivateRoute allowedRoles={['ADMIN', 'SUPER_ADMIN']}>
         <AdminLayout />
       </PrivateRoute>
     ),
@@ -121,7 +125,7 @@ const Router = [
       // Organización
       { path: 'mi-empresa', element: <MiEmpresaPage /> },
       { path: 'planes', element: <PlanesPage /> },
-      { path: 'Empleados', element: <EmpleadoPage /> },
+      { path: 'empleados', element: <EmpleadoPage /> },
       { path: 'nomina', element: <NominaPage /> },
       { path: 'clientes', element: <ClientesPage /> },
       { path: 'proveedores', element: <ProveedoresPage /> },
@@ -143,13 +147,27 @@ const Router = [
       { path: 'estado-resultados', element: <EstadoResultadosPage /> },
       { path: 'balance-general', element: <BalanceGeneralPage /> },
       { path: 'cierre-periodo', element: <CierrePeriodoPage /> },
+      { path: 'conciliacion-bancaria', element: <ConciliacionBancariaPage /> },
       { path: 'reportes-financieros', element: <ReportesFinancierosPage /> },
       { path: 'gestion-documental', element: <GestionDocumentalPage /> },
       // Configuración
-      { path: 'gestion-usuarios', element: <GestionUsuariosPage /> },
       { path: 'ajustes-sistema', element: <AjustesSistemaPage /> },
     ]
   },
+  /*Super Admin*/
+  {
+    path: '/super-admin',
+    element: (
+      <PrivateRoute allowedRoles={['SUPER_ADMIN']}>
+        <AdminLayout />
+      </PrivateRoute>
+    ),
+    children: [
+      { index: true, element: <SuperAdminPage /> },
+      { path: 'empresas', element: <SuperAdminEmpresasPage /> },
+    ]
+  },
+
   /*Contador*/
   {
     path: '/contador',
@@ -173,8 +191,6 @@ const Router = [
       { path: 'inventario', element: <InventarioPage /> },
       { path: 'inventario/movimientos', element: <MovimientosInventarioPage /> },
       { path: 'inventario/alertas', element: <AlertasInventarioPage /> },
-      // Nómina
-      { path: 'nomina', element: <NominaPage /> },
       // Módulo Contable
       { path: 'asientos-contables', element: <AsientosContablesPage /> },
       { path: 'plan-cuentas', element: <PlanCuentasPage /> },
@@ -183,6 +199,7 @@ const Router = [
       { path: 'estado-resultados', element: <EstadoResultadosPage /> },
       { path: 'balance-general', element: <BalanceGeneralPage /> },
       { path: 'cierre-periodo', element: <CierrePeriodoPage /> },
+      { path: 'conciliacion-bancaria', element: <ConciliacionBancariaPage /> },
       { path: 'reportes-financieros', element: <ReportesFinancierosPage /> },
       { path: 'gestion-documental', element: <GestionDocumentalPage /> },
     ]

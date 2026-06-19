@@ -10,6 +10,7 @@ import type { ProductoResponse } from 'src/types/inventario';
 import { Button } from 'src/components/ui/button';
 import { Input } from 'src/components/ui/input';
 import { Label } from 'src/components/ui/label';
+import { Switch } from 'src/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from 'src/components/ui/select';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from 'src/components/ui/dialog';
 import CardBox from 'src/components/shared/CardBox';
@@ -24,7 +25,7 @@ const RegistrarVentaPage = () => {
   const nav = useNavigate();
   const [clientes, setClientes] = useState<ClienteResponse[]>([]);
   const [productos, setProductos] = useState<ProductoResponse[]>([]);
-  const [form, setForm] = useState({ clienteId: 0, fecha: hoy, moneda: 'USD' as 'USD'|'VES', metodoPago: 'EFECTIVO' as MetodoPago, descuentoGlobalPorcentaje: 0, notas: '' });
+  const [form, setForm] = useState({ clienteId: 0, fecha: hoy, moneda: 'USD' as 'USD'|'VES', metodoPago: 'EFECTIVO' as MetodoPago, descuentoGlobalPorcentaje: 0, pendiente: false, notas: '' });
   const [lineas, setLineas] = useState<AgregarLineaRequest[]>([{ descripcion: '', cantidad: 1, precioUnitario: 0 }]);
   const [error, setError] = useState(''); const [g, setG] = useState(false);
   const [openCrearCliente, setOpenCrearCliente] = useState(false);
@@ -69,7 +70,7 @@ const RegistrarVentaPage = () => {
       await transaccionService.crear({
         tipo: 'INGRESO', clienteId: form.clienteId || undefined, fecha: form.fecha, moneda: form.moneda,
         metodoPago: form.metodoPago, descuentoGlobalPorcentaje: form.descuentoGlobalPorcentaje || undefined,
-        notas: form.notas || undefined, lineas,
+        pendiente: form.pendiente || undefined, notas: form.notas || undefined, lineas,
       });
       toast.success('Venta registrada');
       nav('/admin/caja-facturacion');
@@ -191,6 +192,10 @@ const RegistrarVentaPage = () => {
 
             <div className="mt-4 space-y-3">
               <div className="flex flex-col gap-1.5"><Label className="text-xs">Descuento global (%)</Label><Input type="number" min={0} max={100} value={form.descuentoGlobalPorcentaje} onChange={e => setForm({...form, descuentoGlobalPorcentaje: Number(e.target.value)})} onFocus={e => e.target.select()} className="h-9" /></div>
+              <div className="flex items-center justify-between">
+                <div><Label className="text-xs">Pendiente</Label><p className="text-[11px] text-muted-foreground">Queda en cuentas por cobrar</p></div>
+                <Switch checked={form.pendiente} onCheckedChange={v => setForm({...form, pendiente: v})} />
+              </div>
               <div className="flex flex-col gap-1.5"><Label className="text-xs">Notas</Label><Input value={form.notas} onChange={e => setForm({...form, notas: e.target.value})} placeholder="Opcional" className="h-9" /></div>
             </div>
 

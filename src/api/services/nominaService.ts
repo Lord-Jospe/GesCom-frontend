@@ -19,4 +19,11 @@ export const nominaService = {
     (await api.get<NominaResponse[]>(`/payroll/employee/${usuarioId}`)).data,
   pagar: async (id: number) => { await api.patch(`/payroll/${id}/pay`); },
   anular: async (id: number) => { await api.patch(`/payroll/${id}/cancel`); },
+
+  descargarPDF: async () => {
+    try {
+      const { data } = await api.get('/reports/payroll', { responseType: 'blob' });
+      window.open(URL.createObjectURL(new Blob([data], { type: 'application/pdf' })), '_blank');
+    } catch (e: any) { handle('PDF nómina', e); }
+  },
 };

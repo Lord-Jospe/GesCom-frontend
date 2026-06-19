@@ -13,6 +13,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from 's
 import { Icon } from '@iconify/react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from 'src/components/ui/tabs';
 import CardBox from 'src/components/shared/CardBox';
+import { FileDown } from 'lucide-react';
+import { exportarExcel } from 'src/lib/exportUtils';
 
 const hoy = new Date().toISOString().slice(0, 10);
 const inicioMes = hoy.slice(0, 7) + '-01';
@@ -49,8 +51,21 @@ function HistorialTab() {
 
   const pagar = async (id: number) => { try { await nominaService.pagar(id); toast.success('Nómina pagada'); cargar(); } catch (e: any) { toast.error(e.message); } };
 
-  return loading ? <div className="flex justify-center py-12"><Icon icon="svg-spinners:180-ring" width={28} className="text-primary animate-spin" /></div> : (
-    <div className="overflow-x-auto border rounded-lg">
+  if (loading) return <div className="flex justify-center py-12"><Icon icon="svg-spinners:180-ring" width={28} className="text-primary animate-spin" /></div>;
+
+  return (
+    <div>
+      {nominas.length > 0 && (
+        <div className="flex justify-end gap-2 mb-3">
+          <Button variant="outline" size="sm" onClick={() => exportarExcel(nominas.map(n => ({ Empleado: n.nombreEmpleado, Período: `${n.periodoInicio} → ${n.periodoFin}`, 'Salario base': n.salarioBase, Deducciones: n.totalDeducciones, Neto: n.salarioNeto, Estado: n.estado })), 'nomina')}>
+            <FileDown className="size-3.5 mr-1" /> Excel
+          </Button>
+          <Button variant="outline" size="sm" onClick={() => nominaService.descargarPDF()}>
+            <FileDown className="size-3.5 mr-1" /> PDF
+          </Button>
+        </div>
+      )}
+      <div className="overflow-x-auto border rounded-lg">
       <table className="w-full text-sm">
         <thead className="bg-muted/40"><tr>
           <th className="text-left px-3 py-2 font-semibold">Empleado</th>
@@ -77,6 +92,7 @@ function HistorialTab() {
           }
         </tbody>
       </table>
+    </div>
     </div>
   );
 }

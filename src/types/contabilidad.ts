@@ -59,6 +59,7 @@ export interface EstadoResultadosResponse {
   totalIngresos: number;
   totalGastos: number;
   utilidadNeta: number;
+  detalle: { cuentaCodigo: string; cuentaNombre: string; tipo: string; monto: number }[];
 }
 
 export interface CrearAsientoRequest {

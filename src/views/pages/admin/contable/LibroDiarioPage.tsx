@@ -9,7 +9,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from 's
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from 'src/components/ui/dialog';
 import CardBox from 'src/components/shared/CardBox';
 import { Icon } from '@iconify/react';
-import { Plus, Trash2, Calculator } from 'lucide-react';
+import { Plus, Trash2, Calculator, FileDown } from 'lucide-react';
+import { exportarExcel } from 'src/lib/exportUtils';
 
 const hoy = new Date().toISOString().slice(0, 10);
 
@@ -44,9 +45,17 @@ const LibroDiarioPage = () => {
           <h1 className="text-2xl font-bold">Libro Diario</h1>
           <p className="text-muted-foreground">Asientos contables del período</p>
         </div>
-        <Button className="ml-auto" onClick={() => setOpenCrear(true)}>
-          <Plus className="size-4 mr-1" /> Nuevo Asiento
-        </Button>
+        <div className="flex items-center gap-2 ml-auto">
+          <Button variant="outline" size="sm" onClick={() => exportarExcel(asientos.map(a => ({ '#': a.numeroAsiento, Fecha: a.fecha, Descripción: a.descripcion, Débito: a.totalDebito.toFixed(2), Crédito: a.totalCredito.toFixed(2), Tipo: a.esAutomatico ? 'Auto' : 'Manual' })), 'libro-diario')}>
+            <FileDown className="size-3.5 mr-1" /> Excel
+          </Button>
+          <Button variant="outline" size="sm" onClick={() => contabilidadService.descargarPDF(`/reports/journal?desde=${desde}&hasta=${hasta}`)}>
+            <FileDown className="size-3.5 mr-1" /> PDF
+          </Button>
+          <Button onClick={() => setOpenCrear(true)}>
+            <Plus className="size-4 mr-1" /> Nuevo Asiento
+          </Button>
+        </div>
       </div>
 
       <CardBox className="shadow-none border border-border">
