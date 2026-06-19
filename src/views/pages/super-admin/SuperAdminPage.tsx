@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { superAdminService } from 'src/api/services/superAdminService';
 import { Button } from 'src/components/ui/button';
@@ -8,8 +8,9 @@ import { Badge } from 'src/components/ui/badge';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from 'src/components/ui/dialog';
 import CardBox from 'src/components/shared/CardBox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from 'src/components/ui/select';
+import { paymentService } from 'src/api/services/paymentService';
 import { Icon } from '@iconify/react';
-import { Building2, CreditCard, Image as ImageIcon, Crown } from 'lucide-react';
+import { Building2, CreditCard, Image as ImageIcon, Crown, QrCode } from 'lucide-react';
 
 interface EmpresaRow {
   empresaId: number; nombre: string; rif: string; correo: string;
@@ -26,6 +27,7 @@ const SuperAdminPage = () => {
   const [nuevaFecha, setNuevaFecha] = useState('');
   const [nuevoPlan, setNuevoPlan] = useState('');
   const [saving, setSaving] = useState(false);
+  const qrRef = useRef<HTMLInputElement>(null);
 
   const planes = ['SEMILLA', 'EMPRENDEDOR', 'NEGOCIO'];
   const planId: Record<string, number> = { SEMILLA: 1, EMPRENDEDOR: 2, NEGOCIO: 3 };
@@ -90,6 +92,27 @@ const SuperAdminPage = () => {
           </CardBox>
         </div>
       )}
+
+      {/* QR */}
+      <CardBox className="shadow-none border border-border">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <QrCode className="size-6 text-primary" />
+            <div>
+              <h3 className="text-base font-semibold">QR de pago (Binance)</h3>
+              <p className="text-xs text-muted-foreground">Los clientes escanean este QR para pagar</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <input ref={qrRef} type="file" accept="image/*" onChange={async (e) => {
+              const f = e.target.files?.[0]; if (!f) return;
+              try { await paymentService.subirQR(f); toast.success('QR actualizado'); }
+              catch (err: any) { toast.error(err.message); }
+            }} className="hidden" />
+            <Button variant="outline" size="sm" onClick={() => qrRef.current?.click()}>Subir QR</Button>
+          </div>
+        </div>
+      </CardBox>
 
       {/* Tabs */}
       <div className="flex gap-2">
