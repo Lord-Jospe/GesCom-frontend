@@ -60,7 +60,7 @@ const InventarioPage = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold">Productos</h1>
-          <p className="text-muted-foreground">{productos.length} productos · {criticos.length} alertas</p>
+          <p className="text-muted-foreground">{productos.length} productos · {criticos.length} alertas · <ValorInventario /></p>
         </div>
         <div className="flex items-center gap-3">
           <Input placeholder="Buscar..." className="w-48 lg:w-64" value={busqueda} onChange={e => setBusqueda(e.target.value)} />
@@ -252,6 +252,13 @@ export function MovimientoDialog({ open, onOpenChange, producto, onGuardado }: {
       </DialogContent>
     </Dialog>
   );
+}
+
+function ValorInventario() {
+  const [valor, setValor] = useState<number | null>(null);
+  useEffect(() => { inventarioService.valorTotal().then(setValor).catch(() => {}); }, []);
+  if (valor === null) return null;
+  return <span className="font-semibold text-primary">Valor total: ${valor.toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>;
 }
 
 export default InventarioPage;

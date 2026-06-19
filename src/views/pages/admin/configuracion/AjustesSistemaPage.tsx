@@ -23,10 +23,9 @@ const AjustesSistemaPage = () => {
     ivaActivo: true, ivaPorcentaje: '16', igtfActivo: false,
     facturaPrefijo: '', facturaSiguienteNumero: '1',
     ssoPorcentaje: '4', incesPorcentaje: '0.5', faovPorcentaje: '1',
-  });
+    stockMinimoDefault: '5',
+  } as Record<string, any>);
   const original = useRef({ ...form });
-
-  const [stockMinimoDefault, setStockMinimoDefault] = useState('5');
   const [exportando, setExportando] = useState(false);
   const [importando, setImportando] = useState(false);
   const [previewImport, setPreviewImport] = useState<string[][] | null>(null);
@@ -41,10 +40,11 @@ const AjustesSistemaPage = () => {
       const f = {
         ivaActivo: emp.ivaActivo, ivaPorcentaje: String(emp.ivaPorcentaje || 16), igtfActivo: emp.igtfActivo,
         facturaPrefijo: emp.facturaPrefijo || '', facturaSiguienteNumero: String(emp.facturaSiguienteNumero || 1),
+        ssoPorcentaje: String(emp.ssoPorcentaje ?? 4), incesPorcentaje: String(emp.incesPorcentaje ?? 0.5), faovPorcentaje: String(emp.faovPorcentaje ?? 1),
+        stockMinimoDefault: String(emp.stockMinimoDefault ?? 5),
       };
       setForm(f);
       original.current = { ...f };
-      setStockMinimoDefault('5');
     } catch {} finally { setLoading(false); }
   }, []);
 
@@ -54,7 +54,10 @@ const AjustesSistemaPage = () => {
     || form.ivaPorcentaje !== original.current.ivaPorcentaje
     || form.igtfActivo !== original.current.igtfActivo
     || form.facturaPrefijo !== original.current.facturaPrefijo
-    || form.facturaSiguienteNumero !== original.current.facturaSiguienteNumero;
+    || form.facturaSiguienteNumero !== original.current.facturaSiguienteNumero
+    || form.ssoPorcentaje !== original.current.ssoPorcentaje
+    || form.incesPorcentaje !== original.current.incesPorcentaje
+    || form.faovPorcentaje !== original.current.faovPorcentaje;
 
   const guardar = async () => {
     if (!empresa) return;
@@ -66,6 +69,10 @@ const AjustesSistemaPage = () => {
       if (form.igtfActivo !== original.current.igtfActivo) delta.igtfActivo = form.igtfActivo;
       if (form.facturaPrefijo !== original.current.facturaPrefijo) delta.facturaPrefijo = form.facturaPrefijo;
       if (form.facturaSiguienteNumero !== original.current.facturaSiguienteNumero) delta.facturaSiguienteNumero = Number(form.facturaSiguienteNumero);
+      if (form.ssoPorcentaje !== original.current.ssoPorcentaje) delta.ssoPorcentaje = Number(form.ssoPorcentaje);
+      if (form.incesPorcentaje !== original.current.incesPorcentaje) delta.incesPorcentaje = Number(form.incesPorcentaje);
+      if (form.faovPorcentaje !== original.current.faovPorcentaje) delta.faovPorcentaje = Number(form.faovPorcentaje);
+      if (form.stockMinimoDefault !== original.current.stockMinimoDefault) delta.stockMinimoDefault = Number(form.stockMinimoDefault);
       if (Object.keys(delta).length === 0) { toast.info('Sin cambios que guardar'); return; }
       await empresaService.editarPerfil(delta);
       toast.success('Ajustes actualizados');
@@ -170,32 +177,32 @@ const AjustesSistemaPage = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Ajustes del Sistema</h1>
-        <p className="text-muted-foreground">Impuestos, facturación, alertas y respaldo de datos</p>
+        <h1 className="text-3xl font-bold">Ajustes del Sistema</h1>
+        <p className="text-lg text-muted-foreground">Impuestos, facturación, alertas y respaldo de datos</p>
       </div>
 
       {/* IVA / IGTF */}
       <CardBox className="shadow-none border border-border">
-        <h3 className="text-base font-semibold mb-4 flex items-center gap-2">
-          <Icon icon="solar:document-text-linear" width={20} className="text-primary" /> Impuestos
+        <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+          <Icon icon="solar:document-text-linear" width={24} className="text-primary" /> Impuestos
         </h3>
         <div className="grid sm:grid-cols-2 gap-6">
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <div><p className="font-medium text-sm">IVA</p><p className="text-xs text-muted-foreground">Impuesto al Valor Agregado</p></div>
+              <div><p className="font-medium text-lg">IVA</p><p className="text-sm text-muted-foreground">Impuesto al Valor Agregado</p></div>
               <Switch checked={form.ivaActivo} onCheckedChange={v => setForm({...form, ivaActivo: v})} />
             </div>
             {form.ivaActivo && (
               <div className="flex items-center gap-3 pl-2 border-l-2 border-primary/20">
-                <Label className="text-xs">Porcentaje</Label>
-                <Input type="number" step="0.01" min="0" max="100" value={form.ivaPorcentaje} onChange={e => setForm({...form, ivaPorcentaje: e.target.value})} className="h-8 w-20 text-sm" />
-                <span className="text-sm text-muted-foreground">%</span>
+                <Label className="text-sm">Porcentaje</Label>
+                <Input type="number" step="0.01" min="0" max="100" value={form.ivaPorcentaje} onChange={e => setForm({...form, ivaPorcentaje: e.target.value})} className="h-9 w-20" />
+                <span className="text-lg text-muted-foreground">%</span>
               </div>
             )}
           </div>
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <div><p className="font-medium text-sm">IGTF (3%)</p><p className="text-xs text-muted-foreground">Solo transacciones en divisas (USD)</p></div>
+              <div><p className="font-medium text-lg">IGTF (3%)</p><p className="text-sm text-muted-foreground">Solo transacciones en divisas (USD)</p></div>
               <Switch checked={form.igtfActivo} onCheckedChange={v => setForm({...form, igtfActivo: v})} />
             </div>
           </div>
@@ -204,63 +211,63 @@ const AjustesSistemaPage = () => {
 
       {/* Facturación */}
       <CardBox className="shadow-none border border-border">
-        <h3 className="text-base font-semibold mb-4 flex items-center gap-2">
-          <Icon icon="solar:bill-list-linear" width={20} className="text-primary" /> Numeración de facturas
+        <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+          <Icon icon="solar:bill-list-linear" width={24} className="text-primary" /> Numeración de facturas
         </h3>
         <div className="grid sm:grid-cols-2 gap-4">
           <div className="flex flex-col gap-1.5">
-            <Label>Prefijo</Label>
-            <Input value={form.facturaPrefijo} onChange={e => setForm({...form, facturaPrefijo: e.target.value})} placeholder="Ej: F-" className="h-9" />
-            <p className="text-xs text-muted-foreground">Aparece antes del número: ej. F-00001</p>
+            <Label className="text-sm">Prefijo</Label>
+            <Input value={form.facturaPrefijo} onChange={e => setForm({...form, facturaPrefijo: e.target.value})} placeholder="Ej: F-" className="h-10" />
+            <p className="text-sm text-muted-foreground">Aparece antes del número: ej. F-00001</p>
           </div>
           <div className="flex flex-col gap-1.5">
-            <Label>Próximo número</Label>
-            <Input type="number" min={1} value={form.facturaSiguienteNumero} onChange={e => setForm({...form, facturaSiguienteNumero: e.target.value})} className="h-9" />
-            <p className="text-xs text-muted-foreground">La siguiente factura usará este número</p>
+            <Label className="text-sm">Próximo número</Label>
+            <Input type="number" min={1} value={form.facturaSiguienteNumero} onChange={e => setForm({...form, facturaSiguienteNumero: e.target.value})} className="h-10" />
+            <p className="text-sm text-muted-foreground">La siguiente factura usará este número</p>
           </div>
         </div>
       </CardBox>
 
       {/* Alertas inventario */}
       <CardBox className="shadow-none border border-border">
-        <h3 className="text-base font-semibold mb-4 flex items-center gap-2">
-          <Icon icon="solar:bell-bing-linear" width={20} className="text-primary" /> Alertas de inventario
+        <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+          <Icon icon="solar:bell-bing-linear" width={24} className="text-primary" /> Alertas de inventario
         </h3>
         <div className="flex flex-col gap-1.5 max-w-xs">
-          <Label>Stock mínimo por defecto</Label>
-          <Input type="number" min={1} value={stockMinimoDefault} onChange={e => setStockMinimoDefault(e.target.value)} className="h-9" />
-          <p className="text-xs text-muted-foreground">Los productos nuevos usarán este umbral. Puedes cambiarlo por producto.</p>
+          <Label className="text-sm">Stock mínimo por defecto</Label>
+          <Input type="number" min={1} value={form.stockMinimoDefault} onChange={e => setForm({...form, stockMinimoDefault: e.target.value})} className="h-10" />
+          <p className="text-sm text-muted-foreground">Los productos nuevos usarán este umbral.</p>
         </div>
       </CardBox>
 
       {/* Deducciones de nómina */}
       <CardBox className="shadow-none border border-border">
-        <h3 className="text-base font-semibold mb-4 flex items-center gap-2">
+        <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
           <Icon icon="solar:card-transfer-linear" width={20} className="text-primary" /> Deducciones de nómina
         </h3>
-        <p className="text-xs text-muted-foreground mb-4">Porcentajes aplicados al calcular la nómina. Puedes modificarlos según la ley vigente.</p>
+        <p className="text-sm text-muted-foreground mb-4">Porcentajes aplicados al calcular la nómina. Puedes modificarlos según la ley vigente.</p>
         <div className="grid sm:grid-cols-3 gap-4">
           <div className="flex flex-col gap-1.5">
             <Label>SSO (%)</Label>
             <Input type="number" step="0.01" min="0" max="100" value={form.ssoPorcentaje || '4'} onChange={e => setForm({...form, ssoPorcentaje: e.target.value})} className="h-9" />
-            <p className="text-[11px] text-muted-foreground">Seguro Social Obligatorio</p>
+            <p className="text-[14px] text-muted-foreground">Seguro Social Obligatorio</p>
           </div>
           <div className="flex flex-col gap-1.5">
             <Label>INCES (%)</Label>
             <Input type="number" step="0.01" min="0" max="100" value={form.incesPorcentaje || '0.5'} onChange={e => setForm({...form, incesPorcentaje: e.target.value})} className="h-9" />
-            <p className="text-[11px] text-muted-foreground">Instituto Nacional de Capacitación</p>
+            <p className="text-[14px] text-muted-foreground">Instituto Nacional de Capacitación</p>
           </div>
           <div className="flex flex-col gap-1.5">
             <Label>FAOV (%)</Label>
             <Input type="number" step="0.01" min="0" max="100" value={form.faovPorcentaje || '1'} onChange={e => setForm({...form, faovPorcentaje: e.target.value})} className="h-9" />
-            <p className="text-[11px] text-muted-foreground">Fondo de Ahorro Obligatorio para Vivienda</p>
+            <p className="text-[14px] text-muted-foreground">Fondo de Ahorro Obligatorio para Vivienda</p>
           </div>
         </div>
       </CardBox>
 
       {/* Respaldo */}
       <CardBox className="shadow-none border border-border">
-        <h3 className="text-base font-semibold mb-4 flex items-center gap-2">
+        <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
           <Icon icon="solar:database-linear" width={20} className="text-primary" /> Respaldo de datos
         </h3>
         <p className="text-sm text-muted-foreground mb-4">
@@ -307,15 +314,15 @@ const AjustesSistemaPage = () => {
             <div className="max-h-48 overflow-y-auto border rounded-lg mt-2">
               <table className="w-full text-sm">
                 <thead className="bg-muted/30"><tr>
-                  <th className="text-left px-3 py-1.5 text-xs">Nombre</th>
-                  <th className="text-right px-3 py-1.5 text-xs">Stock</th>
-                  <th className="text-right px-3 py-1.5 text-xs">Precio</th>
+                  <th className="text-left px-3 py-1.5 text-sm">Nombre</th>
+                  <th className="text-right px-3 py-1.5 text-sm">Stock</th>
+                  <th className="text-right px-3 py-1.5 text-sm">Precio</th>
                 </tr></thead>
                 <tbody>
                   {previewImport.slice(0, 20).map((r, i) => (
-                    <tr key={i} className="border-t"><td className="px-3 py-1 text-xs truncate max-w-40">{r[0]}</td><td className="px-3 py-1 text-xs text-right">{r[3]}</td><td className="px-3 py-1 text-xs text-right">${r[4]}</td></tr>
+                    <tr key={i} className="border-t"><td className="px-3 py-1 text-sm truncate max-w-40">{r[0]}</td><td className="px-3 py-1 text-sm text-right">{r[3]}</td><td className="px-3 py-1 text-sm text-right">${r[4]}</td></tr>
                   ))}
-                  {previewImport.length > 20 && <tr><td colSpan={3} className="text-center text-xs text-muted-foreground py-1">...y {previewImport.length - 20} más</td></tr>}
+                  {previewImport.length > 20 && <tr><td colSpan={3} className="text-center text-sm text-muted-foreground py-1">...y {previewImport.length - 20} más</td></tr>}
                 </tbody>
               </table>
             </div>

@@ -26,6 +26,10 @@ export interface EmpresaResponse {
   igtfActivo: boolean;
   facturaPrefijo: string;
   facturaSiguienteNumero: number;
+  ssoPorcentaje?: number;
+  incesPorcentaje?: number;
+  faovPorcentaje?: number;
+  stockMinimoDefault?: number;
   createdAt: string;
 }
 
