@@ -7,6 +7,7 @@ import { Label } from 'src/components/ui/label';
 import { Badge } from 'src/components/ui/badge';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from 'src/components/ui/dialog';
 import CardBox from 'src/components/shared/CardBox';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from 'src/components/ui/select';
 import { Icon } from '@iconify/react';
 import { Building2, CreditCard, Image as ImageIcon, Crown } from 'lucide-react';
 
@@ -23,7 +24,11 @@ const SuperAdminPage = () => {
   const [tab, setTab] = useState<'empresas' | 'comprobantes'>('empresas');
   const [editEmp, setEditEmp] = useState<EmpresaRow | null>(null);
   const [nuevaFecha, setNuevaFecha] = useState('');
+  const [nuevoPlan, setNuevoPlan] = useState('');
   const [saving, setSaving] = useState(false);
+
+  const planes = ['SEMILLA', 'EMPRENDEDOR', 'NEGOCIO'];
+  const planId: Record<string, number> = { SEMILLA: 1, EMPRENDEDOR: 2, NEGOCIO: 3 };
 
   const cargar = async () => {
     setLoading(true);
@@ -40,12 +45,16 @@ const SuperAdminPage = () => {
   useEffect(() => { cargar(); }, []);
 
   const handleExtender = async () => {
-    if (!editEmp || !nuevaFecha) return;
+    if (!editEmp || (!nuevaFecha && !nuevoPlan)) return;
     setSaving(true);
     try {
-      await superAdminService.actualizarSuscripcion(editEmp.empresaId, { fechaVence: nuevaFecha });
-      toast.success('Suscripción extendida');
-      setEditEmp(null); cargar();
+      const body: any = {};
+      if (nuevaFecha) body.fechaVence = nuevaFecha;
+      if (nuevoPlan) body.planId = planId[nuevoPlan];
+      await superAdminService.actualizarSuscripcion(editEmp.empresaId, body);
+      toast.success('Suscripción actualizada');
+      setEditEmp(null); setNuevaFecha(''); setNuevoPlan('');
+      cargar();
     } catch (e: any) { toast.error(e.message); } finally { setSaving(false); }
   };
 
@@ -124,8 +133,8 @@ const SuperAdminPage = () => {
                       </td>
                       <td className="px-2 py-2.5">
                         <Button variant="ghost" size="sm" className="h-7 text-xs"
-                          onClick={() => { setEditEmp(e); setNuevaFecha(e.fechaVence || ''); }}>
-                          Extender
+                          onClick={() => { setEditEmp(e); setNuevaFecha(e.fechaVence || ''); setNuevoPlan(''); }}>
+                          Gestionar
                         </Button>
                       </td>
                     </tr>
@@ -167,10 +176,19 @@ const SuperAdminPage = () => {
       {/* Diálogo extender */}
       <Dialog open={!!editEmp} onOpenChange={() => setEditEmp(null)}>
         <DialogContent className="max-w-sm">
-          <DialogHeader><DialogTitle>Extender suscripción</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle>Gestionar suscripción</DialogTitle></DialogHeader>
           {editEmp && (
-            <div className="space-y-3 mt-2">
-              <p className="text-sm"><strong>{editEmp.nombre}</strong> — {editEmp.planNombre}</p>
+            <div className="space-y-4 mt-2">
+              <p className="text-sm"><strong>{editEmp.nombre}</strong> — Plan actual: {editEmp.planNombre}</p>
+              <div className="flex flex-col gap-1.5">
+                <Label>Cambiar plan</Label>
+                <Select value={nuevoPlan} onValueChange={setNuevoPlan}>
+                  <SelectTrigger><SelectValue placeholder="Mantener plan actual" /></SelectTrigger>
+                  <SelectContent>
+                    {planes.map(p => <SelectItem key={p} value={p}>{p} {p === editEmp.planNombre ? '(actual)' : ''}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
               <div className="flex flex-col gap-1.5">
                 <Label>Nueva fecha de vencimiento</Label>
                 <Input type="date" value={nuevaFecha} onChange={e => setNuevaFecha(e.target.value)} />
@@ -179,7 +197,7 @@ const SuperAdminPage = () => {
           )}
           <DialogFooter className="mt-4">
             <Button variant="outline" onClick={() => setEditEmp(null)} disabled={saving}>Cancelar</Button>
-            <Button onClick={handleExtender} disabled={saving || !nuevaFecha}>{saving ? '...' : 'Extender'}</Button>
+            <Button onClick={handleExtender} disabled={saving || (!nuevaFecha && !nuevoPlan)}>{saving ? '...' : 'Guardar'}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

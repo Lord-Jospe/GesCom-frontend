@@ -184,7 +184,7 @@ const AuthRegister = () => {
                         <Input
                             id="nombreEmpresa"
                             type="text"
-                            placeholder="Ej: Mi Empresa C.A."
+                            placeholder="Ingresa el nombre de tu empresa"
                             value={form.nombreEmpresa}
                             onChange={e => set('nombreEmpresa', e.target.value)}
                             className="mt-1"
@@ -196,7 +196,7 @@ const AuthRegister = () => {
                         <Input
                             id="rif"
                             type="text"
-                            placeholder="Ej: J-12345678-9"
+                            placeholder="Ingresa el rif de tu empresa"
                             value={form.rif}
                             onChange={e => set('rif', e.target.value)}
                             className="mt-1"
@@ -211,7 +211,7 @@ const AuthRegister = () => {
                         <Input
                             id="telefono"
                             type="tel"
-                            placeholder="Ej: 0414-1234567"
+                            placeholder="Ingresa el teléfono de tu empresa"
                             value={form.telefono}
                             onChange={e => set('telefono', e.target.value)}
                             className="mt-1"

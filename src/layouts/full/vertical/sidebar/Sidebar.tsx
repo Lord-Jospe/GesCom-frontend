@@ -10,6 +10,7 @@ import { useAuth } from 'src/context/AuthContext';
 import adminItems, { MenuItem } from './itemsSidebar/adminSidebaritems';
 import contadorItems from './itemsSidebar/contadorSideBaritems';
 import operadorItems from './itemsSidebar/operadorSidebarItems';
+import superAdminItems from './itemsSidebar/superAdminSidebarItems';
 
 
 
@@ -110,6 +111,8 @@ const SidebarLayout = ({ onClose }: { onClose?: () => void }) => {
 
   const getSidebarByRole = (rol?: string) => {
   switch (rol) {
+    case 'SUPER_ADMIN':
+      return superAdminItems;
     case 'ADMIN':
       return adminItems;
     case 'CONTADOR':
@@ -120,10 +123,11 @@ const SidebarLayout = ({ onClose }: { onClose?: () => void }) => {
       return [];
     }
   };
-    
-  const SidebarContent = getSidebarByRole(user?.rol) || []; 
+
+  const SidebarContent = getSidebarByRole(user?.rol) || [];
 
   const homeByRole: Record<string, string> = {
+    SUPER_ADMIN: '/super-admin',
     ADMIN: '/admin',
     CONTADOR: '/contador',
     OPERADOR: '/operador',
