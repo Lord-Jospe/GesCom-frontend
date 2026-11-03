@@ -90,7 +90,7 @@ const Messages = () => {
     cob.forEach(t => {
           const dias = Math.floor((Date.now() - new Date(t.fecha).getTime()) / 86400000);
           if (dias > 15) {
-            items.push({ id: `cxc-${t.transaccionId}`, icon: 'solar:hand-money-linear', bg: 'bg-orange-500/10', color: 'text-orange-500', title: 'Cobranza vencida', subtitle: `${t.clienteNombre} — $${t.saldoPendiente.toFixed(2)} · ${dias} días`, url: `${base}/por-cobrar` });
+            items.push({ id: `cxc-${t.transaccionId}`, icon: 'solar:hand-money-linear', bg: 'bg-orange-500/10', color: 'text-orange-500', title: 'Cobranza vencida', subtitle: `${t.clienteNombre || 'Sin cliente'} — $${t.saldoPendiente.toFixed(2)} · ${dias} días`, url: `${base}/por-cobrar` });
           }
         });
     pag.forEach(t => {

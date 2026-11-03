@@ -22,17 +22,17 @@ const ventajas = [
 
 const planes = [
   {
-    nombre: 'Semilla', precio: '0', color: 'border-border', badge: 'Gratis', badgeColor: 'bg-muted text-muted-foreground',
+    nombre: 'Semilla', precio: '12', color: 'border-border', badge: 'Gratis', badgeColor: 'bg-muted text-muted-foreground',
     desc: 'Para estudiantes y emprendedores que facturan menos de $100/mes.',
     features: ['Hasta 15 transacciones / mes', 'Solo texto (sin fotos)', 'Reportes en pantalla', 'Sin multimoneda'],
   },
   {
-    nombre: 'Emprendedor', precio: '8', color: 'border-primary', badge: 'Más popular', badgeColor: 'bg-primary text-white',
+    nombre: 'Emprendedor', precio: '25', color: 'border-primary', badge: 'Más popular', badgeColor: 'bg-primary text-white',
     desc: 'Vendedores de Instagram, puestos de comida, freelancers.',
     features: ['Transacciones limitadas', 'Bóveda: 50 fotos / mes', 'Usuario: 3', 'Reporte PDF mensual', 'Multimoneda BCV', 'Inventario', 'Soporte por WhatsApp'],
   },
   {
-    nombre: 'Empresa', precio: '20', color: 'border-border', badge: 'Premium', badgeColor: 'bg-secondary text-white',
+    nombre: 'Empresa', precio: '45', color: 'border-border', badge: 'Premium', badgeColor: 'bg-secondary text-white',
     desc: 'Bodegones, farmacias, talleres, ferreterías.',
     features: ['Transacciones ilimitadas', 'Bóveda ilimitada','Usuario: ilimitados', 'Gestión de nómina', 'Todos los reportes PDF', 'Multimoneda BCV', 'Control de inventario', 'Cuentas por cobrar y pagar', 'Conciliación bancaria', 'Módulo contable', 'Soporte por WhatsApp'],
   },

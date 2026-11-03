@@ -104,11 +104,14 @@ const RegistrarVentaPage = () => {
             {error && <div className="bg-red-50 border border-red-200 text-red-600 text-sm px-3 py-2 rounded-md mb-4">{error}</div>}
             <div className="grid sm:grid-cols-2 gap-4">
               <div className="flex flex-col gap-1.5">
-                <Label>Cliente</Label>
+                <Label>Cliente (opcional)</Label>
                 <div className="flex gap-1">
-                  <Select value={form.clienteId ? String(form.clienteId) : ''} onValueChange={v => setForm({...form, clienteId: Number(v)})}>
+                  <Select value={form.clienteId ? String(form.clienteId) : '__none__'} onValueChange={v => setForm({...form, clienteId: v === '__none__' ? 0 : Number(v)})}>
                     <SelectTrigger className="flex-1"><SelectValue placeholder="Seleccionar cliente..." /></SelectTrigger>
-                    <SelectContent>{clientes.filter(c => c.isActive).map(c => <SelectItem key={c.clienteId} value={String(c.clienteId)}>{c.nombre}</SelectItem>)}</SelectContent>
+                    <SelectContent>
+                      <SelectItem value="__none__">-</SelectItem>
+                      {clientes.filter(c => c.isActive).map(c => <SelectItem key={c.clienteId} value={String(c.clienteId)}>{c.nombre}</SelectItem>)}
+                    </SelectContent>
                   </Select>
                   <Button size="icon" variant="outline" className="shrink-0" title="Crear cliente rápido" onClick={() => setOpenCrearCliente(true)}>
                     <UserPlus className="size-4" />

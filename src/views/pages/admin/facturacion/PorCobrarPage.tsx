@@ -130,7 +130,7 @@ function DialogPago({ open, onOpenChange, transaccion, onGuardado }: {
   };
 
   return <Dialog open={open} onOpenChange={onOpenChange}><DialogContent className="max-w-sm"><DialogHeader><DialogTitle>Registrar abono</DialogTitle></DialogHeader>
-    <p className="text-sm text-muted-foreground mb-2">{transaccion.clienteNombre} · Pendiente: <strong>${transaccion.saldoPendiente.toFixed(2)}</strong></p>
+    <p className="text-sm text-muted-foreground mb-2">{transaccion.clienteNombre || 'Sin cliente'} · Pendiente: <strong>${transaccion.saldoPendiente.toFixed(2)}</strong></p>
     {error && <div className="bg-red-50 border border-red-200 text-red-600 text-sm px-3 py-2 rounded-md mb-2">{error}</div>}
     <div className="flex flex-col gap-3">
       <div className="flex flex-col gap-1.5"><Label>Monto</Label><Input type="number" step="0.01" value={monto} onChange={e => setMonto(e.target.value)} /></div>
@@ -154,7 +154,7 @@ function DialogNota({ open, onOpenChange, transaccion, onGuardado }: {
     catch (e: any) { setError(e.message); } finally { setG(false); }
   };
   return <Dialog open={open} onOpenChange={onOpenChange}><DialogContent className="max-w-sm"><DialogHeader><DialogTitle>Emitir nota de crédito</DialogTitle></DialogHeader>
-    <p className="text-sm text-muted-foreground mb-2">{transaccion.clienteNombre} · Factura {transaccion.numeroFactura || `#${transaccion.transaccionId}`}</p>
+    <p className="text-sm text-muted-foreground mb-2">{transaccion.clienteNombre || 'Sin cliente'} · Factura {transaccion.numeroFactura || `#${transaccion.transaccionId}`}</p>
     {error && <div className="bg-red-50 border border-red-200 text-red-600 text-sm px-3 py-2 rounded-md mb-2">{error}</div>}
     <div className="flex flex-col gap-3"><div className="flex flex-col gap-1.5"><Label>Monto a acreditar</Label><Input type="number" step="0.01" value={monto} onChange={e => setMonto(e.target.value)} /></div><div className="flex flex-col gap-1.5"><Label>Motivo</Label><Input value={motivo} onChange={e => setMotivo(e.target.value)} placeholder="Motivo de la nota de crédito" /></div></div>
     <DialogFooter className="mt-4"><Button variant="outline" onClick={() => onOpenChange(false)} disabled={g}>Cancelar</Button><Button onClick={handle} disabled={g}>{g ? '...' : 'Emitir'}</Button></DialogFooter></DialogContent></Dialog>;

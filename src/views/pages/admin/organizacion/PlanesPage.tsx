@@ -10,9 +10,18 @@ import { Icon } from '@iconify/react';
 import { Upload } from 'lucide-react';
 
 const planesDisponibles = [
+    {
+    nombre: 'Semilla',
+    precio: 12,
+    color: 'border-primary',
+    badge: 'Más popular',
+    badgeColor: 'bg-primary text-white',
+    desc: 'Vendedores de Instagram, puestos de comida, freelancers.',
+    features: ['Transacciones limitadas', 'Bóveda: 50 fotos / mes', 'Usuario: 3', 'Reporte PDF mensual', 'Multimoneda BCV', 'Inventario', 'Soporte por WhatsApp'],
+  },
   {
     nombre: 'Emprendedor',
-    precio: 8,
+    precio: 25,
     color: 'border-primary',
     badge: 'Más popular',
     badgeColor: 'bg-primary text-white',
@@ -21,7 +30,7 @@ const planesDisponibles = [
   },
   {
     nombre: 'Empresa',
-    precio: 20,
+    precio: 45,
     color: 'border-border',
     badge: 'Premium',
     badgeColor: 'bg-secondary text-white',
